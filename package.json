@@ -1,0 +1,28 @@
+{
+  "name": "morphdom",
+  "version": "0.1.0",
+  "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run test-browser && node_modules/.bin/jshint lib/",
+    "test-browser": "node test/mocha-phantomjs/run.js",
+    "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
+    "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html"
+  },
+  "author": "Patrick Steele-Idem <pnidem@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "ignoring-watcher": "^1.0.5",
+    "jshint": "^2.7.0",
+    "lasso": "^1.10.0",
+    "lasso-marko": "^2.0.4",
+    "marko": "^2.7.2",
+    "mocha": "^2.2.4",
+    "mocha-phantomjs": "^3.5.3",
+    "phantomjs": "^1.9.17"
+  },
+  "dependencies": {
+    "tiny-queue": "^0.2.1"
+  }
+}

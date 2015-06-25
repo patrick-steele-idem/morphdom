@@ -1,0 +1,14 @@
+/work
+/build
+/.idea/
+/npm-debug.log
+/node_modules
+/*.sublime-workspace
+*.orig
+.DS_Store
+coverage
+*.marko.js
+/.cache
+/test/client/mocha-phantomjs/generated
+/test/client/mocha-phantomjs/.cache
+.cache
