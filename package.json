@@ -22,7 +22,5 @@
     "mocha-phantomjs": "^3.5.3",
     "phantomjs": "^1.9.17"
   },
-  "dependencies": {
-    "tiny-queue": "^0.2.1"
-  }
+  "dependencies": {}
 }
