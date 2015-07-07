@@ -9,6 +9,7 @@ function parseHtml(html) {
     return tmp.firstChild;
 }
 
+
 function serializeNode(node) {
     var html = '';
 
@@ -83,6 +84,38 @@ function buildElLookup(node) {
     return map;
 }
 
+function collectNodes(rootNode) {
+    var allNodes = [];
+
+    function buildArrayHelper(node) {
+        allNodes.push(node);
+        var curNode = node.firstChild;
+        while(curNode) {
+            buildArrayHelper(curNode);
+            curNode = curNode.nextSibling;
+        }
+    }
+
+    buildArrayHelper(rootNode);
+    return allNodes;
+}
+
+function markDescendentsRemoved(node) {
+    var curNode = node.firstChild;
+    while(curNode) {
+        if (curNode.$testOnFromNodeFlag) {
+            throw new Error('Descendent of removed node was incorrectly visited. Node: ' + curNode);
+        }
+
+        curNode.$testRemovedDescendentFlag = true;
+
+        if (curNode.nodeType === 1) {
+            markDescendentsRemoved(curNode);            
+        }
+
+        curNode = curNode.nextSibling;
+    }
+}
 
 function runTest(name, htmlStrings) {
     var fromHtml = htmlStrings.from;
@@ -91,11 +124,40 @@ function runTest(name, htmlStrings) {
     var fromNode = parseHtml(fromHtml);
     var toNode = parseHtml(toHtml);
 
+    var allFromNodes = collectNodes(fromNode);
+
     var expectedSerialized = serializeNode(toNode);
 
     var elLookupBefore = buildElLookup(fromNode);
 
-    var morphedNode = morphdom(fromNode, toNode);
+    function onFromNodeFound(node) {
+        if (node.$testOnFromNodeFlag) {
+            throw new Error('Duplicate onFromNodeFound for: ' + node);
+        }
+
+        if (node.$testRemovedDescendentFlag) {
+            throw new Error('Descendent of a removed "from" node is incorrectly being visited. Node: ' + node);
+        }
+
+        node.$testOnFromNodeFlag = true;
+
+
+    }
+
+    function onFromNodeRemoved(node) {
+        if (node.$testOnFromNodeRemovedFlag) {
+            throw new Error('Duplicate onFromNodeRemoved for: ' + node);
+        }
+
+        node.$testOnFromNodeRemovedFlag = true;
+
+        markDescendentsRemoved(node);
+    }
+
+    var morphedNode = morphdom(fromNode, toNode, {
+        onFromNodeFound: onFromNodeFound,
+        onFromNodeRemoved: onFromNodeRemoved
+    });
 
     var elLookupAfter = buildElLookup(morphedNode);
 
@@ -123,6 +185,16 @@ function runTest(name, htmlStrings) {
         var afterEl =  elLookupAfter[elId];
         if (afterEl) {
             expect(afterEl).to.equal(elLookupBefore[elId]);
+        }
+    });
+
+    allFromNodes.forEach(function(node) {
+        if (node.$testOnFromNodeFlag && node.$testRemovedDescendentFlag) {
+            throw new Error('Descendent of a removed "from" node was visited. Node: ' + node);
+        }
+
+        if (!node.$testOnFromNodeFlag && !node.$testRemovedDescendentFlag) {
+            throw new Error('"from" node not found during morph ' + node);
         }
     });
 }

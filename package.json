@@ -11,6 +11,10 @@
   },
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrick-steele-idem/morphdom.git"
+  },
   "devDependencies": {
     "chai": "^2.3.0",
     "ignoring-watcher": "^1.0.5",

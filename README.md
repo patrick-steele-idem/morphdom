@@ -25,6 +25,28 @@ morphdom(el1, el2);
 expect(el1.className).to.equal('bar');
 ```
 
+# API
+
+## morphdom(fromNode, toNode, options) : Node
+
+The `morphdom(fromNode, toNode, options)` function supports the following arguments:
+
+- *fromNode* (`Node`)- The node to morph
+- *toNode* (`Node`) - The node that the `fromNode` should be morphed to
+- *options* (`Object`) - See below for supported options
+
+The returned value will typically be the `fromNode`. However, in situations where the `fromNode` is not compatible with the `toNode` (either different node type or different tag name) then a different DOM node will be returned.
+
+Supported options (all optional):
+
+- *onFromNodeFound* (`Function(Node)`) - A function that will called when a `Node` in the `from` tree is found
+- *onFromNodeRemoved* (`Function(Node)`) - A function that will called when a `Node` in the `from` tree has been removed (the children of the removed node will not be traversed)
+
+```javascript
+var morphdom = require('morphdom');
+var morphedNode = morphdom(fromNode, toNode, options);
+```
+
 # Maintainers
 
 * [Patrick Steele-Idem](https://github.com/patrick-steele-idem) (Twitter: [@psteeleidem](http://twitter.com/psteeleidem))
