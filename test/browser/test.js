@@ -110,7 +110,7 @@ function markDescendentsRemoved(node) {
         curNode.$testRemovedDescendentFlag = true;
 
         if (curNode.nodeType === 1) {
-            markDescendentsRemoved(curNode);            
+            markDescendentsRemoved(curNode);
         }
 
         curNode = curNode.nextSibling;
@@ -271,6 +271,29 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el2.disabled).to.equal(false);
+    });
+
+    it.only('should allow morphing to be skipped for a node', function() {
+        var el1a = document.createElement('div');
+        var el1b = document.createElement('b');
+        el1b.setAttribute('class', 'foo');
+        el1a.appendChild(el1b);
+
+        var el2a = document.createElement('div');
+        var el2b = document.createElement('b');
+        el2b.setAttribute('class', 'bar');
+        el2a.appendChild(el2b);
+
+
+        morphdom(el1a, el2a, {
+            onBeforeMorphEl: function(el) {
+                if (el.tagName === 'B') {
+                    this.skip();
+                }
+            }
+        });
+
+        expect(el1a.childNodes[0].className).to.equal('foo');
     });
 });
 

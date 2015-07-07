@@ -39,8 +39,11 @@ The returned value will typically be the `fromNode`. However, in situations wher
 
 Supported options (all optional):
 
-- *onFromNodeFound* (`Function(Node)`) - A function that will called when a `Node` in the `from` tree is found
-- *onFromNodeRemoved* (`Function(Node)`) - A function that will called when a `Node` in the `from` tree has been removed (the children of the removed node will not be traversed)
+- *onFromNodeFound* (`Function(node)`) - A function that will called when a `Node` in the `from` tree is found
+- *onFromNodeRemoved* (`Function(node)`) - A function that will called when a `Node` in the `from` tree has been removed (the children of the removed node will not be traversed)
+- *onBeforeMorphEl* (`Function(fromEl, toEl)`) - A function that will called when a `HTMLElement` in the `from` tree is about to be morphed. `this.skip()` can be called in the callback function to skip the morphing of the current element.
+
+
 
 ```javascript
 var morphdom = require('morphdom');
