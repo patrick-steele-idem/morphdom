@@ -230,7 +230,7 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
     });
 
-    it('should transform an input el', function() {
+    it('should transform an text input el', function() {
         var el1 = document.createElement('input');
         el1.type = 'text';
         el1.value = 'Hello World';
@@ -242,6 +242,21 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.value).to.equal('Hello World 2');
+    });
+
+    it('should transform a checkbox input el', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.setAttribute('checked', '');
+        el1.checked = false;
+
+        var el2 = document.createElement('input');
+        el2.setAttribute('type', 'text');
+        el2.setAttribute('checked', '');
+
+        morphdom(el1, el2);
+
+        expect(el1.checked).to.equal(true);
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {
@@ -273,7 +288,7 @@ describe('morphdom' , function() {
         expect(el2.disabled).to.equal(false);
     });
 
-    it.only('should allow morphing to be skipped for a node', function() {
+    it('should allow morphing to be skipped for a node', function() {
         var el1a = document.createElement('div');
         var el1b = document.createElement('b');
         el1b.setAttribute('class', 'foo');
@@ -288,7 +303,7 @@ describe('morphdom' , function() {
         morphdom(el1a, el2a, {
             onBeforeMorphEl: function(el) {
                 if (el.tagName === 'B') {
-                    this.skip();
+                    return false;
                 }
             }
         });
