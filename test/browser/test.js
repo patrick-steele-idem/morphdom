@@ -100,21 +100,23 @@ function collectNodes(rootNode) {
     return allNodes;
 }
 
-function markDescendentsRemoved(node) {
-    var curNode = node.firstChild;
-    while(curNode) {
-        if (curNode.$testOnFromNodeFlag) {
-            throw new Error('Descendent of removed node was incorrectly visited. Node: ' + curNode);
-        }
-
-        curNode.$testRemovedDescendentFlag = true;
-
-        if (curNode.nodeType === 1) {
-            markDescendentsRemoved(curNode);
-        }
-
-        curNode = curNode.nextSibling;
+function isNodeInTree(node, rootNode) {
+    if (node == null) {
+        throw new Error('Invalid arguments');
     }
+    var currentNode = node;
+
+    while (true) {
+        if (currentNode == null) {
+            return false;
+        } else if (currentNode == rootNode) {
+            return true;
+        }
+
+        currentNode = currentNode.parentNode;
+    }
+
+    return false;
 }
 
 function runTest(name, htmlStrings) {
@@ -140,23 +142,10 @@ function runTest(name, htmlStrings) {
         }
 
         node.$testOnFromNodeFlag = true;
-
-
-    }
-
-    function onFromNodeRemoved(node) {
-        if (node.$testOnFromNodeRemovedFlag) {
-            throw new Error('Duplicate onFromNodeRemoved for: ' + node);
-        }
-
-        node.$testOnFromNodeRemovedFlag = true;
-
-        markDescendentsRemoved(node);
     }
 
     var morphedNode = morphdom(fromNode, toNode, {
-        onFromNodeFound: onFromNodeFound,
-        onFromNodeRemoved: onFromNodeRemoved
+        onFromNodeFound: onFromNodeFound
     });
 
     var elLookupAfter = buildElLookup(morphedNode);
@@ -189,13 +178,19 @@ function runTest(name, htmlStrings) {
     });
 
     allFromNodes.forEach(function(node) {
-        if (node.$testOnFromNodeFlag && node.$testRemovedDescendentFlag) {
-            throw new Error('Descendent of a removed "from" node was visited. Node: ' + node);
+        if (!node.$testOnFromNodeFlag) {
+            throw new Error('"from" node was not reported as visited. Node: ' + node);
         }
 
-        if (!node.$testOnFromNodeFlag && !node.$testRemovedDescendentFlag) {
-            throw new Error('"from" node not found during morph ' + node);
-        }
+        // if (isNodeInTree(node, morphedNode)) {
+        //     if (node.$testOnFromNodeRemovedFlag) {
+        //         throw new Error('onFromNodeRemoved(node) called for node that is in the final DOM tree: ' + node);
+        //     }
+        // } else {
+        //     if (!node.$testOnFromNodeRemovedFlag) {
+        //         throw new Error('"from" node was removed but onFromNodeRemoved(node) was not called: ' + node);
+        //     }
+        // }
     });
 }
 
