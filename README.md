@@ -39,10 +39,9 @@ The returned value will typically be the `fromNode`. However, in situations wher
 
 Supported options (all optional):
 
-- *onFromNodeFound* (`Function(node)`) - A function that will called when a `Node` in the `from` tree is found
-- *onFromNodeRemoved* (`Function(node)`) - A function that will called when a `Node` in the `from` tree has been removed (the children of the removed node will not be traversed)
+- *onNodeDiscarded* (`Function(node)`) - A function that will called when a `Node` in the `from` tree has been discarded and will no longer exist in the final DOM tree.
 - *onBeforeMorphEl* (`Function(fromEl, toEl)`) - A function that will called when a `HTMLElement` in the `from` tree is about to be morphed. If the listener function returns `false` then the element will be skipped.
-- *onBeforeMorphElChildren* (`Function(fromEl, toEl)`) - A function that will called when the children of an `HTMLElement` in the `from` tree is about to be morphed. If the listener function returns `false` then the child nodes will be skipped.
+- *onBeforeMorphElChildren* (`Function(fromEl, toEl)`) - A function that will called when the children of an `HTMLElement` in the `from` tree are about to be morphed. If the listener function returns `false` then the child nodes will be skipped.
 
 ```javascript
 var morphdom = require('morphdom');

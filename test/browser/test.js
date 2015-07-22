@@ -132,20 +132,34 @@ function runTest(name, htmlStrings) {
 
     var elLookupBefore = buildElLookup(fromNode);
 
-    function onFromNodeFound(node) {
-        if (node.$testOnFromNodeFlag) {
-            throw new Error('Duplicate onFromNodeFound for: ' + node);
+    function onNodeDiscarded(node) {
+        if (node.$onNodeDiscarded) {
+            throw new Error('Duplicate onNodeDiscarded for: ' + serializeNode(node));
         }
 
-        if (node.$testRemovedDescendentFlag) {
-            throw new Error('Descendent of a removed "from" node is incorrectly being visited. Node: ' + node);
+        node.$onNodeDiscarded = true;
+    }
+
+    function onBeforeMorphEl(node) {
+        if (node.$onBeforeMorphEl) {
+            throw new Error('Duplicate onBeforeMorphEl for: ' + serializeNode(node));
         }
 
-        node.$testOnFromNodeFlag = true;
+        node.$onBeforeMorphEl = true;
+    }
+
+    function onBeforeMorphElChildren(node) {
+        if (node.$onBeforeMorphElChildren) {
+            throw new Error('Duplicate onBeforeMorphElChildren for: ' + serializeNode(node));
+        }
+
+        node.$onBeforeMorphElChildren = true;
     }
 
     var morphedNode = morphdom(fromNode, toNode, {
-        onFromNodeFound: onFromNodeFound
+        onNodeDiscarded: onNodeDiscarded,
+        onBeforeMorphEl: onBeforeMorphEl,
+        onBeforeMorphElChildren: onBeforeMorphElChildren
     });
 
     var elLookupAfter = buildElLookup(morphedNode);
@@ -178,8 +192,14 @@ function runTest(name, htmlStrings) {
     });
 
     allFromNodes.forEach(function(node) {
-        if (!node.$testOnFromNodeFlag) {
-            throw new Error('"from" node was not reported as visited. Node: ' + node);
+        if (node.$onNodeDiscarded && isNodeInTree(node, morphedNode)) {
+            throw new Error('"from" node was reported as being discarded, but it still in the final DOM tree. Node: ' + serializeNode(node));
+        }
+
+        if (node.nodeType === 1 && node.$onNodeDiscarded !== true) {
+            if (!node.$onBeforeMorphEl) {
+                throw new Error('"from" element was not reported as being discarded, but it was not morphed. Node: ' + serializeNode(node));
+            }
         }
 
         // if (isNodeInTree(node, morphedNode)) {
