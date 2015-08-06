@@ -26,5 +26,5 @@
         "phantomjs": "1.9.7-15"
     },
     "dependencies": {},
-    "version": "0.1.4"
+    "version": "0.1.5"
 }
