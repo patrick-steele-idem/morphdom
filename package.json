@@ -26,7 +26,6 @@
     "lasso": "^1.10.0",
     "lasso-marko": "^2.0.4",
     "marko": "^2.7.2",
-    "matcha": "^0.6.0",
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^3.5.3",
     "phantomjs": "1.9.7-15"
