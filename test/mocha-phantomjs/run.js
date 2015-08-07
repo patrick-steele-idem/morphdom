@@ -47,15 +47,23 @@ function generateHtmlStringsFile() {
     dirs.forEach(function(dir) {
         var only = process.env.TEST && process.env.TEST === dir;
 
+        var moduleStr = null;
+        var modulePath = path.join(autotestDir, dir, 'index.js');
+
+        if (fs.existsSync(modulePath)) {
+            moduleStr = fs.readFileSync(modulePath, {encoding: 'utf8'});
+        }
+
         htmlStrings[dir] = {
             from: fs.readFileSync(path.join(autotestDir, dir, 'from.html'), {encoding: 'utf8'}),
             to: fs.readFileSync(path.join(autotestDir, dir, 'to.html'), {encoding: 'utf8'}),
+            module: moduleStr,
             only: only
         };
     });
 
     fs.writeFileSync(
-        path.join(outputDir, 'html-strings.js'),
+        path.join(outputDir, 'auto-tests.js'),
         'module.exports=' + JSON.stringify(htmlStrings, null, 4) + ';\n',
         {encoding: 'utf8' });
 }

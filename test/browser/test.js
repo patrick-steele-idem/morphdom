@@ -84,6 +84,20 @@ function buildElLookup(node) {
     return map;
 }
 
+function outerHTML(node) {
+    var placeholderEl = document.createElement('span');
+    node.parentNode.replaceChild(placeholderEl, node);
+
+
+    var container = document.createElement('body');
+    container.appendChild(node);
+    var html = container.innerHTML;
+
+    placeholderEl.parentNode.replaceChild(node, placeholderEl);
+
+    return html;
+}
+
 function collectNodes(rootNode) {
     var allNodes = [];
 
@@ -119,9 +133,10 @@ function isNodeInTree(node, rootNode) {
     return false;
 }
 
-function runTest(name, htmlStrings) {
-    var fromHtml = htmlStrings.from;
-    var toHtml = htmlStrings.to;
+function runTest(name, autoTest) {
+    var fromHtml = autoTest.from;
+    var toHtml = autoTest.to;
+    var moduleStr = autoTest.module;
 
     var fromNode = parseHtml(fromHtml);
     var toNode = parseHtml(toHtml);
@@ -168,7 +183,7 @@ function runTest(name, htmlStrings) {
         name: name,
         fromHtml: fromHtml,
         expectedHtml: toHtml,
-        actualHtml: morphedNode.outerHTML
+        actualHtml: outerHTML(morphedNode)
     });
 
     var containerEl = document.createElement('div');
@@ -179,6 +194,10 @@ function runTest(name, htmlStrings) {
     var morphedNodeSerialized = serializeNode(morphedNode);
 
     expect(morphedNodeSerialized).to.equal(expectedSerialized);
+
+    // console.log('morphedNodeSerialized: ' + morphedNodeSerialized);
+    // console.log('expectedSerialized: ' + expectedSerialized);
+    // console.log('morphedNode.outerHTML: ' + outerHTML(morphedNode));
 
     // console.log(morphedNodeSerialized);
 
@@ -212,6 +231,21 @@ function runTest(name, htmlStrings) {
         //     }
         // }
     });
+
+    if (moduleStr) {
+        var autoTestExports = {};
+        var moduleFactory = eval('(function(exports) { ' + moduleStr + ' })');
+        moduleFactory(autoTestExports);
+
+        var verify = autoTestExports.verify;
+        if (verify) {
+            var verifyContext = {
+                rootNode:  morphedNode
+            };
+
+            verify(verifyContext, expect);
+        }
+    }
 }
 
 describe('morphdom' , function() {
@@ -221,10 +255,10 @@ describe('morphdom' , function() {
     });
 
     describe('auto tests', function() {
-        var htmlStrings = require('../mocha-phantomjs/generated/html-strings');
+        var autoTests = require('../mocha-phantomjs/generated/auto-tests');
 
-        Object.keys(htmlStrings).forEach(function(name) {
-            var test = htmlStrings[name];
+        Object.keys(autoTests).forEach(function(name) {
+            var test = autoTests[name];
             var itFunc = test.only ? it.only : it;
 
             itFunc(name, function() {
