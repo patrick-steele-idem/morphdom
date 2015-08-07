@@ -1,14 +1,13 @@
 var chai = require('chai');
 var expect = chai.expect;
 var morphdom = require('../../lib/index');
-var resultTemplate = require('./result.marko');
+var resultTemplate = require('./test-result.marko');
 
 function parseHtml(html) {
     var tmp = document.createElement('body');
     tmp.innerHTML = html;
     return tmp.firstChild;
 }
-
 
 function serializeNode(node) {
     var html = '';
@@ -188,7 +187,7 @@ function runTest(name, autoTest) {
 
     var containerEl = document.createElement('div');
     containerEl.innerHTML = resultHtml;
-    document.getElementById('test').appendChild(containerEl);
+    document.getElementById('test-results').appendChild(containerEl);
     // console.log('elLookupBefore: ', elLookupBefore);
 
     var morphedNodeSerialized = serializeNode(morphedNode);
@@ -248,118 +247,123 @@ function runTest(name, autoTest) {
     }
 }
 
-describe('morphdom' , function() {
-    this.timeout(0);
+function addTests() {
+    describe('morphdom' , function() {
+        this.timeout(0);
 
-    beforeEach(function() {
-    });
+        beforeEach(function() {
+        });
 
-    describe('auto tests', function() {
-        var autoTests = require('../mocha-phantomjs/generated/auto-tests');
+        describe('auto tests', function() {
+            var autoTests = require('../mocha-phantomjs/generated/auto-tests');
 
-        Object.keys(autoTests).forEach(function(name) {
-            var test = autoTests[name];
-            var itFunc = test.only ? it.only : it;
+            Object.keys(autoTests).forEach(function(name) {
+                var test = autoTests[name];
+                var itFunc = test.only ? it.only : it;
 
-            itFunc(name, function() {
-                runTest(name, test);
+                itFunc(name, function() {
+                    runTest(name, test);
+                });
             });
         });
-    });
 
-    it('should transform a simple el', function() {
-        var el1 = document.createElement('div');
-        el1.className = 'foo';
+        it('should transform a simple el', function() {
+            var el1 = document.createElement('div');
+            el1.className = 'foo';
 
-        var el2 = document.createElement('div');
-        el2.className = 'bar';
+            var el2 = document.createElement('div');
+            el2.className = 'bar';
 
-        morphdom(el1, el2);
+            morphdom(el1, el2);
 
-        expect(el1.className).to.equal('bar');
-    });
-
-    it('should transform an text input el', function() {
-        var el1 = document.createElement('input');
-        el1.type = 'text';
-        el1.value = 'Hello World';
-
-        var el2 = document.createElement('input');
-        el2.setAttribute('type', 'text');
-        el2.setAttribute('value', 'Hello World 2');
-
-        morphdom(el1, el2);
-
-        expect(el1.value).to.equal('Hello World 2');
-    });
-
-    it('should transform a checkbox input el', function() {
-        var el1 = document.createElement('input');
-        el1.type = 'checkbox';
-        el1.setAttribute('checked', '');
-        el1.checked = false;
-
-        var el2 = document.createElement('input');
-        el2.setAttribute('type', 'text');
-        el2.setAttribute('checked', '');
-
-        morphdom(el1, el2);
-
-        expect(el1.checked).to.equal(true);
-    });
-
-    it('should transform an incompatible node and maintain the same parent', function() {
-        var parentEl = document.createElement('div');
-
-
-        var el1 = document.createElement('input');
-        el1.type = 'text';
-        el1.value = 'Hello World';
-        parentEl.appendChild(el1);
-
-        var el2 = document.createElement('p');
-        var morphedNode = morphdom(el1, el2);
-
-        expect(morphedNode.parentNode).to.equal(parentEl);
-    });
-
-    it('should handle the "disabled" attribute correctly', function() {
-        var el1 = document.createElement('input');
-        el1.disabled = true;
-
-        el1.value = 'Hello World';
-
-        var el2 = document.createElement('input');
-        el2.setAttribute('value', 'Hello World 2');
-
-        morphdom(el1, el2);
-
-        expect(el2.disabled).to.equal(false);
-    });
-
-    it('should allow morphing to be skipped for a node', function() {
-        var el1a = document.createElement('div');
-        var el1b = document.createElement('b');
-        el1b.setAttribute('class', 'foo');
-        el1a.appendChild(el1b);
-
-        var el2a = document.createElement('div');
-        var el2b = document.createElement('b');
-        el2b.setAttribute('class', 'bar');
-        el2a.appendChild(el2b);
-
-
-        morphdom(el1a, el2a, {
-            onBeforeMorphEl: function(el) {
-                if (el.tagName === 'B') {
-                    return false;
-                }
-            }
+            expect(el1.className).to.equal('bar');
         });
 
-        expect(el1a.childNodes[0].className).to.equal('foo');
-    });
-});
+        it('should transform an text input el', function() {
+            var el1 = document.createElement('input');
+            el1.type = 'text';
+            el1.value = 'Hello World';
 
+            var el2 = document.createElement('input');
+            el2.setAttribute('type', 'text');
+            el2.setAttribute('value', 'Hello World 2');
+
+            morphdom(el1, el2);
+
+            expect(el1.value).to.equal('Hello World 2');
+        });
+
+        it('should transform a checkbox input el', function() {
+            var el1 = document.createElement('input');
+            el1.type = 'checkbox';
+            el1.setAttribute('checked', '');
+            el1.checked = false;
+
+            var el2 = document.createElement('input');
+            el2.setAttribute('type', 'text');
+            el2.setAttribute('checked', '');
+
+            morphdom(el1, el2);
+
+            expect(el1.checked).to.equal(true);
+        });
+
+        it('should transform an incompatible node and maintain the same parent', function() {
+            var parentEl = document.createElement('div');
+
+
+            var el1 = document.createElement('input');
+            el1.type = 'text';
+            el1.value = 'Hello World';
+            parentEl.appendChild(el1);
+
+            var el2 = document.createElement('p');
+            var morphedNode = morphdom(el1, el2);
+
+            expect(morphedNode.parentNode).to.equal(parentEl);
+        });
+
+        it('should handle the "disabled" attribute correctly', function() {
+            var el1 = document.createElement('input');
+            el1.disabled = true;
+
+            el1.value = 'Hello World';
+
+            var el2 = document.createElement('input');
+            el2.setAttribute('value', 'Hello World 2');
+
+            morphdom(el1, el2);
+
+            expect(el2.disabled).to.equal(false);
+        });
+
+        it('should allow morphing to be skipped for a node', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            el1b.setAttribute('class', 'foo');
+            el1a.appendChild(el1b);
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('b');
+            el2b.setAttribute('class', 'bar');
+            el2a.appendChild(el2b);
+
+
+            morphdom(el1a, el2a, {
+                onBeforeMorphEl: function(el) {
+                    if (el.tagName === 'B') {
+                        return false;
+                    }
+                }
+            });
+
+            expect(el1a.childNodes[0].className).to.equal('foo');
+        });
+    });
+}
+
+if (require('../mocha-phantomjs/generated/config').runTests === true) {
+    addTests();
+}
 
 

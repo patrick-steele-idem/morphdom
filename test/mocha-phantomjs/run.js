@@ -38,6 +38,19 @@ require('lasso').configure({
 var running = false;
 var fileModified = false;
 
+var testConfig = {
+    runBenchmarks: false,
+    runTests: false,
+};
+
+for (var i=2; i<process.argv.length; i++) {
+    if (process.argv[i] === 'test') {
+        testConfig.runTests = true;
+    } else if (process.argv[i] === 'benchmark') {
+        testConfig.runBenchmarks = true;
+    }
+}
+
 function generateHtmlStringsFile() {
 
     var dirs = fs.readdirSync(autotestDir);
@@ -69,14 +82,25 @@ function generateHtmlStringsFile() {
 }
 
 function run() {
+    var isBenchmark = process.argv[2] === 'benchmark';
+
     console.log('Preparing client-side tests...');
 
+    console.log('Config:', testConfig);
+
+
     generateHtmlStringsFile();
+
+    fs.writeFileSync(
+        path.join(outputDir, 'config.js'),
+        'module.exports=' + JSON.stringify(testConfig, null, 4) + ';\n',
+        {encoding: 'utf8' });
 
     running = true;
     fileModified = false;
 
     var pageTemplate = require('./test-page.marko');
+
     var pageHtmlFile = path.join(outputDir, 'test-page.html');
 
     var out = fs.createWriteStream(pageHtmlFile, 'utf8');
@@ -86,7 +110,10 @@ function run() {
             console.log('Running client tests using mocha-phantomjs...');
             spawn(
                 'npm',
-                ['run', 'mocha-phantomjs-run', '--loglevel=silent'],
+                [
+                    'run',
+                    'mocha-phantomjs-run',
+                    '--loglevel=silent'],
                 {
                     cwd: rootDir,
                     stdio: 'inherit'

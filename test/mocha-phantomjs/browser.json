@@ -2,8 +2,8 @@
     "dependencies": [
         "mocha/mocha.js",
         "mocha/mocha.css",
-        "require-run: ./client-setup",
-        "require-run: ../browser/*.js",
-        "require-run: ./client"
+        "require-run: ./mocha-browser-setup",
+        "require-run: ../browser/test.js",
+        "require-run: ../browser/benchmark.js"
     ]
 }
