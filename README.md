@@ -49,7 +49,7 @@ NOTE: This module will modify both the original and target DOM node tree during 
 The `morphdom(fromNode, toNode, options)` function supports the following arguments:
 
 - *fromNode* (`Node`)- The node to morph
-- *toNode* (`Node`) - The node that the `fromNode` should be morphed to
+- *toNode* (`Node`|`String`) - The node that the `fromNode` should be morphed to (or an HTML string)
 - *options* (`Object`) - See below for supported options
 
 The returned value will typically be the `fromNode`. However, in situations where the `fromNode` is not compatible with the `toNode` (either different node type or different tag name) then a different DOM node will be returned.
