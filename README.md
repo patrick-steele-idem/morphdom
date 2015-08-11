@@ -124,7 +124,7 @@ In theory, templating languages such as Marko could support two compiled outputs
 
 ## Is this module used by any library/framework?
 
-This module is used by [Marko Widgets](https://github.com/marko-js/marko-widgets). Marko Widgets is a high performance and lightweight UI components framework for the [Marko templating engine](https://github.com/marko-js/marko).
+This module will be used by the next major version of [Marko Widgets](https://github.com/marko-js/marko-widgets) (currently in beta: `npm install marko-widgets@5.0.0-beta --save`). Marko Widgets is a high performance and lightweight UI components framework for the [Marko templating engine](https://github.com/marko-js/marko).
 
 You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
 
