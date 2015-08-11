@@ -43,7 +43,7 @@ function addBenchmarks() {
             var autoTest = autoTests[name];
 
             it(name, function() {
-                if (console) {
+                if (window.console) {
                     console.log('Running benchmark on "' + name + '"...');
                 }
 
@@ -77,7 +77,7 @@ function addBenchmarks() {
                 var totalTimeFormatted = totalTime.toFixed(2) + 'ms';
                 var avgTimeFormatted = (totalTime/ITERATIONS).toFixed(2) + 'ms';
 
-                if (console) {
+                if (window.console) {
                     console.log('Total time: ' + totalTimeFormatted);
                     console.log('Average time per iteration: ' + avgTimeFormatted);
                 }

@@ -359,6 +359,16 @@ function addTests() {
 
             expect(el1a.childNodes[0].className).to.equal('foo');
         });
+
+        it('should transform a simple el to a target HTML string', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML  = '<button>Click Me</button>';
+
+            morphdom(el1, '<div class="bar"><button>Click Me</button>');
+
+            expect(el1.className).to.equal('bar');
+            expect(el1.firstChild.tagName).to.equal('BUTTON');
+        });
     });
 }
 
