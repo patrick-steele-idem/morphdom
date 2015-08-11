@@ -1,35 +1,37 @@
 {
-    "name": "morphdom",
-    "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
-    "main": "lib/index.js",
-    "scripts": {
-        "test": "npm run test-browser && npm run lint",
-        "benchmark": "npm run benchmark-browser",
-        "all": "npm run all-browser && npm run lint",
-        "lint": "jshint lib/",
-        "test-browser": "node test/mocha-phantomjs/run.js test",
-        "benchmark-browser": "node test/mocha-phantomjs/run.js benchmark",
-        "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
-        "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
-        "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html"
-    },
-    "author": "Patrick Steele-Idem <pnidem@gmail.com>",
-    "license": "ISC",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/patrick-steele-idem/morphdom.git"
-    },
-    "devDependencies": {
-        "chai": "^2.3.0",
-        "ignoring-watcher": "^1.0.5",
-        "jshint": "^2.7.0",
-        "lasso": "^1.10.0",
-        "lasso-marko": "^2.0.4",
-        "marko": "^2.7.2",
-        "mocha": "^2.2.4",
-        "mocha-phantomjs": "^3.5.3",
-        "phantomjs": "1.9.7-15"
-    },
-    "dependencies": {},
-    "version": "0.1.7"
+  "name": "morphdom",
+  "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run test-browser && npm run lint",
+    "benchmark": "npm run benchmark-browser",
+    "all": "npm run all-browser && npm run lint",
+    "lint": "jshint lib/",
+    "test-browser": "node test/mocha-phantomjs/run.js test",
+    "benchmark-browser": "node test/mocha-phantomjs/run.js benchmark",
+    "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
+    "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
+    "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html"
+  },
+  "author": "Patrick Steele-Idem <pnidem@gmail.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrick-steele-idem/morphdom.git"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "ignoring-watcher": "^1.0.5",
+    "jshint": "^2.7.0",
+    "lasso": "^1.10.0",
+    "lasso-marko": "^2.0.4",
+    "marko": "^2.7.2",
+    "mocha": "^2.2.4",
+    "mocha-phantomjs": "^3.5.3",
+    "phantomjs": "1.9.7-15",
+    "vdom-virtualize": "0.0.12",
+    "virtual-dom": "^2.1.1"
+  },
+  "dependencies": {},
+  "version": "0.1.7"
 }

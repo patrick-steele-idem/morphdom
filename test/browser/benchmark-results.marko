@@ -1,0 +1,22 @@
+<div class="results">
+    <table>
+        <thead>
+            <tr>
+                <td></td>
+                <td for="moduleName in data.moduleNames">
+                    $moduleName
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr for="testName in data.testNames">
+                <td class="test-name">
+                    ${testName}
+                </td>
+                <td for="moduleName in data.moduleNames">
+                    ${data.getAverageTime(moduleName, testName)}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
