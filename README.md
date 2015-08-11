@@ -46,10 +46,10 @@ var el1 = document.createElement('div');
 el1.className = 'foo';
 el1.innerHTML = 'Hello John';
 
-var newHTML = myTemplate.render({name: 'Frank'});
-morphdom(el1, newHTML);
+morphdom(el1, '<div class="bar">Hello Frank</div>');
 
 expect(el1.className).to.equal('bar');
+expect(el1.innerHTML).to.equal('Hello Frank');
 ```
 
 NOTE: This module will modify both the original and target DOM node tree during the transformation. It is assumed that the target DOM node tree will be discarded after the original DOM node tree is morphed.
