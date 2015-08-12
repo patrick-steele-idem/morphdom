@@ -110,6 +110,7 @@ There are some drawbacks to using a virtual DOM-based approach:
 
 - The real DOM is not the source of truth (the persistent virtual DOM tree is the source of truth)
 - The real DOM _cannot_ be modified behind the scenes (e.g., no jQuery) because the diff is done against the virtual DOM tree
+- A [lightweight] copy of the real DOM must be maintained in memory at all times
 - The virtual DOM is an abstraction layer that introduces code overhead
 - The virtual DOM representations are not standardized (will vary by implementation)
 - The virtual DOM can only efficiently be used with code and templating languages that produce a virtual DOM tree
