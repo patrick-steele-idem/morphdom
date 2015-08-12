@@ -93,10 +93,12 @@ var morphedNode = morphdom(fromNode, toNode, {
 
 No, the DOM _data structure_ is not slow. The DOM is a key part of any web browser so it must be fast. Walking a DOM tree and reading the attributes on DOM nodes is _not_ slow. However, if you attempt to read a computed property on a DOM node that requires a relayout of the page then _that_ will be slow. However, `morphdom` only cares about the following properties of a DOM node:
 
-- `el.firstChild`
-- `el.tagName`
-- `el.nextSibling`
-- `el.attributes`
+- `node.firstChild`
+- `node.tagName`
+- `node.nextSibling`
+- `node.attributes`
+- `node.nodeType`
+- `node.nodeValue`
 
 ## What about the virtual DOM?
 
