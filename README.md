@@ -30,7 +30,7 @@ el1.className = 'foo';
 var el2 = document.createElement('div');
 el2.className = 'bar';
 
-morphdom(el1, '<div class="bar"></div>');
+morphdom(el1, el2);
 
 expect(el1.className).to.equal('bar');
 ```
