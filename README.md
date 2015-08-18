@@ -74,7 +74,7 @@ Supported options (all optional):
 ```javascript
 var morphdom = require('morphdom');
 var morphedNode = morphdom(fromNode, toNode, {
-    onBeforeNodeDiscarded(node) {
+    onBeforeNodeDiscarded: function(node) {
         return true;
     }
     onNodeDiscarded: function(node) {
