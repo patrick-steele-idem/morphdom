@@ -11,7 +11,8 @@
         "benchmark-browser": "node test/mocha-phantomjs/run.js benchmark",
         "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
         "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
-        "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html"
+        "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html",
+        "prepublish": "mkdir -p dist && node_modules/umd/bin/cli.js morphdom lib/index.js -c > dist/index.js"
     },
     "author": "Patrick Steele-Idem <pnidem@gmail.com>",
     "license": "ISC",
@@ -30,7 +31,8 @@
         "mocha-phantomjs": "^3.5.3",
         "phantomjs": "1.9.7-15",
         "vdom-virtualize": "0.0.12",
-        "virtual-dom": "^2.1.1"
+        "virtual-dom": "^2.1.1",
+        "umd": "^3.0.1"
     },
     "dependencies": {},
     "version": "0.1.13"
