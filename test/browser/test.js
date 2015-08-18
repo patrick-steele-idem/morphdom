@@ -146,6 +146,13 @@ function runTest(name, autoTest) {
 
     var elLookupBefore = buildElLookup(fromNode);
 
+    function onBeforeNodeDiscarded(node) {
+        if (node.$onBeforeNodeDiscarded) {
+            throw new Error('Duplicate oonBeforeNodeDiscarded for: ' + serializeNode(node));
+        }
+
+        node.$onBeforeNodeDiscarded = true;
+    }
     function onNodeDiscarded(node) {
         if (node.$onNodeDiscarded) {
             throw new Error('Duplicate onNodeDiscarded for: ' + serializeNode(node));
@@ -171,6 +178,7 @@ function runTest(name, autoTest) {
     }
 
     var morphedNode = morphdom(fromNode, toNode, {
+        onBeforeNodeDiscarded: onBeforeNodeDiscarded,
         onNodeDiscarded: onNodeDiscarded,
         onBeforeMorphEl: onBeforeMorphEl,
         onBeforeMorphElChildren: onBeforeMorphElChildren
