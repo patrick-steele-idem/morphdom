@@ -19,6 +19,8 @@ First install the module into your project:
 npm install morphdom --save
 ```
 
+_NOTE: There is also a UMD version of this module in the published npm package: `dist/morphdom-umd.js`_
+
 The code below shows how to morph one `<div>` element to another `<div>` element.
 
 ```javascript

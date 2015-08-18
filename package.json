@@ -12,7 +12,7 @@
         "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
         "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
         "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html",
-        "prepublish": "mkdir -p dist && node_modules/umd/bin/cli.js morphdom lib/index.js -c > dist/index.js"
+        "prepublish": "mkdir -p dist && node_modules/umd/bin/cli.js morphdom lib/index.js -c > dist/morphdom-umd.js"
     },
     "author": "Patrick Steele-Idem <pnidem@gmail.com>",
     "license": "ISC",
