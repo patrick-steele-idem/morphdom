@@ -368,6 +368,31 @@ function addTests() {
             expect(el1a.childNodes[0].className).to.equal('foo');
         });
 
+        it('should allow discarding to be skipped for a node', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            var el1c = document.createElement('span');
+            var el1d = document.createElement('a');
+            el1a.appendChild(el1b);
+            el1a.appendChild(el1c);
+            el1a.appendChild(el1d);
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('a');
+            el2a.appendChild(el2b);
+
+            morphdom(el1a, el2a, {
+                onBeforeNodeDiscarded: function(el) {
+                    if (el.tagName === 'B') {
+                        return false;
+                    }
+                }
+            });
+
+            expect(el1a.childNodes[0].tagName).to.equal('B');
+            expect(el1a.childNodes[1].tagName).to.equal('A');
+        });
+
         it('should transform a simple el to a target HTML string', function() {
             var el1 = document.createElement('div');
             el1.innerHTML  = '<button>Click Me</button>';
