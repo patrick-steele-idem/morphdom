@@ -123,13 +123,13 @@ There are many high performance templating engines that stream out HTML strings 
 
 In theory, templating languages such as Marko could support two compiled outputs: one that produces HTML strings (for use on the server) and another that produces DOM nodes (for use in the browser). However, based on our benchmarks we see no reason to switch over to rendering DOM nodes. Rendering to an HTML string performs very well on both the server and in the browser and it simplifies template compilers.
 
-## Is this module used by any library/framework?
+## What projects are using `morphdom`?
 
-This module will be used by the next major version of [Marko Widgets](https://github.com/marko-js/marko-widgets) (currently in beta: `npm install marko-widgets@^5.0.0-beta --save`). Marko Widgets is a high performance and lightweight UI components framework that uses the [Marko templating engine](https://github.com/marko-js/marko) for rendering UI components.
+`morphdom` is being used in the following projects:
 
-You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
+- __[Marko Widgets](https://github.com/marko-js/marko-widgets)__ (`v5.0.0-beta+`) - Marko Widgets is a high performance and lightweight UI components framework that uses the [Marko templating engine](https://github.com/marko-js/marko) for rendering UI components. You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
 
-However, `morphdom` was designed to be standalone and will work with any library or framework.
+_NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
 # Benchmarks
 
