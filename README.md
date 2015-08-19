@@ -78,7 +78,7 @@ var morphdom = require('morphdom');
 var morphedNode = morphdom(fromNode, toNode, {
     onBeforeNodeDiscarded: function(node) {
         return true;
-    }
+    },
     onNodeDiscarded: function(node) {
 
     },
