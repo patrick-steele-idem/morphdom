@@ -420,6 +420,19 @@ function addTests() {
             expect(button.className).to.equal('world');
             expect(button.innerHTML).to.equal('B');
         });
+
+        it('should transform an textarea el', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<textarea>foo</textarea>';
+            el1.firstChild.value = 'foo2';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<textarea>bar</textarea>';
+
+            morphdom(el1, el2);
+
+            expect(el1.firstChild.value).to.equal('bar');
+        });
     });
 }
 
