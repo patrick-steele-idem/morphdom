@@ -72,6 +72,7 @@ Supported options (all optional):
 - **onNodeDiscarded** (`Function(node)`) - A function that will called when a `Node` in the `from` tree has been discarded and will no longer exist in the final DOM tree.
 - **onBeforeMorphEl** (`Function(fromEl, toEl)`) - A function that will called when a `HTMLElement` in the `from` tree is about to be morphed. If the listener function returns `false` then the element will be skipped.
 - **onBeforeMorphElChildren** (`Function(fromEl, toEl)`) - A function that will called when the children of an `HTMLElement` in the `from` tree are about to be morphed. If the listener function returns `false` then the child nodes will be skipped.
+- **childrenOnly** (`Boolean`) - If `true` then only the children of the `fromEl` and `toEl` nodes will be morphed (the containing element will be skipped). Defaults to `false`.
 
 ```javascript
 var morphdom = require('morphdom');
@@ -87,7 +88,8 @@ var morphedNode = morphdom(fromNode, toNode, {
     },
     onBeforeMorphElChildren: function(fromEl, toEl) {
         return true;
-    }
+    },
+    childrenOnly: false
 });
 ```
 

@@ -402,6 +402,24 @@ function addTests() {
             expect(el1.className).to.equal('bar');
             expect(el1.firstChild.tagName).to.equal('BUTTON');
         });
+
+        it('should allow only morphing child nodes', function() {
+            var el1 = document.createElement('div');
+            el1.className = 'foo';
+            el1.innerHTML  = '<button class="hello">A</button>';
+
+            var morphedEl = morphdom(el1, '<div class="bar"><button class="world">B</button></div>', {
+                childrenOnly: true
+            });
+
+            expect(morphedEl).to.equal(el1);
+
+            var button = el1.querySelector('button');
+
+            expect(el1.className).to.equal('foo');
+            expect(button.className).to.equal('world');
+            expect(button.innerHTML).to.equal('B');
+        });
     });
 }
 
