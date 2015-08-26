@@ -433,6 +433,36 @@ function addTests() {
 
             expect(el1.firstChild.value).to.equal('bar');
         });
+
+        it('should not change caret position if input value did not change', function() {
+
+            var inputEl = document.createElement('input');
+            inputEl.type = 'text';
+            inputEl.value = 'HELLO';
+            inputEl.id = 'focusInput';
+            document.body.appendChild(inputEl);
+
+            inputEl.focus();
+
+            inputEl.setSelectionRange(0, 0);
+            expect(inputEl.selectionStart).to.equal(0);
+
+            function update() {
+                var newInput = document.createElement('input');
+                newInput.type = 'text';
+                newInput.id = 'focusInput';
+                newInput.value = inputEl.value;
+                morphdom(inputEl, newInput);
+            }
+
+            inputEl.addEventListener('input', update);
+
+            update();
+
+            expect(inputEl.selectionStart).to.equal(0);
+
+
+        });
     });
 }
 
