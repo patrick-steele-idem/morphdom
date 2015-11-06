@@ -435,7 +435,6 @@ function addTests() {
         });
 
         it('should not change caret position if input value did not change', function() {
-
             var inputEl = document.createElement('input');
             inputEl.type = 'text';
             inputEl.value = 'HELLO';
@@ -460,8 +459,40 @@ function addTests() {
             update();
 
             expect(inputEl.selectionStart).to.equal(0);
+        });
 
+        it('should determine correct matching elements by id', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<span id="span1"></span><span id="span2"></span>';
 
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<span id="span2"></span>';
+
+            var span2 = el1.children[1];
+
+            var morphedEl = morphdom(el1, el2);
+
+            expect(morphedEl.children[0]).to.equal(span2);
+            expect(morphedEl.children.length).to.equal(1);
+        });
+
+        it('should determine correct matching elements by attribute "data-id"', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<span data-id="1"></span><span data-id="2"></span>';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<span data-id="2"></span>';
+
+            var span2 = el1.children[1];
+
+            var morphedEl = morphdom(el1, el2, {
+                getNodeKey: function(el) {
+                    return el.dataset.id;
+                }
+            });
+
+            expect(morphedEl.children[0]).to.equal(span2);
+            expect(morphedEl.children.length).to.equal(1);
         });
     });
 }
@@ -469,5 +500,3 @@ function addTests() {
 if (require('../mocha-phantomjs/generated/config').runTests === true) {
     addTests();
 }
-
-
