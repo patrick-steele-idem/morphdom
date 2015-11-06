@@ -494,6 +494,28 @@ function addTests() {
             expect(morphedEl.children[0]).to.equal(span2);
             expect(morphedEl.children.length).to.equal(1);
         });
+
+        it('should allow ignoring a textarea value', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<textarea>foo</textarea>';
+            el1.firstChild.value = 'foo2';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<textarea>bar</textarea>';
+
+            morphdom(el1, el2, {
+                onBeforeMorphEl: function(fromEl, toEl) {
+                    if (fromEl.tagName === 'TEXTAREA' || fromEl.tagName === 'INPUT') {
+                        toEl.checked = fromEl.checked;
+                        toEl.value = fromEl.value;
+                    } else if (fromEl.tagName === 'OPTION') {
+                        toEl.selected = fromEl.selected;
+                    }
+                }
+            });
+
+            expect(el1.firstChild.value).to.equal('foo2');
+        });
     });
 }
 
