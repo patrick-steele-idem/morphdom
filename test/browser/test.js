@@ -533,26 +533,26 @@ function addTests() {
             expect(div1).to.equal(div1_2);
         });
 
-        xit('should reuse DOM element with matching ID and class name (2)', function() {
-            // NOTE: This test is currently failing. We need to improve the special case code
-            //       for handling incompatible root nodes.
-            var fromEl = document.createElement('div');
-            var toEl = document.createElement('div');
-
-            fromEl.innerHTML = '<div id="qwerty" class="div1"></div>';
-            toEl.innerHTML = '<span><div id="qwerty" class="div1"></div></span>';
-
-            fromEl = fromEl.firstChild;
-            toEl = toEl.firstChild;
-
-            var div1 = fromEl;
-
-            var morphedEl = morphdom(fromEl, toEl);
-
-            var div1_2 = morphedEl.querySelector('.div1');
-
-            expect(div1).to.equal(div1_2);
-        });
+        // xit('should reuse DOM element with matching ID and class name (2)', function() {
+        //     // NOTE: This test is currently failing. We need to improve the special case code
+        //     //       for handling incompatible root nodes.
+        //     var fromEl = document.createElement('div');
+        //     var toEl = document.createElement('div');
+        //
+        //     fromEl.innerHTML = '<div id="qwerty" class="div1"></div>';
+        //     toEl.innerHTML = '<span><div id="qwerty" class="div1"></div></span>';
+        //
+        //     fromEl = fromEl.firstChild;
+        //     toEl = toEl.firstChild;
+        //
+        //     var div1 = fromEl;
+        //
+        //     var morphedEl = morphdom(fromEl, toEl);
+        //
+        //     var div1_2 = morphedEl.querySelector('.div1');
+        //
+        //     expect(div1).to.equal(div1_2);
+        // });
     });
 }
 
