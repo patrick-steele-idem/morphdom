@@ -13,7 +13,7 @@ function serializeNode(node) {
     var html = '';
 
     function serializeElHelper(el, indent) {
-        html += indent + '<' + el.tagName;
+        html += indent + '<' + (el.namespaceURI ? el.namespaceURI + ':' : '') + el.tagName;
 
         var attributes = el.attributes;
         var attributesArray = [];
@@ -21,7 +21,7 @@ function serializeNode(node) {
         for (var i=0; i<attributes.length; i++) {
             var attr = attributes[i];
             if (attr.specified !== false) {
-                attributesArray.push(' ' + attr.name + '="' + attr.value + '"');
+                attributesArray.push(' ' + (attr.namespaceURI ? attr.namespaceURI + ':' : '') + attr.name + '="' + attr.value + '"');
             }
         }
 
