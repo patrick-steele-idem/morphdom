@@ -5,6 +5,10 @@ Changelog
 
 ## 1.0.x
 
+### 1.1.0
+
+- Fixes [#32](https://github.com/patrick-steele-idem/morphdom/issues/32) - Support for IE7+
+
 ### 1.0.4
 
 - Fixes [#30](https://github.com/patrick-steele-idem/morphdom/issues/30) - Not all keyed elements are matched up correctly in some cases. Walk target DOM els that are moved over to match all keyed els.
