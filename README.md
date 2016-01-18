@@ -193,10 +193,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 data-table
             </td>
             <td>
-                0.75ms
+                0.81ms
             </td>
             <td>
-                0.29ms
+                0.28ms
             </td>
         </tr>
         <tr>
@@ -207,7 +207,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 0.01ms
             </td>
             <td>
-                0.01ms
+                0.20ms
             </td>
         </tr>
         <tr>
@@ -226,10 +226,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 ids-nested-3
             </td>
             <td>
-                0.08ms
+                0.01ms
             </td>
             <td>
-                0.08ms
+                0.01ms
             </td>
         </tr>
         <tr>
@@ -240,7 +240,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 0.03ms
             </td>
             <td>
-                0.11ms
+                0.02ms
             </td>
         </tr>
         <tr>
@@ -267,10 +267,21 @@ The table below shows some sample benchmark results when running the benchmarks 
         </tr>
         <tr>
             <td class="test-name">
-                ids-prepend
+                ids-nested-7
+            </td>
+            <td>
+                0.02ms
             </td>
             <td>
                 0.01ms
+            </td>
+        </tr>
+        <tr>
+            <td class="test-name">
+                ids-prepend
+            </td>
+            <td>
+                0.02ms
             </td>
             <td>
                 0.01ms
@@ -284,7 +295,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 0.01ms
             </td>
             <td>
-                0.06ms
+                0.01ms
             </td>
         </tr>
         <tr>
@@ -292,10 +303,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 input-element-disabled
             </td>
             <td>
-                0.00ms
+                0.01ms
             </td>
             <td>
-                0.00ms
+                0.01ms
             </td>
         </tr>
         <tr>
@@ -314,10 +325,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 large
             </td>
             <td>
-                1.01ms
+                1.27ms
             </td>
             <td>
-                1.61ms
+                1.65ms
             </td>
         </tr>
         <tr>
@@ -325,10 +336,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 lengthen
             </td>
             <td>
-                0.02ms
+                0.03ms
             </td>
             <td>
-                0.02ms
+                0.15ms
             </td>
         </tr>
         <tr>
@@ -347,7 +358,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 reverse
             </td>
             <td>
-                0.02ms
+                0.03ms
             </td>
             <td>
                 0.01ms
@@ -369,10 +380,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 select-element
             </td>
             <td>
-                0.03ms
+                0.04ms
             </td>
             <td>
-                0.02ms
+                0.03ms
             </td>
         </tr>
         <tr>
@@ -380,7 +391,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 shorten
             </td>
             <td>
-                0.01ms
+                0.02ms
             </td>
             <td>
                 0.02ms
@@ -391,10 +402,10 @@ The table below shows some sample benchmark results when running the benchmarks 
                 simple
             </td>
             <td>
-                0.01ms
+                0.02ms
             </td>
             <td>
-                0.01ms
+                0.00ms
             </td>
         </tr>
         <tr>
@@ -402,7 +413,7 @@ The table below shows some sample benchmark results when running the benchmarks 
                 simple-ids
             </td>
             <td>
-                0.03ms
+                0.04ms
             </td>
             <td>
                 0.02ms
@@ -432,13 +443,57 @@ The table below shows some sample benchmark results when running the benchmarks 
         </tr>
         <tr>
             <td class="test-name">
+                tag-to-text
+            </td>
+            <td>
+                0.00ms
+            </td>
+            <td>
+                0.00ms
+            </td>
+        </tr>
+        <tr>
+            <td class="test-name">
+                text-to-tag
+            </td>
+            <td>
+                0.01ms
+            </td>
+            <td>
+                0.00ms
+            </td>
+        </tr>
+        <tr>
+            <td class="test-name">
+                text-to-text
+            </td>
+            <td>
+                0.00ms
+            </td>
+            <td>
+                0.00ms
+            </td>
+        </tr>
+        <tr>
+            <td class="test-name">
+                textarea
+            </td>
+            <td>
+                0.01ms
+            </td>
+            <td>
+                0.00ms
+            </td>
+        </tr>
+        <tr>
+            <td class="test-name">
                 todomvc
             </td>
             <td>
-                0.23ms
+                0.30ms
             </td>
             <td>
-                0.31ms
+                0.37ms
             </td>
         </tr>
         <tr>
@@ -455,7 +510,7 @@ The table below shows some sample benchmark results when running the benchmarks 
     </tbody>
 </table>
 
-_NOTE: Safari 8.0.7 (10600.7.12)_
+_NOTE: Safari 9.0.2 (11601.3.9)
 
 # Maintainers
 
