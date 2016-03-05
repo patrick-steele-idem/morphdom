@@ -138,6 +138,7 @@ In theory, templating languages such as Marko could support two compiled outputs
 
 - __[Marko Widgets](https://github.com/marko-js/marko-widgets)__ (`v5.0.0-beta+`) - Marko Widgets is a high performance and lightweight UI components framework that uses the [Marko templating engine](https://github.com/marko-js/marko) for rendering UI components. You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
 - __[Catberry.js](https://github.com/catberry/catberry)__ (`v6.0.0+`) - Catberry is a framework with Flux architecture, isomorphic web-components and progressive rendering.
+- __[Composer.js](https://lyonbros.github.io/composer.js/)__ (`v1.2.1`) - Composer is a set of stackable libraries for building complex single-page apps. It uses morphdom in its rendering engine for efficient and non-destructive updates to the DOM.
 
 _NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
