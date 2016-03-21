@@ -12,7 +12,7 @@
     "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
     "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
     "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html",
-    "prepublish": "mkdir -p dist && node_modules/umd/bin/cli.js morphdom lib/index.js -c > dist/morphdom-umd.js"
+    "prepublish": "./prepublish.sh"
   },
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "license": "ISC",
@@ -30,9 +30,10 @@
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^3.5.3",
     "phantomjs": "1.9.7-15",
+    "uglify-js": "^2.6.2",
+    "umd": "^3.0.1",
     "vdom-virtualize": "0.0.12",
-    "virtual-dom": "^2.1.1",
-    "umd": "^3.0.1"
+    "virtual-dom": "^2.1.1"
   },
   "dependencies": {},
   "version": "1.1.2",
