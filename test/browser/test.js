@@ -301,6 +301,22 @@ function addTests() {
             expect(el1.value).to.equal('Hello World 2');
         });
 
+        it('should allow ignoring a text input value', function() {
+            var el1 = document.createElement('input');
+            el1.type = 'text';
+            el1.value = 'Hello World';
+
+            var el2 = document.createElement('input');
+            el2.setAttribute('type', 'text');
+            el2.setAttribute('value', 'Hello World 2');
+
+            morphdom(el1, el2, {
+                ignoreFormValues: true
+            });
+
+            expect(el1.value).to.equal('Hello World');
+        });
+
         it('should transform a checkbox input el', function() {
             var el1 = document.createElement('input');
             el1.type = 'checkbox';
@@ -314,6 +330,23 @@ function addTests() {
             morphdom(el1, el2);
 
             expect(el1.checked).to.equal(true);
+        });
+
+        it('should allow ingoring a checkbox value', function() {
+            var el1 = document.createElement('input');
+            el1.type = 'checkbox';
+            el1.setAttribute('checked', '');
+            el1.checked = false;
+
+            var el2 = document.createElement('input');
+            el2.setAttribute('type', 'text');
+            el2.setAttribute('checked', '');
+
+            morphdom(el1, el2, {
+                ignoreFormValues: true
+            });
+
+            expect(el1.checked).to.equal(false);
         });
 
         it('should transform an incompatible node and maintain the same parent', function() {
@@ -432,6 +465,21 @@ function addTests() {
             morphdom(el1, el2);
 
             expect(el1.firstChild.value).to.equal('bar');
+        });
+
+        it('should allow ignoring a textarea value', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<textarea>foo</textarea>';
+            el1.firstChild.value = 'foo2';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<textarea>bar</textarea>';
+
+            morphdom(el1, el2, {
+                ignoreFormValues: true
+            });
+
+            expect(el1.firstChild.value).to.equal('foo2');
         });
 
         it('should not change caret position if input value did not change', function() {
