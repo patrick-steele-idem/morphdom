@@ -12,4 +12,3 @@ coverage
 /test/client/mocha-phantomjs/generated
 /test/client/mocha-phantomjs/.cache
 .cache
-/dist
