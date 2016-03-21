@@ -1,0 +1,29 @@
+{
+  "name": "morphdom",
+  "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
+  "main": "dist/morphdom-umd.js",
+  "authors": [
+    "Patrick Steele-Idem <pnidem@gmail.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "dom",
+    "diff",
+    "patch",
+    "virtual",
+    "browser"
+  ],
+  "homepage": "https://github.com/patrick-steele-idem/morphdom",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
