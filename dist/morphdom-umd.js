@@ -482,6 +482,6 @@ function morphdom(fromNode, toNode, options) {
     return morphedNode;
 }
 
-module.exports = morphdom;
+if (module) {module.exports = morphdom;}
 
 return module.exports;});
