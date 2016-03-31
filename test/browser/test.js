@@ -146,6 +146,36 @@ function runTest(name, autoTest) {
 
     var elLookupBefore = buildElLookup(fromNode);
 
+    function onBeforeNodeAdded(node) {
+        if (node.$onBeforeNodeAdded) {
+            throw new Error('Duplicate onBeforeNodeAdded for: ' + serializeNode(node));
+        }
+
+        node.$onBeforeNodeAdded = true;
+    }
+    function onNodeAdded(node) {
+        if (node.$onNodeAdded) {
+            throw new Error('Duplicate onNodeAdded for: ' + serializeNode(node));
+        }
+
+        node.$onNodeAdded = true;
+    }
+
+    function onBeforeElUpdated(node) {
+        if (node.$onBeforeElUpdated) {
+            throw new Error('Duplicate onBeforeElUpdated for: ' + serializeNode(node));
+        }
+
+        node.$onBeforeElUpdated = true;
+    }
+    function onElUpdated(node) {
+        if (node.$onElUpdated) {
+            throw new Error('Duplicate onElUpdated for: ' + serializeNode(node));
+        }
+
+        node.$onElUpdated = true;
+    }
+
     function onBeforeNodeDiscarded(node) {
         if (node.$onBeforeNodeDiscarded) {
             throw new Error('Duplicate oonBeforeNodeDiscarded for: ' + serializeNode(node));
@@ -161,27 +191,22 @@ function runTest(name, autoTest) {
         node.$onNodeDiscarded = true;
     }
 
-    function onBeforeMorphEl(node) {
-        if (node.$onBeforeMorphEl) {
-            throw new Error('Duplicate onBeforeMorphEl for: ' + serializeNode(node));
+    function onBeforeNodeChildrenUpdated(node) {
+        if (node.$onBeforeNodeChildrenUpdated) {
+            throw new Error('Duplicate onBeforeNodeChildrenUpdated for: ' + serializeNode(node));
         }
 
-        node.$onBeforeMorphEl = true;
-    }
-
-    function onBeforeMorphElChildren(node) {
-        if (node.$onBeforeMorphElChildren) {
-            throw new Error('Duplicate onBeforeMorphElChildren for: ' + serializeNode(node));
-        }
-
-        node.$onBeforeMorphElChildren = true;
+        node.$onBeforeNodeChildrenUpdated = true;
     }
 
     var morphedNode = morphdom(fromNode, toNode, {
+        onBeforeNodeAdded: onBeforeNodeAdded,
+        onNodeAdded: onNodeAdded,
+        onBeforeElUpdated: onBeforeElUpdated,
+        onElUpdated: onElUpdated,
         onBeforeNodeDiscarded: onBeforeNodeDiscarded,
         onNodeDiscarded: onNodeDiscarded,
-        onBeforeMorphEl: onBeforeMorphEl,
-        onBeforeMorphElChildren: onBeforeMorphElChildren
+        onBeforeNodeChildrenUpdated: onBeforeNodeChildrenUpdated
     });
 
     var elLookupAfter = buildElLookup(morphedNode);
@@ -223,7 +248,7 @@ function runTest(name, autoTest) {
         }
 
         if (node.nodeType === 1 && node.$onNodeDiscarded !== true) {
-            if (!node.$onBeforeMorphEl) {
+            if (!node.$onBeforeElUpdated) {
                 throw new Error('"from" element was not reported as being discarded, but it was not morphed. Node: ' + serializeNode(node));
             }
         }
@@ -345,7 +370,50 @@ function addTests() {
             expect(el2.disabled).to.equal(false);
         });
 
-        it('should allow morphing to be skipped for a node', function() {
+        it('should allow adding to be skipped for a node', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            el1a.appendChild(el1b);
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('b');
+            var el2c = document.createElement('i');
+            el2a.appendChild(el2b);
+            el2a.appendChild(el2c);
+
+            morphdom(el1a, el2a, {
+                onBeforeNodeAdded: function(el) {
+                    if (el.tagName === 'I') {
+                        return false;
+                    }
+                }
+            });
+
+            expect(el1a.childNodes.length).to.equal(1);
+        });
+
+        it('should emit when a node is added', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            el1a.appendChild(el1b);
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('b');
+            var el2c = document.createElement('i');
+            el2a.appendChild(el2b);
+            el2a.appendChild(el2c);
+
+            var addedNode
+            morphdom(el1a, el2a, {
+                onNodeAdded: function(el) {
+                    addedNode = el
+                }
+            });
+
+            expect(addedNode).to.equal(el2c);
+        });
+
+        it('should allow updating to be skipped for a node', function() {
             var el1a = document.createElement('div');
             var el1b = document.createElement('b');
             el1b.setAttribute('class', 'foo');
@@ -356,9 +424,8 @@ function addTests() {
             el2b.setAttribute('class', 'bar');
             el2a.appendChild(el2b);
 
-
             morphdom(el1a, el2a, {
-                onBeforeMorphEl: function(el) {
+                onBeforeElUpdated: function(el) {
                     if (el.tagName === 'B') {
                         return false;
                     }
@@ -366,6 +433,27 @@ function addTests() {
             });
 
             expect(el1a.childNodes[0].className).to.equal('foo');
+        });
+
+        it('should emit when a node is updated', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            el1b.setAttribute('class', 'foo');
+            el1a.appendChild(el1b);
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('b');
+            el2b.setAttribute('class', 'bar');
+            el2a.appendChild(el2b);
+
+            var updatedNode
+            morphdom(el1a, el2a, {
+                onElUpdated: function(el) {
+                    updatedNode = el
+                }
+            });
+
+            expect(updatedNode).to.equal(el1b);
         });
 
         it('should allow discarding to be skipped for a node', function() {
@@ -393,6 +481,23 @@ function addTests() {
             expect(el1a.childNodes[1].tagName).to.equal('A');
         });
 
+        it('should emit when a node is discarded', function() {
+            var el1a = document.createElement('div');
+            var el1b = document.createElement('b');
+            el1a.appendChild(el1b);
+
+            var el2a = document.createElement('div');
+
+            var discardedNode
+            morphdom(el1a, el2a, {
+                onNodeDiscarded: function(el) {
+                    discardedNode = el
+                }
+            });
+
+            expect(discardedNode).to.equal(el1b);
+        });
+
         it('should transform a simple el to a target HTML string', function() {
             var el1 = document.createElement('div');
             el1.innerHTML  = '<button>Click Me</button>';
@@ -403,7 +508,7 @@ function addTests() {
             expect(el1.firstChild.tagName).to.equal('BUTTON');
         });
 
-        it('should allow only morphing child nodes', function() {
+        it('should allow updates to child nodes only', function() {
             var el1 = document.createElement('div');
             el1.className = 'foo';
             el1.innerHTML  = '<button class="hello">A</button>';
@@ -504,7 +609,7 @@ function addTests() {
             el2.innerHTML = '<textarea>bar</textarea>';
 
             morphdom(el1, el2, {
-                onBeforeMorphEl: function(fromEl, toEl) {
+                onBeforeElUpdated: function(fromEl, toEl) {
                     if (fromEl.tagName === 'TEXTAREA' || fromEl.tagName === 'INPUT') {
                         toEl.checked = fromEl.checked;
                         toEl.value = fromEl.value;
