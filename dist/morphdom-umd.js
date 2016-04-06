@@ -159,7 +159,13 @@ function morphdom(fromNode, toNode, options) {
     }
 
     if (typeof toNode === 'string') {
-        toNode = toElement(toNode);
+        if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
+            var toNodeHtml = toNode;
+            toNode = document.createElement('html');
+            toNode.innerHTML = toNodeHtml;
+        } else {
+            toNode = toElement(toNode);
+        }
     }
 
     var savedEls = {}; // Used to save off DOM elements with IDs
