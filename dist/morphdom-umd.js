@@ -165,10 +165,13 @@ function morphdom(fromNode, toNode, options) {
     var savedEls = {}; // Used to save off DOM elements with IDs
     var unmatchedEls = {};
     var getNodeKey = options.getNodeKey || defaultGetNodeKey;
-    var onNodeDiscarded = options.onNodeDiscarded || noop;
-    var onBeforeMorphEl = options.onBeforeMorphEl || noop;
-    var onBeforeMorphElChildren = options.onBeforeMorphElChildren || noop;
+    var onBeforeNodeAdded = options.onBeforeNodeAdded || noop;
+    var onNodeAdded = options.onNodeAdded || noop;
+    var onBeforeElUpdated = options.onBeforeElUpdated || options.onBeforeMorphEl || noop;
+    var onElUpdated = options.onElUpdated || noop;
     var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
+    var onNodeDiscarded = options.onNodeDiscarded || noop;
+    var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || options.onBeforeMorphElChildren || noop;
     var childrenOnly = options.childrenOnly === true;
     var movedEls = [];
 
@@ -240,13 +243,14 @@ function morphdom(fromNode, toNode, options) {
         }
 
         if (!childrenOnly) {
-            if (onBeforeMorphEl(fromEl, toEl) === false) {
+            if (onBeforeElUpdated(fromEl, toEl) === false) {
                 return;
             }
 
             morphAttrs(fromEl, toEl);
+            onElUpdated(fromEl);
 
-            if (onBeforeMorphElChildren(fromEl, toEl) === false) {
+            if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
                 return;
             }
         }
@@ -340,7 +344,10 @@ function morphdom(fromNode, toNode, options) {
                 // If we got this far then we did not find a candidate match for our "to node"
                 // and we exhausted all of the children "from" nodes. Therefore, we will just
                 // append the current "to node" to the end
-                fromEl.appendChild(curToNodeChild);
+                if (onBeforeNodeAdded(curToNodeChild) !== false) {
+                    fromEl.appendChild(curToNodeChild);
+                    onNodeAdded(curToNodeChild);
+                }
 
                 if (curToNodeChild.nodeType === 1 && (curToNodeId || curToNodeChild.firstChild)) {
                     // The element that was just added to the original DOM may have

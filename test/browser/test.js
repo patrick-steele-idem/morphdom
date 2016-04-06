@@ -638,6 +638,20 @@ function addTests() {
             expect(div1).to.equal(div1_2);
         });
 
+        it('should transform an html document el to a target HTML string', function() {
+            var el1 = document.createElement('html');
+            el1.innerHTML = '<html><head><title>Test</title></head><body>a</body></html>';
+
+            expect(el1.firstChild.nextSibling.innerHTML).to.equal('a');
+
+            morphdom(el1, '<html><head><title>Test</title></head><body>b</body></html>');
+
+            expect(el1.tagName).to.equal('HTML');
+            expect(el1.firstChild.tagName).to.equal('HEAD');
+            expect(el1.firstChild.nextSibling.tagName).to.equal('BODY');
+            expect(el1.firstChild.nextSibling.innerHTML).to.equal('b');
+        });
+
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
