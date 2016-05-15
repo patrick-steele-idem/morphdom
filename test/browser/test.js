@@ -403,14 +403,37 @@ function addTests() {
             el2a.appendChild(el2b);
             el2a.appendChild(el2c);
 
-            var addedNode
+            var addedNode;
             morphdom(el1a, el2a, {
                 onNodeAdded: function(el) {
-                    addedNode = el
+                    addedNode = el;
                 }
             });
 
             expect(addedNode).to.equal(el2c);
+        });
+
+        it('should emit when node children are added', function() {
+            var el1a = document.createElement('div');
+
+            var el2a = document.createElement('div');
+            var el2b = document.createElement('b');
+            el2a.appendChild(el2b);
+            var el2c = document.createElement('i');
+            var el2d = document.createElement('s');
+            el2b.appendChild(el2c);
+            el2b.appendChild(el2d);
+
+            var addedNodes = [];
+            morphdom(el1a, el2a, {
+                onNodeAdded: function(el) {
+                    addedNodes.push(el);
+                }
+            });
+
+            expect(addedNodes).to.include(el2b);
+            expect(addedNodes).to.include(el2c);
+            expect(addedNodes).to.include(el2d);
         });
 
         it('should allow updating to be skipped for a node', function() {
@@ -446,10 +469,10 @@ function addTests() {
             el2b.setAttribute('class', 'bar');
             el2a.appendChild(el2b);
 
-            var updatedNode
+            var updatedNode;
             morphdom(el1a, el2a, {
                 onElUpdated: function(el) {
-                    updatedNode = el
+                    updatedNode = el;
                 }
             });
 
@@ -488,10 +511,10 @@ function addTests() {
 
             var el2a = document.createElement('div');
 
-            var discardedNode
+            var discardedNode;
             morphdom(el1a, el2a, {
                 onNodeDiscarded: function(el) {
-                    discardedNode = el
+                    discardedNode = el;
                 }
             });
 
