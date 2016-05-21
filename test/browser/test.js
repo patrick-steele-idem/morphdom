@@ -191,12 +191,20 @@ function runTest(name, autoTest) {
         node.$onNodeDiscarded = true;
     }
 
-    function onBeforeNodeChildrenUpdated(node) {
-        if (node.$onBeforeNodeChildrenUpdated) {
-            throw new Error('Duplicate onBeforeNodeChildrenUpdated for: ' + serializeNode(node));
+    function onBeforeElChildrenUpdated(node) {
+        if (node.$onBeforeElChildrenUpdated) {
+            throw new Error('Duplicate onBeforeElChildrenUpdated for: ' + serializeNode(node));
         }
 
-        node.$onBeforeNodeChildrenUpdated = true;
+        node.$onBeforeElChildrenUpdated = true;
+    }
+
+    function onElChildrenUpdated(node) {
+        if (node.$onElChildrenUpdated) {
+            throw new Error('Duplicate onElChildrenUpdated for: ' + serializeNode(node));
+        }
+
+        node.$onElChildrenUpdated = true;
     }
 
     var morphedNode = morphdom(fromNode, toNode, {
@@ -206,7 +214,8 @@ function runTest(name, autoTest) {
         onElUpdated: onElUpdated,
         onBeforeNodeDiscarded: onBeforeNodeDiscarded,
         onNodeDiscarded: onNodeDiscarded,
-        onBeforeNodeChildrenUpdated: onBeforeNodeChildrenUpdated
+        onBeforeElChildrenUpdated: onBeforeElChildrenUpdated,
+        onElChildrenUpdated: onElChildrenUpdated
     });
 
     var elLookupAfter = buildElLookup(morphedNode);
