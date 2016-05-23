@@ -24,7 +24,7 @@
     "chai": "^2.3.0",
     "ignoring-watcher": "^1.0.5",
     "jshint": "^2.7.0",
-    "lasso": "^1.10.0",
+    "lasso": "^2.4.1",
     "lasso-marko": "^2.0.4",
     "marko": "^2.7.2",
     "mocha": "^2.2.4",
