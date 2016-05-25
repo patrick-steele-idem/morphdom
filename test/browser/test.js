@@ -10,53 +10,7 @@ function parseHtml(html) {
 }
 
 function serializeNode(node) {
-    var html = '';
-
-    function serializeElHelper(el, indent) {
-        html += indent + '<' + (el.namespaceURI ? el.namespaceURI + ':' : '') + el.tagName;
-
-        var attributes = el.attributes;
-        var attributesArray = [];
-
-        for (var i=0; i<attributes.length; i++) {
-            var attr = attributes[i];
-            if (attr.specified !== false) {
-                attributesArray.push(' ' + (attr.namespaceURI ? attr.namespaceURI + ':' : '') + attr.name + '="' + attr.value + '"');
-            }
-        }
-
-        attributesArray.sort();
-
-        html += attributesArray.join('');
-
-        html += '>\n';
-
-        var childNodes = el.childNodes;
-
-        if (childNodes && childNodes.length) {
-            for (i=0; i<childNodes.length; i++) {
-                serializeHelper(childNodes[i], indent + '  ');
-            }
-        }
-    }
-
-    function serializeTextHelper(node, indent) {
-        html += indent + JSON.stringify(node.nodeValue) + '\n';
-    }
-
-    function serializeHelper(node, indent) {
-        if (node.nodeType === 1) {
-            serializeElHelper(node, indent);
-        } else if (node.nodeType === 3) {
-            serializeTextHelper(node, indent);
-        } else {
-            throw new Error('Unexpected node type');
-        }
-    }
-
-    serializeHelper(node, '');
-
-    return html;
+    return (new XMLSerializer).serializeToString(node);
 }
 
 function buildElLookup(node) {
@@ -383,7 +337,7 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeNodeAdded: function(el) {
-                    if (el.tagName === 'I') {
+                    if (el.nodeName === 'I') {
                         return false;
                     }
                 }
@@ -426,7 +380,7 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeElUpdated: function(el) {
-                    if (el.tagName === 'B') {
+                    if (el.nodeName === 'B') {
                         return false;
                     }
                 }
@@ -471,14 +425,14 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeNodeDiscarded: function(el) {
-                    if (el.tagName === 'B') {
+                    if (el.nodeName === 'B') {
                         return false;
                     }
                 }
             });
 
-            expect(el1a.childNodes[0].tagName).to.equal('B');
-            expect(el1a.childNodes[1].tagName).to.equal('A');
+            expect(el1a.childNodes[0].nodeName).to.equal('B');
+            expect(el1a.childNodes[1].nodeName).to.equal('A');
         });
 
         it('should emit when a node is discarded', function() {
@@ -505,7 +459,7 @@ function addTests() {
             morphdom(el1, '<div class="bar"><button>Click Me</button>');
 
             expect(el1.className).to.equal('bar');
-            expect(el1.firstChild.tagName).to.equal('BUTTON');
+            expect(el1.firstChild.nodeName).to.equal('BUTTON');
         });
 
         it('should allow updates to child nodes only', function() {
@@ -610,10 +564,10 @@ function addTests() {
 
             morphdom(el1, el2, {
                 onBeforeElUpdated: function(fromEl, toEl) {
-                    if (fromEl.tagName === 'TEXTAREA' || fromEl.tagName === 'INPUT') {
+                    if (fromEl.nodeName === 'TEXTAREA' || fromEl.nodeName === 'INPUT') {
                         toEl.checked = fromEl.checked;
                         toEl.value = fromEl.value;
-                    } else if (fromEl.tagName === 'OPTION') {
+                    } else if (fromEl.nodeName === 'OPTION') {
                         toEl.selected = fromEl.selected;
                     }
                 }
@@ -646,9 +600,9 @@ function addTests() {
 
             morphdom(el1, '<html><head><title>Test</title></head><body>b</body></html>');
 
-            expect(el1.tagName).to.equal('HTML');
-            expect(el1.firstChild.tagName).to.equal('HEAD');
-            expect(el1.firstChild.nextSibling.tagName).to.equal('BODY');
+            expect(el1.nodeName).to.equal('HTML');
+            expect(el1.firstChild.nodeName).to.equal('HEAD');
+            expect(el1.firstChild.nextSibling.nodeName).to.equal('BODY');
             expect(el1.firstChild.nextSibling.innerHTML).to.equal('b');
         });
 
