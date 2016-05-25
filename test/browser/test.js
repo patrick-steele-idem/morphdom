@@ -10,53 +10,7 @@ function parseHtml(html) {
 }
 
 function serializeNode(node) {
-    var html = '';
-
-    function serializeElHelper(el, indent) {
-        html += indent + '<' + (el.prefix ? el.prefix + ':' : '') + el.nodeName;
-
-        var attributes = el.attributes;
-        var attributesArray = [];
-
-        for (var i=0; i<attributes.length; i++) {
-            var attr = attributes[i];
-            if (attr.specified !== false) {
-                attributesArray.push(' ' + attr.name + '="' + attr.value + '"');
-            }
-        }
-
-        attributesArray.sort();
-
-        html += attributesArray.join('');
-
-        html += '>\n';
-
-        var childNodes = el.childNodes;
-
-        if (childNodes && childNodes.length) {
-            for (i=0; i<childNodes.length; i++) {
-                serializeHelper(childNodes[i], indent + '  ');
-            }
-        }
-    }
-
-    function serializeTextHelper(node, indent) {
-        html += indent + JSON.stringify(node.nodeValue) + '\n';
-    }
-
-    function serializeHelper(node, indent) {
-        if (node.nodeType === 1) {
-            serializeElHelper(node, indent);
-        } else if (node.nodeType === 3) {
-            serializeTextHelper(node, indent);
-        } else {
-            throw new Error('Unexpected node type');
-        }
-    }
-
-    serializeHelper(node, '');
-
-    return html;
+    return (new XMLSerializer).serializeToString(node);
 }
 
 function buildElLookup(node) {
