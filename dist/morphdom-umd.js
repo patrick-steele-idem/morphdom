@@ -26,6 +26,7 @@ function empty(o) {
 
     return true;
 }
+
 function toElement(str) {
     if (!range && document.createRange) {
         range = document.createRange();
@@ -93,6 +94,63 @@ var specialElHandlers = {
 function noop() {}
 
 /**
+ * Create an element, optionally with a known namespace URI.
+ *
+ * @param {String} name the element name, e.g. 'div' or 'svg'
+ * @param {String?} namespaceURI the element's namespace URI, i.e. the value of
+ * its `xmlns` attribute or its inferred namespace.
+ *
+ * @return {Element}
+ */
+function createElement(name, namespaceURI) {
+    return namespaceURI ?
+        document.createElementNS(namespaceURI, name) :
+        document.createElement(name);
+}
+
+/**
+ * Get an element's namespace-aware attribute value.
+ *
+ * @param {Element} el
+ * @param {Attr} attr   an Attr reference, from which we can determine the
+ * namespace URI.
+ *
+ * @return {String}
+ */
+function getAttribute(el, attr) {
+    return attr.namespaceURI ?
+        el.getAttributeNS(attr.namespaceURI, attr.name) :
+        el.getAttribute(attr.name);
+}
+
+/**
+ * Set an element's namespace-aware attribute value.
+ *
+ * @param {Element} el
+ * @param {Attr}    attr   an Attr reference, from which we can determine the
+ * namespace URI.
+ * @param {String}  value  the attribute value
+ */
+function setAttribute(el, attr, value) {
+    return attr.namespaceURI ?
+        el.setAttributeNS(attr.namespaceURI, attr.name, value) :
+        el.setAttribute(attr.name, value);
+}
+
+/**
+ * Set an element's namespace-aware attribute.
+ *
+ * @param {Element} el
+ * @param {Attr}    attr   an Attr reference, from which we can determine the
+ * namespace URI.
+ */
+function removeAttribute(el, attr) {
+    return attr.namespaceURI ?
+        el.removeAttributeNS(attr.namespaceURI, attr.name) :
+        el.removeAttribute(attr.name);
+}
+
+/**
  * Loop over all of the attributes on the target node and make sure the
  * original DOM node has the same attributes. If an attribute
  * found on the original node is not on the new node then remove it from
@@ -115,8 +173,8 @@ function morphAttrs(fromNode, toNode) {
             attrValue = attr.value;
             foundAttrs[attrName] = true;
 
-            if (fromNode.getAttribute(attrName) !== attrValue) {
-                fromNode.setAttribute(attrName, attrValue);
+            if (getAttribute(fromNode, attr) !== attrValue) {
+                setAttribute(fromNode, attr, attrValue);
             }
         }
     }
@@ -130,7 +188,7 @@ function morphAttrs(fromNode, toNode) {
         if (attr.specified !== false) {
             attrName = attr.name;
             if (!foundAttrs.hasOwnProperty(attrName)) {
-                fromNode.removeAttribute(attrName);
+                removeAttribute(fromNode, attr);
             }
         }
     }
@@ -394,7 +452,7 @@ function morphdom(fromNode, toNode, options) {
             if (toNodeType === 1) {
                 if (fromNode.tagName !== toNode.tagName) {
                     onNodeDiscarded(fromNode);
-                    morphedNode = moveChildren(fromNode, document.createElement(toNode.tagName));
+                    morphedNode = moveChildren(fromNode, createElement(toNode.tagName, toNode.namespaceURI));
                 }
             } else {
                 // Going from an element node to a text node
