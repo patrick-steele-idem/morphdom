@@ -383,7 +383,7 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeNodeAdded: function(el) {
-                    if (el.tagName === 'I') {
+                    if (el.nodeName === 'I') {
                         return false;
                     }
                 }
@@ -426,7 +426,7 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeElUpdated: function(el) {
-                    if (el.tagName === 'B') {
+                    if (el.nodeName === 'B') {
                         return false;
                     }
                 }
@@ -471,14 +471,14 @@ function addTests() {
 
             morphdom(el1a, el2a, {
                 onBeforeNodeDiscarded: function(el) {
-                    if (el.tagName === 'B') {
+                    if (el.nodeName === 'B') {
                         return false;
                     }
                 }
             });
 
-            expect(el1a.childNodes[0].tagName).to.equal('B');
-            expect(el1a.childNodes[1].tagName).to.equal('A');
+            expect(el1a.childNodes[0].nodeName).to.equal('B');
+            expect(el1a.childNodes[1].nodeName).to.equal('A');
         });
 
         it('should emit when a node is discarded', function() {
@@ -505,7 +505,7 @@ function addTests() {
             morphdom(el1, '<div class="bar"><button>Click Me</button>');
 
             expect(el1.className).to.equal('bar');
-            expect(el1.firstChild.tagName).to.equal('BUTTON');
+            expect(el1.firstChild.nodeName).to.equal('BUTTON');
         });
 
         it('should allow updates to child nodes only', function() {
@@ -610,10 +610,10 @@ function addTests() {
 
             morphdom(el1, el2, {
                 onBeforeElUpdated: function(fromEl, toEl) {
-                    if (fromEl.tagName === 'TEXTAREA' || fromEl.tagName === 'INPUT') {
+                    if (fromEl.nodeName === 'TEXTAREA' || fromEl.nodeName === 'INPUT') {
                         toEl.checked = fromEl.checked;
                         toEl.value = fromEl.value;
-                    } else if (fromEl.tagName === 'OPTION') {
+                    } else if (fromEl.nodeName === 'OPTION') {
                         toEl.selected = fromEl.selected;
                     }
                 }
@@ -646,9 +646,9 @@ function addTests() {
 
             morphdom(el1, '<html><head><title>Test</title></head><body>b</body></html>');
 
-            expect(el1.tagName).to.equal('HTML');
-            expect(el1.firstChild.tagName).to.equal('HEAD');
-            expect(el1.firstChild.nextSibling.tagName).to.equal('BODY');
+            expect(el1.nodeName).to.equal('HTML');
+            expect(el1.firstChild.nodeName).to.equal('HEAD');
+            expect(el1.firstChild.nextSibling.nodeName).to.equal('BODY');
             expect(el1.firstChild.nextSibling.innerHTML).to.equal('b');
         });
 
