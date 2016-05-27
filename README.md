@@ -55,6 +55,11 @@ expect(el1.innerHTML).to.equal('Hello Frank');
 
 NOTE: This module will modify both the original and target DOM node tree during the transformation. It is assumed that the target DOM node tree will be discarded after the original DOM node tree is morphed.
 
+# Browser Support
+
+- IE7+ and any modern browser
+- Proper namespace support added in `v1.4.0`
+
 # API
 
 ## morphdom(fromNode, toNode, options) : Node
@@ -523,7 +528,7 @@ The table below shows some sample benchmark results when running the benchmarks 
     </tbody>
 </table>
 
-_NOTE: Safari 9.0.2 (11601.3.9)
+_NOTE: Safari 9.0.2 (11601.3.9)_
 
 # Maintainers
 
