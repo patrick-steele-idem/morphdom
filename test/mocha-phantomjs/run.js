@@ -82,8 +82,6 @@ function generateHtmlStringsFile() {
 }
 
 function run() {
-    var isBenchmark = process.argv[2] === 'benchmark';
-
     console.log('Preparing client-side tests...');
 
     console.log('Config:', testConfig);
