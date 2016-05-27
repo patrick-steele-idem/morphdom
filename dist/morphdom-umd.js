@@ -178,6 +178,7 @@ function morphdom(fromNode, toNode, options) {
     var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
     var onNodeDiscarded = options.onNodeDiscarded || noop;
     var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || options.onBeforeMorphElChildren || noop;
+    var onElChildrenUpdated = options.onElChildrenUpdated || noop;
     var childrenOnly = options.childrenOnly === true;
     var movedEls = [];
 
@@ -380,6 +381,10 @@ function morphdom(fromNode, toNode, options) {
         var specialElHandler = specialElHandlers[fromEl.tagName];
         if (specialElHandler) {
             specialElHandler(fromEl, toEl);
+        }
+
+        if (!childrenOnly) {
+            onElChildrenUpdated(fromEl);
         }
     } // END: morphEl(...)
 
