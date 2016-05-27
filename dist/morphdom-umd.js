@@ -7,16 +7,23 @@ var testEl = (typeof document !== 'undefined') ?
     {};
 
 var XHTML = 'http://www.w3.org/1999/xhtml';
+var ELEMENT_NODE = Node.ELEMENT_NODE;
+var TEXT_NODE = Node.TEXT_NODE;
 
 // Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
 // (IE7+ support) <=IE7 does not support el.hasAttribute(name)
-var hasAttribute;
-if (testEl.hasAttribute) {
-    hasAttribute = function hasAttribute(el, name) {
+var hasAttributeNS;
+
+if (testEl.hasAttributeNS) {
+    hasAttributeNS = function(el, namespaceURI, name) {
+        return el.hasAttributeNS(namespaceURI, name);
+    };
+} else if (testEl.hasAttribute) {
+    hasAttributeNS = function(el, namespaceURI, name) {
         return el.hasAttribute(name);
     };
 } else {
-    hasAttribute = function hasAttribute(el, name) {
+    hasAttributeNS = function(el, namespaceURI, name) {
         return !!el.getAttributeNode(name);
     };
 }
@@ -77,7 +84,7 @@ var specialElHandlers = {
             fromEl.value = toEl.value;
         }
 
-        if (!hasAttribute(toEl, 'value')) {
+        if (!hasAttributeNS(toEl, null, 'value')) {
             fromEl.removeAttribute('value');
         }
 
@@ -108,7 +115,7 @@ function noop() {}
  *
  * @param {Element} a
  * @param {Element} b
- * @return {Boolean}
+ * @return {boolean}
  */
 var compareNodeNames = function(a, b) {
     return a.nodeName === b.nodeName &&
@@ -118,16 +125,16 @@ var compareNodeNames = function(a, b) {
 /**
  * Create an element, optionally with a known namespace URI.
  *
- * @param {String} name the element name, e.g. 'div' or 'svg'
- * @param {String?} namespaceURI the element's namespace URI, i.e. the value of
+ * @param {string} name the element name, e.g. 'div' or 'svg'
+ * @param {string} [namespaceURI] the element's namespace URI, i.e. the value of
  * its `xmlns` attribute or its inferred namespace.
  *
  * @return {Element}
  */
-function createElement(name, namespaceURI) {
-    return (namespaceURI && namespaceURI !== XHTML) ?
-        document.createElementNS(namespaceURI, name) :
-        document.createElement(name);
+function createElementNS(name, namespaceURI) {
+    return !namespaceURI || namespaceURI === XHTML ?
+        document.createElement(name) :
+        document.createElementNS(namespaceURI, name);
 }
 
 /**
@@ -143,23 +150,26 @@ function morphAttrs(fromNode, toNode) {
     var i;
     var attr;
     var attrName;
+    var attrNamespaceURI;
     var attrValue;
-    var foundAttrs = {};
     var fromValue;
 
     for (i = attrs.length - 1; i >= 0; i--) {
         attr = attrs[i];
         attrName = attr.name;
         attrValue = attr.value;
-        fromValue = fromNode.getAttributeNS(attr.namespaceURI, attr.name);
-        foundAttrs[attrName] = true;
+        attrNamespaceURI = attr.namespaceURI;
+
+        fromValue = attrNamespaceURI ?
+            fromNode.getAttributeNS(attrNamespaceURI, attrName) :
+            fromNode.getAttribute(attrName);
 
         if (fromValue !== attrValue) {
-            fromNode.setAttributeNS(
-              attr.namespaceURI,
-              attr.name,
-              attrValue
-            );
+            if (attrNamespaceURI) {
+                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+            } else {
+                fromNode.setAttribute(attrName, attrValue);
+            }
         }
     }
 
@@ -171,7 +181,9 @@ function morphAttrs(fromNode, toNode) {
         attr = attrs[i];
         if (attr.specified !== false) {
             attrName = attr.name;
-            if (!foundAttrs.hasOwnProperty(attrName)) {
+            attrNamespaceURI = attr.namespaceURI;
+
+            if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
                 fromNode.removeAttributeNode(attr);
             }
         }
@@ -243,7 +255,7 @@ function morphdom(fromNode, toNode, options) {
             onNodeDiscarded(node);
         }
 
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.nodeType === ELEMENT_NODE) {
             var curChild = node.firstChild;
             while (curChild) {
                 removeNodeHelper(curChild, nestedInSavedEl || id);
@@ -253,7 +265,7 @@ function morphdom(fromNode, toNode, options) {
     }
 
     function walkDiscardedChildNodes(node) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.nodeType === ELEMENT_NODE) {
             var curChild = node.firstChild;
             while (curChild) {
 
@@ -343,7 +355,7 @@ function morphdom(fromNode, toNode, options) {
                         var isCompatible = false;
 
                         // Both nodes being compared are Element nodes
-                        if (curFromNodeType === Node.ELEMENT_NODE) {
+                        if (curFromNodeType === ELEMENT_NODE) {
                             if (compareNodeNames(curFromNodeChild, curToNodeChild)) {
                                 // We have compatible DOM elements
                                 if (curFromNodeId || curToNodeId) {
@@ -365,7 +377,7 @@ function morphdom(fromNode, toNode, options) {
                                 morphEl(curFromNodeChild, curToNodeChild, alreadyVisited);
                             }
                         // Both nodes being compared are Text nodes
-                        } else if (curFromNodeType === Node.TEXT_NODE) {
+                    } else if (curFromNodeType === TEXT_NODE) {
                             isCompatible = true;
                             // Simply update nodeValue on the original node to
                             // change the text value
@@ -411,7 +423,7 @@ function morphdom(fromNode, toNode, options) {
                     onNodeAdded(curToNodeChild);
                 }
 
-                if (curToNodeChild.nodeType === Node.ELEMENT_NODE &&
+                if (curToNodeChild.nodeType === ELEMENT_NODE &&
                     (curToNodeId || curToNodeChild.firstChild)) {
                     // The element that was just added to the original DOM may
                     // have some nested elements with a key/ID that needs to be
@@ -449,18 +461,18 @@ function morphdom(fromNode, toNode, options) {
     if (!childrenOnly) {
         // Handle the case where we are given two DOM nodes that are not
         // compatible (e.g. <div> --> <span> or <div> --> TEXT)
-        if (morphedNodeType === Node.ELEMENT_NODE) {
-            if (toNodeType === Node.ELEMENT_NODE) {
+        if (morphedNodeType === ELEMENT_NODE) {
+            if (toNodeType === ELEMENT_NODE) {
                 if (!compareNodeNames(fromNode, toNode)) {
                     onNodeDiscarded(fromNode);
-                    morphedNode = moveChildren(fromNode, createElement(toNode.nodeName, toNode.namespaceURI));
+                    morphedNode = moveChildren(fromNode, createElementNS(toNode.nodeName, toNode.namespaceURI));
                 }
             } else {
                 // Going from an element node to a text node
                 morphedNode = toNode;
             }
-        } else if (morphedNodeType === Node.TEXT_NODE) { // Text node
-            if (toNodeType === Node.TEXT_NODE) {
+        } else if (morphedNodeType === TEXT_NODE) { // Text node
+            if (toNodeType === TEXT_NODE) {
                 morphedNode.nodeValue = toNode.nodeValue;
                 return morphedNode;
             } else {
@@ -504,7 +516,7 @@ function morphdom(fromNode, toNode, options) {
                     }
                 }
 
-                if (curChild.nodeType === Node.ELEMENT_NODE) {
+                if (curChild.nodeType === ELEMENT_NODE) {
                     handleMovedEl(curChild);
                 }
 
