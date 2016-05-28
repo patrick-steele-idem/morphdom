@@ -5,6 +5,10 @@ Changelog
 
 ## 1.4.x
 
+### 1.4.1
+
+- Use hard coded constants for node types for improved browser compatibility
+
 ### 1.4.0
 
 - Make attributes and elements namespace-aware ([@shawnbot](https://github.com/shawnbot))
