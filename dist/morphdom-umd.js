@@ -7,8 +7,8 @@ var testEl = (typeof document !== 'undefined') ?
     {};
 
 var XHTML = 'http://www.w3.org/1999/xhtml';
-var ELEMENT_NODE = Node.ELEMENT_NODE;
-var TEXT_NODE = Node.TEXT_NODE;
+var ELEMENT_NODE = 1;
+var TEXT_NODE = 3;
 
 // Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
 // (IE7+ support) <=IE7 does not support el.hasAttribute(name)
@@ -160,9 +160,12 @@ function morphAttrs(fromNode, toNode) {
         attrValue = attr.value;
         attrNamespaceURI = attr.namespaceURI;
 
-        fromValue = attrNamespaceURI ?
-            fromNode.getAttributeNS(attrNamespaceURI, attrName) :
-            fromNode.getAttribute(attrName);
+        if (attrNamespaceURI) {
+            attrName = attr.localName || attrName;
+            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+        } else {
+            fromValue = fromNode.getAttribute(attrName);
+        }
 
         if (fromValue !== attrValue) {
             if (attrNamespaceURI) {
@@ -183,7 +186,7 @@ function morphAttrs(fromNode, toNode) {
             attrName = attr.name;
             attrNamespaceURI = attr.namespaceURI;
 
-            if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
+            if (!hasAttributeNS(toNode, attrNamespaceURI, attrNamespaceURI ? attrName = attr.localName || attrName : attrName)) {
                 fromNode.removeAttributeNode(attr);
             }
         }
