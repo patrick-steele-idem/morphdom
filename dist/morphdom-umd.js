@@ -9,6 +9,7 @@ var testEl = (typeof document !== 'undefined') ?
 var XHTML = 'http://www.w3.org/1999/xhtml';
 var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
+var COMMENT_NODE = 8;
 
 // Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
 // (IE7+ support) <=IE7 does not support el.hasAttribute(name)
@@ -379,8 +380,8 @@ function morphdom(fromNode, toNode, options) {
                                 // target DOM node.
                                 morphEl(curFromNodeChild, curToNodeChild, alreadyVisited);
                             }
-                        // Both nodes being compared are Text nodes
-                    } else if (curFromNodeType === TEXT_NODE) {
+                        // Both nodes being compared are Text or Comment nodes
+                    } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
                             isCompatible = true;
                             // Simply update nodeValue on the original node to
                             // change the text value
@@ -474,8 +475,8 @@ function morphdom(fromNode, toNode, options) {
                 // Going from an element node to a text node
                 morphedNode = toNode;
             }
-        } else if (morphedNodeType === TEXT_NODE) { // Text node
-            if (toNodeType === TEXT_NODE) {
+        } else if (morphedNodeType === TEXT_NODE || morphedNodeType === COMMENT_NODE) { // Text or comment node
+            if (toNodeType === morphedNodeType) {
                 morphedNode.nodeValue = toNode.nodeValue;
                 return morphedNode;
             } else {
