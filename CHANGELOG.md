@@ -5,6 +5,14 @@ Changelog
 
 ## 1.4.x
 
+### 1.4.3
+
+- Fixes [#66](https://github.com/patrick-steele-idem/morphdom/issues/66) by treating comment nodes identically to text nodes ([PR #67](https://github.com/patrick-steele-idem/morphdom/pull/67) by [@cfinucane](https://github.com/cfinucane))
+
+### 1.4.2
+
+- Fixes #63 - Do attr lookup on localName if available
+
 ### 1.4.1
 
 - Use hard coded constants for node types for improved browser compatibility
