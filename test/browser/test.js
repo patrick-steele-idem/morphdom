@@ -606,6 +606,24 @@ function addTests() {
             expect(el1.firstChild.nextSibling.innerHTML).to.equal('b');
         });
 
+        it('should not alter the DOM unnecessarily in the presence of comments', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<!-- comment --><div class="div1">a</div>';
+
+            var el2 = el1.cloneNode(true);
+
+            var addedNodes = [];
+            var discardedNodes = [];
+            morphdom(el1, el2, {
+                onNodeAdded: function(el) { addedNodes.push(el) },
+                onNodeDiscarded: function(el) { discardedNodes.push(el) }
+            });
+
+            // This was a no-op update, and should have made no changes
+            expect(addedNodes).to.be.empty;
+            expect(discardedNodes).to.be.empty;
+        });
+
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
