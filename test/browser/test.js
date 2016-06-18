@@ -10,7 +10,7 @@ function parseHtml(html) {
 }
 
 function serializeNode(node) {
-    return (new XMLSerializer).serializeToString(node);
+    return (new XMLSerializer()).serializeToString(node);
 }
 
 function buildElLookup(node) {
@@ -357,10 +357,11 @@ function addTests() {
             el2a.appendChild(el2b);
             el2a.appendChild(el2c);
 
-            var addedNode
+            var addedNode;
+
             morphdom(el1a, el2a, {
                 onNodeAdded: function(el) {
-                    addedNode = el
+                    addedNode = el;
                 }
             });
 
@@ -400,10 +401,11 @@ function addTests() {
             el2b.setAttribute('class', 'bar');
             el2a.appendChild(el2b);
 
-            var updatedNode
+            var updatedNode;
+
             morphdom(el1a, el2a, {
                 onElUpdated: function(el) {
-                    updatedNode = el
+                    updatedNode = el;
                 }
             });
 
@@ -442,10 +444,11 @@ function addTests() {
 
             var el2a = document.createElement('div');
 
-            var discardedNode
+            var discardedNode;
+
             morphdom(el1a, el2a, {
                 onNodeDiscarded: function(el) {
-                    discardedNode = el
+                    discardedNode = el;
                 }
             });
 
@@ -615,13 +618,13 @@ function addTests() {
             var addedNodes = [];
             var discardedNodes = [];
             morphdom(el1, el2, {
-                onNodeAdded: function(el) { addedNodes.push(el) },
-                onNodeDiscarded: function(el) { discardedNodes.push(el) }
+                onNodeAdded: function(el) { addedNodes.push(el); },
+                onNodeDiscarded: function(el) { discardedNodes.push(el); }
             });
 
             // This was a no-op update, and should have made no changes
-            expect(addedNodes).to.be.empty;
-            expect(discardedNodes).to.be.empty;
+            expect(addedNodes.length).to.equal(0);
+            expect(discardedNodes.length).to.equal(0);
         });
 
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
