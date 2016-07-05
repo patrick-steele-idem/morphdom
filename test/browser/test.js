@@ -627,6 +627,18 @@ function addTests() {
             expect(discardedNodes.length).to.equal(0);
         });
 
+        it('patch tags by id', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<span id="boo" class="foo"></span>';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<div id="boo"></div>';
+
+            var finalEl = morphdom(el1, el2);
+
+            expect(finalEl.innerHTML).to.equal('<div id="boo"></div>');
+        });
+
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
