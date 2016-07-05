@@ -192,7 +192,10 @@ function runTest(name, autoTest) {
     Object.keys(elLookupBefore).forEach(function(elId) {
         var afterEl =  elLookupAfter[elId];
         if (afterEl) {
-            expect(afterEl).to.equal(elLookupBefore[elId]);
+            var beforeEl = elLookupBefore[elId];
+            if (afterEl.tagName === beforeEl.tagName) {
+                expect(afterEl).to.equal(beforeEl);
+            }
         }
     });
 
