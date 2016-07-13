@@ -533,6 +533,7 @@ _NOTE: Safari 9.0.2 (11601.3.9)_
 # Maintainers
 
 * [Patrick Steele-Idem](https://github.com/patrick-steele-idem) (Twitter: [@psteeleidem](http://twitter.com/psteeleidem))
+* [Paul Grenier](https://github.com/AutoSponge) (Twitter: [@autosponge](https://twitter.com/autosponge))
 
 # Contribute
 
