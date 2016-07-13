@@ -5,6 +5,18 @@ Changelog
 
 ## 1.4.x
 
+### 1.4.6
+
+- Fixes [#71](https://github.com/patrick-steele-idem/morphdom/issues/71) - form elements lose class when removing name attribute in MSIE 8-11 and MS Edge ([PR #73](https://github.com/patrick-steele-idem/morphdom/pull/73) by [@karfcz](https://github.com/karfcz))
+
+### 1.4.5
+
+- `onNodeDiscarded` is now correctly called when tag name mismatch for keyed el
+
+### 1.4.4
+
+- Fixes [#72](https://github.com/patrick-steele-idem/morphdom/issues/72) - Compare tag name when matching els by ID
+
 ### 1.4.3
 
 - Fixes [#66](https://github.com/patrick-steele-idem/morphdom/issues/66) by treating comment nodes identically to text nodes ([PR #67](https://github.com/patrick-steele-idem/morphdom/pull/67) by [@cfinucane](https://github.com/cfinucane))
