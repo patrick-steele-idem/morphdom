@@ -188,7 +188,11 @@ function morphAttrs(fromNode, toNode) {
             attrNamespaceURI = attr.namespaceURI;
 
             if (!hasAttributeNS(toNode, attrNamespaceURI, attrNamespaceURI ? attrName = attr.localName || attrName : attrName)) {
-                fromNode.removeAttributeNode(attr);
+                if (attrNamespaceURI) {
+                    fromNode.removeAttributeNS(attrNamespaceURI, attr.localName);
+                } else {
+                    fromNode.removeAttribute(attrName);
+                }
             }
         }
     }
