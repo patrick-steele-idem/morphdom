@@ -1,0 +1,6 @@
+{
+    "dependencies": [
+        "./style.css",
+        "require-run: ./client.js"
+    ]
+}

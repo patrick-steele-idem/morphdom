@@ -1,0 +1,42 @@
+
+* {
+    font-family: Helvetica,Arial,sans-serif;
+}
+
+ul {
+    display: block;
+}
+
+.todo {
+    font-size: 20px;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+
+    list-style: none;
+    background: #16a085;
+    border-bottom: 0 solid #fff;
+    color: #fff;
+    padding: 0 0.5em;
+    margin: 0;
+    margin-bottom: 4px;
+    overflow: hidden;
+    line-height: 2em;
+    width: 10em;
+    vertical-align: middle;
+    height: 0;
+}
+
+.todo-visible {
+   opacity: 1;
+   height: 2em;
+}
+
+
+.todo-remove {
+    background-image: url('./remove.svg');
+    height: 16px;
+    width: 16px;
+    display: inline-block;
+    margin-right: 1em;
+    cursor: pointer;
+}

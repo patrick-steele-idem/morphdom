@@ -1,18 +1,19 @@
 {
   "name": "morphdom",
   "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "npm run test-browser && npm run lint",
     "benchmark": "npm run benchmark-browser",
     "all": "npm run all-browser && npm run lint",
-    "lint": "jshint lib/",
+    "lint": "jshint src/",
     "test-browser": "node test/mocha-phantomjs/run.js test",
     "benchmark-browser": "node test/mocha-phantomjs/run.js benchmark",
     "all-browser": "node test/mocha-phantomjs/run.js test benchmark",
     "mocha-phantomjs": "node test/mocha-phantomjs/run.js",
     "mocha-phantomjs-run": "mocha-phantomjs ./test/mocha-phantomjs/generated/test-page.html",
-    "prepublish": "./prepublish.sh"
+    "prepublish": "./prepublish.sh",
+    "start": "node examples/server.js"
   },
   "author": "Patrick Steele-Idem <pnidem@gmail.com>",
   "license": "ISC",
@@ -21,11 +22,14 @@
     "url": "https://github.com/patrick-steele-idem/morphdom.git"
   },
   "devDependencies": {
+    "async": "^2.0.0",
+    "browser-refresh-taglib": "^1.1.0",
     "chai": "^2.3.0",
+    "express": "^4.14.0",
     "ignoring-watcher": "^1.0.5",
     "jshint": "^2.7.0",
     "lasso": "^2.4.1",
-    "lasso-marko": "^2.0.4",
+    "lasso-marko": "^2.0.7",
     "marko": "^3.3.0",
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^3.5.3",

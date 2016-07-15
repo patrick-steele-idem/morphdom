@@ -1,4 +1,16 @@
+<macro times(moduleName, testName)>
+    ${data.getAverageTimeForTest(moduleName, testName)}
+</macro>
+
 <div class="results">
+    <ul>
+        <li for(moduleName in data.moduleNames)>
+            Total time for ${moduleName}: ${data.getTotalTime(moduleName)}
+            <if(data.isWinner(moduleName))>
+                (winner)
+            </if>
+        </li>
+    </ul>
     <table>
         <thead>
             <tr>
@@ -14,7 +26,12 @@
                     ${testName}
                 </td>
                 <td for(moduleName in data.moduleNames)>
-                    ${data.getAverageTime(moduleName, testName)}
+                    <if(data.isWinnerForTest(moduleName, testName))>
+                        <b><times(moduleName, testName)/></b>
+                    </if>
+                    <else>
+                        <times(moduleName, testName)/>
+                    </else>
                 </td>
             </tr>
         </tbody>

@@ -8,6 +8,8 @@
     <lasso-head/>
 </head>
 <body>
+    <div id="status">
+    </div>
 
     <div id="mocha">
     </div>
@@ -15,7 +17,10 @@
     <div id="test-results">
     </div>
 
-    <div id="benchmark-results">
+    <div if(data.runBenchmarks)>
+        <button type="button" onclick="window.startBenchmarks()">Start Benchmarks</button>
+        <div id="benchmark-results">
+        </div>
     </div>
 
     <lasso-body/>

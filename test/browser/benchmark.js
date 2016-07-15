@@ -1,8 +1,9 @@
-var morphdom = require('../../lib/index');
+var morphdom = require('../../src/index');
 var resultsTemplate = require('./benchmark-results.marko');
 var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
 var vdomVirtualize = require('vdom-virtualize');
+var series = require('async').series;
 
 var now;
 
@@ -40,14 +41,36 @@ function parseHtml(html) {
 
 function addBenchmarks() {
 
-    var results = {};
+    var results = {
+        tests: {},
+        moduleTotalTimes: {}
+    };
 
     function recordResult(moduleName, testName, totalTime) {
-        var testEntry = results[testName] || (results[testName] = {});
-        var result = testEntry[moduleName] = {
+        var testEntry = results.tests[testName] || (results.tests[testName] = {
+            modules: {},
+            fastest: null,
+            fastestTotalTime: null
+        });
+
+        var result = testEntry.modules[moduleName] = {
+            moduleName: moduleName,
             totalTime: totalTime.toFixed(2),
             avgTime: (totalTime/ITERATIONS).toFixed(2)
         };
+
+        var currentFastestTotalTime = testEntry.fastestTotalTime;
+        if (currentFastestTotalTime == null || totalTime < currentFastestTotalTime) {
+            testEntry.fastest = result;
+            testEntry.fastestTotalTime = totalTime;
+        }
+
+        var overallEntry = results.moduleTotalTimes[moduleName] || (results.moduleTotalTimes[moduleName] = {
+            moduleName: moduleName,
+            totalTime: 0
+        });
+
+        overallEntry.totalTime += totalTime;
 
         console.log(moduleName + ' - ' + testName + ':', result);
 
@@ -56,21 +79,18 @@ function addBenchmarks() {
 
     var handlers = {
         morphdom: {
-            setup: function(autoTest) {
+            enabled: true,
+            setup: function(autoTest, iterations) {
                 var workingDataArray = this.workingDataArray = [];
                 var i;
-                var fromNode;
-                var toNode;
 
-                for (i=0; i<ITERATIONS; i++) {
-                    var fromHtml = autoTest.from;
-                    var toHtml = autoTest.to;
-                    fromNode = parseHtml(fromHtml);
-                    toNode = parseHtml(toHtml);
+                var fromNode = parseHtml(autoTest.from);
+                var toNode = parseHtml(autoTest.to);
 
+                for (i=0; i<iterations; i++) {
                     workingDataArray.push({
-                        fromNode: fromNode,
-                        toNode: toNode
+                        fromNode: fromNode.cloneNode(true),
+                        toNode: toNode.cloneNode(true)
                     });
                 }
             },
@@ -83,24 +103,26 @@ function addBenchmarks() {
             }
         },
         'virtual-dom': {
-            setup: function(autoTest) {
+            enabled: true,
+            setup: function(autoTest, iterations) {
                 var workingDataArray = this.workingDataArray = [];
                 var i;
-                var fromNode;
+
                 var fromNodeVDOM;
-                var toNode;
                 var toNodeVDOM;
 
-                for (i=0; i<ITERATIONS; i++) {
-                    var fromHtml = autoTest.from;
-                    var toHtml = autoTest.to;
-                    fromNode = parseHtml(fromHtml);
-                    fromNodeVDOM = vdomVirtualize(fromNode);
-                    toNode = parseHtml(toHtml);
-                    toNodeVDOM = vdomVirtualize(toNode);
+                var fromNode = parseHtml(autoTest.from);
+                var toNode = parseHtml(autoTest.to);
+
+                for (i=0; i<iterations; i++) {
+
+                    var fromNodeClone = fromNode.cloneNode(true);
+                    fromNodeVDOM = vdomVirtualize(fromNodeClone);
+                    var toNodeClone = toNode.cloneNode(true);
+                    toNodeVDOM = vdomVirtualize(toNodeClone);
 
                     workingDataArray.push({
-                        fromNode: fromNode,
+                        fromNode: fromNodeClone,
                         fromNodeVDOM: fromNodeVDOM,
                         toNodeVDOM: toNodeVDOM
                     });
@@ -119,49 +141,81 @@ function addBenchmarks() {
         }
     };
 
-    var moduleNames = ['virtual-dom', 'morphdom']; //Object.keys(handlers);
+    var moduleNames = Object.keys(handlers);
 
-    function warmup() {
-        Object.keys(autoTests).forEach(function(name) {
-            var autoTest = autoTests[name];
+    var statusEl = document.getElementById('status');
 
-            moduleNames.forEach(function(moduleName) {
-                if (window.console) {
-                    console.log('Running warmup (' + moduleName + ' - ' + name + ')...');
-                }
+    function setStatus(message) {
+        statusEl.innerHTML = message;
+        // var pre = document.createElement('pre');
+        // pre.innerHTML = message;
+        // statusEl.appendChild(pre);
 
-                handlers[moduleName].setup(autoTest);
-
-                for (var i=0; i<ITERATIONS; i++) {
-                    handlers[moduleName].runIteration(i);
-
-                }
-            });
-        });
+        if (window.console) {
+            console.log(message);
+        }
     }
 
-    warmup();
+    function warmupTest(moduleName, name, autoTest, callback) {
+        setStatus('Running warmup (' + moduleName + ' - ' + name + ')...');
+
+        setTimeout(function() {
+            var iterations = 30;
+
+            handlers[moduleName].setup(autoTest, iterations);
+
+            for (var i=0; i<iterations; i++) {
+                handlers[moduleName].runIteration(i, iterations);
+            }
+            callback();
+        }, 0);
+    }
 
     describe('benchmarks', function() {
         this.timeout(0);
+
+        before(function(done) {
+            if (window.mochaPhantomJS) {
+                done();
+            }
+
+            window.startBenchmarks = function() {
+                done();
+            };
+        });
 
         Object.keys(autoTests).forEach(function(name) {
             var autoTest = autoTests[name];
 
             var itFunc = autoTest.only ? it.only : it;
 
-            itFunc(name, function() {
-                moduleNames.forEach(function(moduleName) {
-                    handlers[moduleName].setup(autoTest);
+            itFunc(name, function(done) {
+                var tasks = moduleNames.map(function(moduleName) {
+                    return function(callback) {
+                        if (handlers[moduleName].enabled === false) {
+                            return callback();
+                        }
+                        var warmupInterval = interval.start();
+                        warmupTest(moduleName, name, autoTest, function() {
+                            var warmupTime = warmupInterval.stop();
 
-                    var myInterval = interval.start();
-                    for (var i=0; i<ITERATIONS; i++) {
-                        handlers[moduleName].runIteration(i);
+                            handlers[moduleName].setup(autoTest, ITERATIONS);
 
-                    }
-                    var totalTime = myInterval.stop();
-                    recordResult(moduleName, name, totalTime);
+                            setStatus('Warmup completed in ' + warmupTime + 'ms' + '. Running tests (' + moduleName + ' - ' + name + ')...');
+
+                            var myInterval = interval.start();
+                            for (var i=0; i<ITERATIONS; i++) {
+                                handlers[moduleName].runIteration(i);
+                            }
+                            var totalTime = myInterval.stop();
+
+                            recordResult(moduleName, name, totalTime);
+                            setTimeout(callback, 0);
+                        });
+                    };
                 });
+
+                series(tasks, done);
             });
         });
         after(function() {
@@ -169,17 +223,48 @@ function addBenchmarks() {
 
             var resultHtml = resultsTemplate.renderSync({
                 moduleNames: moduleNames,
-                testNames: Object.keys(results),
-                getTotalTime: function(moduleName, testName) {
-                    var testResults = results[testName][moduleName];
+                testNames: Object.keys(results.tests),
+                getTotalTimeForTest: function(moduleName, testName) {
+                    var testResults = results.tests[testName].modules[moduleName];
+                    if (!testResults) {
+                        return '-';
+                    }
                     var totalTime  = testResults.totalTime;
                     return totalTime + 'ms';
                 },
-                getAverageTime: function(moduleName, testName) {
-                    var testResults = results[testName][moduleName];
+                getAverageTimeForTest: function(moduleName, testName) {
+                    var testResults = results.tests[testName].modules[moduleName];
+                    if (!testResults) {
+                        return '-';
+                    }
                     var avgTime  = testResults.avgTime;
                     return avgTime + 'ms';
-                }
+                },
+                isWinnerForTest: function(moduleName, testName) {
+                    var fastest = results.tests[testName].fastest;
+                    return fastest && fastest.moduleName === moduleName;
+                },
+                isWinner: function(moduleName) {
+                    var fastest = null;
+
+                    for (var currentModuleName in results.moduleTotalTimes) {
+                        var current = results.moduleTotalTimes[currentModuleName];
+                        if (!fastest) {
+                            fastest = current;
+                        } else if (current.totalTime < fastest.totalTime) {
+                            fastest = current;
+                        }
+                    }
+                    return fastest && fastest.moduleName === moduleName;
+                },
+                getTotalTime: function(moduleName) {
+                    var entry = results.moduleTotalTimes[moduleName];
+                    if (entry == null) {
+                        return '-';
+                    }
+
+                    return entry.totalTime.toFixed(2) + 'ms';
+                },
             });
 
             var containerEl = document.createElement('div');

@@ -1,0 +1,19 @@
+
+* {
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 16px;
+}
+
+.animated {
+    transition: all 0.3s ease-in-out;
+    width: 300px;
+    height: 100px;
+    background-color: #2ecc71;
+    overflow: auto;
+}
+
+.animated.after {
+    width: 600px;
+    height: 100px;
+    background-color: #f1c40f;
+}

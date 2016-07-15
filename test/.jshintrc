@@ -46,7 +46,7 @@
     "sub": false,
     "white": false,
     "eqeqeq": false,
-    "latedef": true,
+    "latedef": false,
     "unused": "vars",
     "eqnull": true
 }

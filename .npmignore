@@ -12,3 +12,4 @@
 coverage
 *.marko.js
 /.cache
+/examples

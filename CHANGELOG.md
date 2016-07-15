@@ -1,6 +1,25 @@
 Changelog
 =========
 
+# 2.x
+
+## 2.0.x
+
+### 2.0.0
+
+- Fixed [#47](https://github.com/patrick-steele-idem/morphdom/issues/47) - Detect and handle reorder of siblings
+- `onNodeAdded` is now called for all on child nodes and not just the root node (closes [PR #57](https://github.com/patrick-steele-idem/morphdom/pull/57))
+- Simplified code and reduced overall code size
+- NOTE: Performance is about the same or slightly better than the previous version of `morphdom` based on benchmarks
+- Added examples:[./examples/](./examples/README.md)
+
+#### Breaking changes
+
+- `onNodeAdded` is now called for all on child nodes (not just the root node)
+- Removed options:
+    - `onBeforeMorphEl` (use `onBeforeElUpdated` instead)
+    - `onBeforeMorphElChildren` (use `onBeforeElChildrenUpdated` instead)
+
 # 1.x
 
 ## 1.4.x
