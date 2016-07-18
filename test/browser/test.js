@@ -1,6 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
-var morphdom = require('../../lib/index');
+var morphdom = require('../../');
 var resultTemplate = require('./test-result.marko');
 
 function parseHtml(html) {
@@ -10,7 +10,55 @@ function parseHtml(html) {
 }
 
 function serializeNode(node) {
-    return (new XMLSerializer()).serializeToString(node);
+
+    // NOTE: We don't use XMLSerializer because we need to sort the attributes to correctly compare output HTML strings
+    // BAD: return (new XMLSerializer()).serializeToString(node);
+    var html = '';
+    function serializeHelper(node, indent) {
+        if (node.nodeType === 1) {
+            serializeElHelper(node, indent);
+        } else if (node.nodeType === 3) {
+            serializeTextHelper(node, indent);
+        } else {
+            throw new Error('Unexpected node type');
+        }
+    }
+
+    function serializeElHelper(el, indent) {
+        html += indent + '<' + el.tagName;
+
+        var attributes = el.attributes;
+        var attributesArray = [];
+
+        for (var i=0; i<attributes.length; i++) {
+            var attr = attributes[i];
+            if (attr.specified !== false) {
+                attributesArray.push(' ' + attr.name + '="' + attr.value + '"');
+            }
+        }
+
+        attributesArray.sort();
+
+        html += attributesArray.join('');
+
+        html += '>\n';
+
+        var childNodes = el.childNodes;
+
+        if (childNodes && childNodes.length) {
+            for (i=0; i<childNodes.length; i++) {
+                serializeHelper(childNodes[i], indent + '  ');
+            }
+        }
+    }
+
+    function serializeTextHelper(node, indent) {
+        html += indent + JSON.stringify(node.nodeValue) + '\n';
+    }
+
+    serializeHelper(node, '');
+
+    return html;
 }
 
 function buildElLookup(node) {
@@ -589,13 +637,13 @@ function addTests() {
             fromEl.innerHTML = '<div id="qwerty" class="div1"></div>';
             toEl.innerHTML = '<span><div id="qwerty" class="div1"></div></span>';
 
-            var div1 = fromEl.querySelector('.div1');
+            var div1a = fromEl.querySelector('.div1');
 
             morphdom(fromEl, toEl);
 
-            var div1_2 = fromEl.querySelector('.div1');
+            var div1b = fromEl.querySelector('.div1');
 
-            expect(div1).to.equal(div1_2);
+            expect(div1a).to.equal(div1b);
         });
 
         it('should transform an html document el to a target HTML string', function() {

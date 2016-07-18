@@ -103,6 +103,7 @@ function run() {
 
     var out = fs.createWriteStream(pageHtmlFile, 'utf8');
     pageTemplate.render({
+            runBenchmarks: testConfig.runBenchmarks === true
         }, out)
         .on('finish', function() {
             console.log('Running client tests using mocha-phantomjs...');
