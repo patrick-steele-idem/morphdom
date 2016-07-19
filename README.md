@@ -57,7 +57,7 @@ NOTE: This module will modify both the original and target DOM node tree during 
 
 # Examples
 
-See: [./examples/](./examples/README.md)
+See: [./examples/](./examples/)
 
 # Browser Support
 
