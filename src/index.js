@@ -535,8 +535,8 @@ function morphdom(fromNode, toNode, options) {
         morphEl(morphedNode, toNode, childrenOnly);
 
         for (var k in fromNodesLookup) {
-            if (fromNodesLookup.hasOwnProperty(k)) {
-                var elToRemove = fromNodesLookup[k];
+            var elToRemove = fromNodesLookup[k];
+            if (elToRemove) {
                 removeNode(elToRemove, elToRemove.parentNode);
             }
         }
