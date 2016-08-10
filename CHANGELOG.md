@@ -5,6 +5,14 @@ Changelog
 
 ## 2.0.x
 
+### 2.0.2
+
+- Fixed [#78](https://github.com/patrick-steele-idem/morphdom/issues/78) - Elements under `onBeforeElChildrenUpdated` element removed if they have `id` set
+
+### 2.0.1
+
+- Small optimization and more tests
+
 ### 2.0.0
 
 - Fixed [#47](https://github.com/patrick-steele-idem/morphdom/issues/47) - Detect and handle reorder of siblings

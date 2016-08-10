@@ -690,6 +690,42 @@ function addTests() {
             expect(finalEl.innerHTML).to.equal('<div id="boo"></div>');
         });
 
+        it('should not remove keyed elements that are part of a DOM subtree that is skipped using onBeforeElUpdated', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<span id="skipMe"><span id="skipMeChild"></span></span>';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<span id="skipMe"></div>';
+
+            morphdom(el1, el2, {
+                onBeforeElUpdated: function(el) {
+                    if (el.id === 'skipMe') {
+                        return false;
+                    }
+                }
+            });
+
+            expect(el1.querySelector('#skipMeChild') != null).to.equal(true);
+        });
+
+        it('should not remove keyed elements that are part of a DOM subtree that is skipped using onBeforeElChildrenUpdated', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<span id="skipMe"><span id="skipMeChild"></span></span>';
+
+            var el2 = document.createElement('div');
+            el2.innerHTML = '<span id="skipMe"></div>';
+
+            morphdom(el1, el2, {
+                onBeforeElChildrenUpdated: function(el) {
+                    if (el.id === 'skipMe') {
+                        return false;
+                    }
+                }
+            });
+
+            expect(el1.querySelector('#skipMeChild') != null).to.equal(true);
+        });
+
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
