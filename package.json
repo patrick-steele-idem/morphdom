@@ -39,9 +39,8 @@
     "virtual-dom": "^2.1.1",
     "phantomjs-prebuilt": "^2.1.12"
   },
-  "dependencies": {
-  },
-  "version": "2.0.2",
+  "dependencies": {},
+  "version": "2.0.3",
   "keywords": [
     "dom",
     "diff",
