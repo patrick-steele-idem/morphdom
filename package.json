@@ -33,13 +33,14 @@
     "marko": "^3.3.0",
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^3.5.3",
-    "phantomjs": "1.9.7-15",
     "uglify-js": "^2.6.2",
     "umd": "^3.0.1",
     "vdom-virtualize": "0.0.12",
-    "virtual-dom": "^2.1.1"
+    "virtual-dom": "^2.1.1",
+    "phantomjs-prebuilt": "^2.1.12"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "version": "2.0.2",
   "keywords": [
     "dom",
