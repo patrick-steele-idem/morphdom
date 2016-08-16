@@ -1,3 +1,4 @@
+sudo: false
 node_js:
 - "4"
 - "5"
