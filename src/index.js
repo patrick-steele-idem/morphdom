@@ -372,6 +372,10 @@ function morphdom(fromNode, toNode, options) {
             delete fromNodesLookup[toElKey];
         }
 
+        if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
+            return;
+        }
+
         if (!childrenOnly) {
             if (onBeforeElUpdated(fromEl, toEl) === false) {
                 return;
@@ -399,6 +403,10 @@ function morphdom(fromNode, toNode, options) {
                 curToNodeKey = getNodeKey(curToNodeChild);
 
                 while (curFromNodeChild) {
+                    if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
+                        return;
+                    }
+
                     curFromNodeKey = getNodeKey(curFromNodeChild);
                     fromNextSibling = curFromNodeChild.nextSibling;
 

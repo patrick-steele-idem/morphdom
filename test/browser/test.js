@@ -726,6 +726,23 @@ function addTests() {
             expect(el1.querySelector('#skipMeChild') != null).to.equal(true);
         });
 
+        it('should use isSameNode to allow reference proxies', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = 'stay gold';
+            var el2 = document.createElement('div');
+            el2.innerHTML = 'ponyboy';
+            el2.isSameNode = function (el) {return el.isSameNode(el1)};
+            morphdom(el1, el2);
+            expect(el1.innerHTML).to.equal('stay gold');
+
+            var containEl1 = document.createElement('div');
+            containEl1.appendChild(el1);
+            var containEl2 = document.createElement('div');
+            containEl2.appendChild(el2);
+            morphdom(containEl1, containEl2);
+            expect(el1.innerHTML).to.equal('stay gold');
+        });
+
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
