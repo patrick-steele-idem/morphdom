@@ -4,6 +4,12 @@ var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
 var vdomVirtualize = require('vdom-virtualize');
 var series = require('async').series;
+var markoVDOMVirtualize = require('marko-vdom/virtualize');
+var diffhtml;
+
+try {
+    diffhtml = require('diffhtml');
+} catch(e) {};
 
 var now;
 
@@ -98,8 +104,58 @@ function addBenchmarks() {
                 var workingData = this.workingDataArray[i];
                 var fromNode = workingData.fromNode;
                 var toNode = workingData.toNode;
-                var options = workingData.options;
-                morphdom(fromNode, toNode, options);
+                morphdom(fromNode, toNode);
+            }
+        },
+        'marko-vdom': {
+            enabled: true,
+            setup: function(autoTest, iterations) {
+                var workingDataArray = this.workingDataArray = [];
+                var i;
+
+                var fromNode = parseHtml(autoTest.from);
+                var toNode = parseHtml(autoTest.to);
+                var toNodeVDOM = markoVDOMVirtualize(toNode);
+
+                for (i=0; i<iterations; i++) {
+                    workingDataArray.push({
+                        fromNode: fromNode.cloneNode(true),
+                        toNodeVDOM: toNodeVDOM
+                    });
+                }
+            },
+
+            runIteration: function(i) {
+                var workingData = this.workingDataArray[i];
+                var fromNode = workingData.fromNode;
+                var toNodeVDOM = workingData.toNodeVDOM;
+
+                morphdom(fromNode, toNodeVDOM);
+            }
+        },
+        'diffHTML': {
+            enabled: true && diffhtml != null,
+            setup: function(autoTest, iterations) {
+                var workingDataArray = this.workingDataArray = [];
+                var i;
+
+                var fromNode = parseHtml(autoTest.from);
+                var toNodeVDOM = diffhtml.html(autoTest.to);
+
+                for (i=0; i<iterations; i++) {
+                    workingDataArray.push({
+                        fromNode: fromNode.cloneNode(true),
+                        toNodeVDOM: toNodeVDOM
+                    });
+                }
+            },
+
+            runIteration: function(i) {
+                var workingData = this.workingDataArray[i];
+                var fromNode = workingData.fromNode;
+                var toNodeVDOM = workingData.toNodeVDOM;
+
+                diffhtml.element(fromNode, toNodeVDOM);
             }
         },
         'virtual-dom': {
@@ -114,13 +170,12 @@ function addBenchmarks() {
                 var fromNode = parseHtml(autoTest.from);
                 var toNode = parseHtml(autoTest.to);
 
+                var fromNodeClone = fromNode.cloneNode(true);
+                fromNodeVDOM = vdomVirtualize(fromNodeClone);
+                var toNodeClone = toNode.cloneNode(true);
+                toNodeVDOM = vdomVirtualize(toNodeClone);
+
                 for (i=0; i<iterations; i++) {
-
-                    var fromNodeClone = fromNode.cloneNode(true);
-                    fromNodeVDOM = vdomVirtualize(fromNodeClone);
-                    var toNodeClone = toNode.cloneNode(true);
-                    toNodeVDOM = vdomVirtualize(toNodeClone);
-
                     workingDataArray.push({
                         fromNode: fromNodeClone,
                         fromNodeVDOM: fromNodeVDOM,
