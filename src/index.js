@@ -2,11 +2,14 @@
 // Create a range object for efficently rendering strings to elements.
 var range;
 
-var testEl = (typeof document !== 'undefined') ?
-    document.body || document.createElement('div') :
+var doc = typeof document !== 'undefined' && document;
+
+var testEl = doc ?
+    doc.body || doc.createElement('div') :
     {};
 
-var XHTML = 'http://www.w3.org/1999/xhtml';
+var NS_XHTML = 'http://www.w3.org/1999/xhtml';
+
 var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
@@ -30,16 +33,16 @@ if (testEl.hasAttributeNS) {
 }
 
 function toElement(str) {
-    if (!range && document.createRange) {
-        range = document.createRange();
-        range.selectNode(document.body);
+    if (!range && doc.createRange) {
+        range = doc.createRange();
+        range.selectNode(doc.body);
     }
 
     var fragment;
     if (range && range.createContextualFragment) {
         fragment = range.createContextualFragment(str);
     } else {
-        fragment = document.createElement('body');
+        fragment = doc.createElement('body');
         fragment.innerHTML = str;
     }
     return fragment.childNodes[0];
@@ -103,16 +106,34 @@ var specialElHandlers = {
 function noop() {}
 
 /**
- * Returns true if two node's names and namespace URIs are the same.
+ * Returns true if two node's names are the same.
+ *
+ * NOTE: We don't bother checking `namespaceURI` because you will never find two HTML elements with the same
+ *       nodeName and different namespace URIs.
  *
  * @param {Element} a
- * @param {Element} b
+ * @param {Element} b The target element
  * @return {boolean}
  */
-var compareNodeNames = function(a, b) {
-    return a.nodeName === b.nodeName &&
-           a.namespaceURI === b.namespaceURI;
-};
+function compareNodeNames(fromEl, toEl) {
+    var fromNodeName = fromEl.nodeName;
+    var toNodeName = toEl.nodeName;
+
+    if (fromNodeName === toNodeName) {
+        return true;
+    }
+
+    if (toEl.actualize &&
+        fromNodeName.charCodeAt(0) < 91 && /* from tag name is upper case */
+        toNodeName.charCodeAt(0) > 90 /* target tag name is lower case */) {
+        // If the target element is a virtual DOM node then we may need to normalize the tag name
+        // before comparing. Normal HTML elements that are in the "http://www.w3.org/1999/xhtml"
+        // are converted to upper case
+        return fromNodeName === toNodeName.toUpperCase();
+    } else {
+        return false;
+    }
+}
 
 /**
  * Create an element, optionally with a known namespace URI.
@@ -124,9 +145,9 @@ var compareNodeNames = function(a, b) {
  * @return {Element}
  */
 function createElementNS(name, namespaceURI) {
-    return !namespaceURI || namespaceURI === XHTML ?
-        document.createElement(name) :
-        document.createElementNS(namespaceURI, name);
+    return !namespaceURI || namespaceURI === NS_XHTML ?
+        doc.createElement(name) :
+        doc.createElementNS(namespaceURI, name);
 }
 
 /**
@@ -146,24 +167,28 @@ function morphAttrs(fromNode, toNode) {
     var attrValue;
     var fromValue;
 
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        attrName = attr.name;
-        attrNamespaceURI = attr.namespaceURI;
-        attrValue = attr.value;
+    if (toNode.assignAttributes) {
+        toNode.assignAttributes(fromNode);
+    } else {
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            attrName = attr.name;
+            attrNamespaceURI = attr.namespaceURI;
+            attrValue = attr.value;
 
-        if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+            if (attrNamespaceURI) {
+                attrName = attr.localName || attrName;
+                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-            }
-        } else {
-            fromValue = fromNode.getAttribute(attrName);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+                }
+            } else {
+                fromValue = fromNode.getAttribute(attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttribute(attrName, attrValue);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttribute(attrName, attrValue);
+                }
             }
         }
     }
@@ -179,10 +204,10 @@ function morphAttrs(fromNode, toNode) {
             attrNamespaceURI = attr.namespaceURI;
 
             if (attrNamespaceURI) {
-                attrName = attrName = attr.localName || attrName;
+                attrName = attr.localName || attrName;
 
                 if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                    fromNode.removeAttributeNS(attrNamespaceURI, attr.localName);
+                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
                 }
             } else {
                 if (!hasAttributeNS(toNode, null, attrName)) {
@@ -218,7 +243,7 @@ function morphdom(fromNode, toNode, options) {
     if (typeof toNode === 'string') {
         if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
             var toNodeHtml = toNode;
-            toNode = document.createElement('html');
+            toNode = doc.createElement('html');
             toNode.innerHTML = toNodeHtml;
         } else {
             toNode = toElement(toNode);
@@ -518,7 +543,15 @@ function morphdom(fromNode, toNode, options) {
                     fromEl.appendChild(matchingFromEl);
                     morphEl(matchingFromEl, curToNodeChild);
                 } else {
-                    if (onBeforeNodeAdded(curToNodeChild) !== false) {
+                    var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
+                    if (onBeforeNodeAddedResult !== false) {
+                        if (onBeforeNodeAddedResult) {
+                            curToNodeChild = onBeforeNodeAddedResult;
+                        }
+
+                        if (curToNodeChild.actualize) {
+                            curToNodeChild = curToNodeChild.actualize(fromEl.ownerDocument || doc);
+                        }
                         fromEl.appendChild(curToNodeChild);
                         handleNodeAdded(curToNodeChild);
                     }
@@ -603,6 +636,9 @@ function morphdom(fromNode, toNode, options) {
     }
 
     if (!childrenOnly && morphedNode !== fromNode && fromNode.parentNode) {
+        if (morphedNode.actualize) {
+            morphedNode = morphedNode.actualize(fromNode.ownerDocument || doc);
+        }
         // If we had to swap out the from node with a new node because the old
         // node was not compatible with the target node then we need to
         // replace the old DOM node in the original DOM tree. This is only

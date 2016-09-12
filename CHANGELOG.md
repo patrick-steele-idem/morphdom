@@ -3,6 +3,14 @@ Changelog
 
 # 2.x
 
+## 2.1.x
+
+### 2.1.0
+
+- Added simple mechanism to support using cached nodes ([Pull Request #81](https://github.com/patrick-steele-idem/morphdom/pull/81) by [@AutoSponge](https://github.com/AutoSponge))
+    - Fixes: [Issue #77 - Memoized elements are removed & added anyway](https://github.com/patrick-steele-idem/morphdom/issues/77)
+- Added support for diffing a real DOM tree with a virtual DOM tree. See: [./docs/virtual-dom.md](./docs/virtual-dom.md)
+
 ## 2.0.x
 
 ### 2.0.2

@@ -2,11 +2,21 @@ var chai = require('chai');
 var expect = chai.expect;
 var morphdom = require('../../');
 var resultTemplate = require('./test-result.marko');
+var markoVDOM = require('marko-vdom');
+var markoVDOMVirtualize = require('marko-vdom/virtualize');
 
 function parseHtml(html) {
     var tmp = document.createElement('body');
     tmp.innerHTML = html;
     return tmp.firstChild;
+}
+
+function startsWith(str, prefix) {
+    if (str.length < prefix.length) {
+        return false;
+    }
+
+    return str.substring(0, prefix.length) == prefix;
 }
 
 function serializeNode(node) {
@@ -25,7 +35,19 @@ function serializeNode(node) {
     }
 
     function serializeElHelper(el, indent) {
-        html += indent + '<' + el.tagName;
+        var nodeName = el.tagName;
+
+        var namespaceURI = el.namespaceURI;
+
+        if (namespaceURI === 'http://www.w3.org/2000/svg') {
+            nodeName = 'svg:' + nodeName;
+        } else if (namespaceURI === 'http://www.w3.org/1998/Math/MathML') {
+            nodeName = 'math:' + nodeName;
+        } else if (namespaceURI !== 'http://www.w3.org/1999/xhtml') {
+            nodeName = namespaceURI + ':' + nodeName;
+        }
+
+        html += indent + '<' + nodeName;
 
         var attributes = el.attributes;
         var attributesArray = [];
@@ -33,6 +55,9 @@ function serializeNode(node) {
         for (var i=0; i<attributes.length; i++) {
             var attr = attributes[i];
             if (attr.specified !== false) {
+                if (startsWith(attr.name, 'xmlns')) {
+                    return;
+                }
                 attributesArray.push(' ' + attr.name + '="' + attr.value + '"');
             }
         }
@@ -134,7 +159,7 @@ function isNodeInTree(node, rootNode) {
     return false;
 }
 
-function runTest(name, autoTest) {
+function runTest(name, autoTest, virtual) {
     var fromHtml = autoTest.from;
     var toHtml = autoTest.to;
     var moduleStr = autoTest.module;
@@ -145,6 +170,10 @@ function runTest(name, autoTest) {
     var allFromNodes = collectNodes(fromNode);
 
     var expectedSerialized = serializeNode(toNode);
+
+    if (virtual) {
+        toNode = markoVDOMVirtualize(toNode);
+    }
 
     var elLookupBefore = buildElLookup(fromNode);
 
@@ -305,6 +334,20 @@ function addTests() {
             });
         });
 
+        describe('auto tests - vdom', function() {
+            var autoTests = require('../mocha-phantomjs/generated/auto-tests');
+
+            Object.keys(autoTests).forEach(function(name) {
+
+                var test = autoTests[name];
+                var itFunc = test.only ? it.only : it;
+
+                itFunc(name + ' (vdom)', function() {
+                    runTest(name, test, true /* virtual */);
+                });
+            });
+        });
+
         it('should transform a simple el', function() {
             var el1 = document.createElement('div');
             el1.className = 'foo';
@@ -317,7 +360,7 @@ function addTests() {
             expect(el1.className).to.equal('bar');
         });
 
-        it('should transform an text input el', function() {
+        it('should transform a text input el', function() {
             var el1 = document.createElement('input');
             el1.type = 'text';
             el1.value = 'Hello World';
@@ -534,7 +577,7 @@ function addTests() {
             expect(button.innerHTML).to.equal('B');
         });
 
-        it('should transform an textarea el', function() {
+        it('should transform a textarea el', function() {
             var el1 = document.createElement('div');
             el1.innerHTML = '<textarea>foo</textarea>';
             el1.firstChild.value = 'foo2';
@@ -726,12 +769,56 @@ function addTests() {
             expect(el1.querySelector('#skipMeChild') != null).to.equal(true);
         });
 
+        it('should transform a virtual text input el', function() {
+            var el1 = document.createElement('input');
+            el1.type = 'text';
+            el1.value = 'Hello World';
+
+            var el2 = markoVDOM.createElement('input', { type: 'text', value: 'Hello World 2'}, 0);
+
+            morphdom(el1, el2);
+
+            expect(el1.value).to.equal('Hello World 2');
+        });
+
+        it('should transform a virtual div', function() {
+            var el1 = document.createElement('div');
+            el1.className = 'foo';
+            el1.appendChild(document.createTextNode('FOO'));
+
+            var el2 = markoVDOM.createElement('div', { class: 'bar' }, 1 /* child count */)
+                .t('BAR');
+
+            morphdom(el1, el2);
+
+            expect(el1.className).to.equal('bar');
+            expect(el1.childNodes[0].nodeValue).to.equal('BAR');
+        });
+
+        it('should actualize a virtual HTML element when it is added to the final DOM', function() {
+            var el1 = document.createElement('div');
+            el1.className = 'foo';
+
+            var el2 = markoVDOM.createElement('div', { class: 'bar' }, 1)
+                .e('span', { class: 'baz' }, 1)
+                    .t('foo');
+
+            morphdom(el1, el2);
+
+            expect(el1.className).to.equal('bar');
+            expect(el1.childNodes[0].nodeName).to.equal('SPAN');
+            expect(el1.childNodes[0].getAttribute('class')).to.equal('baz');
+            expect(el1.childNodes[0].childNodes[0].nodeValue).to.equal('foo');
+        });
+
         it('should use isSameNode to allow reference proxies', function() {
             var el1 = document.createElement('div');
             el1.innerHTML = 'stay gold';
             var el2 = document.createElement('div');
             el2.innerHTML = 'ponyboy';
-            el2.isSameNode = function (el) {return el.isSameNode(el1)};
+            el2.isSameNode = function (el) {
+                return el.isSameNode(el1);
+            };
             morphdom(el1, el2);
             expect(el1.innerHTML).to.equal('stay gold');
 
