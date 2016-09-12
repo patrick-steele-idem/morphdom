@@ -107,7 +107,7 @@ function addBenchmarks() {
                 morphdom(fromNode, toNode);
             }
         },
-        'marko-vdom': {
+        'morphdom - marko-vdom': {
             enabled: true,
             setup: function(autoTest, iterations) {
                 var workingDataArray = this.workingDataArray = [];
@@ -134,7 +134,7 @@ function addBenchmarks() {
             }
         },
         'diffHTML': {
-            enabled: true && diffhtml != null,
+            enabled: false && diffhtml != null,
             setup: function(autoTest, iterations) {
                 var workingDataArray = this.workingDataArray = [];
                 var i;
@@ -195,6 +195,13 @@ function addBenchmarks() {
             }
         }
     };
+
+    for (var k in handlers) {
+        var handler = handlers[k];
+        if (!handler.enabled) {
+            delete handlers[k];
+        }
+    }
 
     var moduleNames = Object.keys(handlers);
 
