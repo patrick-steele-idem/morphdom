@@ -8,7 +8,8 @@ var testEl = doc ?
     doc.body || doc.createElement('div') :
     {};
 
-var XHTML = 'http://www.w3.org/1999/xhtml';
+var NS_XHTML = 'http://www.w3.org/1999/xhtml';
+
 var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
@@ -139,7 +140,7 @@ function compareNodeNames(fromEl, toEl) {
  * @return {Element}
  */
 function createElementNS(name, namespaceURI) {
-    return !namespaceURI || namespaceURI === XHTML ?
+    return !namespaceURI || namespaceURI === NS_XHTML ?
         doc.createElement(name) :
         doc.createElementNS(namespaceURI, name);
 }
@@ -161,24 +162,28 @@ function morphAttrs(fromNode, toNode) {
     var attrValue;
     var fromValue;
 
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        attrName = attr.name;
-        attrNamespaceURI = attr.namespaceURI;
-        attrValue = attr.value;
+    if (toNode.assignAttributes) {
+        toNode.assignAttributes(fromNode);
+    } else {
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            attrName = attr.name;
+            attrNamespaceURI = attr.namespaceURI;
+            attrValue = attr.value;
 
-        if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+            if (attrNamespaceURI) {
+                attrName = attr.localName || attrName;
+                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-            }
-        } else {
-            fromValue = fromNode.getAttribute(attrName);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+                }
+            } else {
+                fromValue = fromNode.getAttribute(attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttribute(attrName, attrValue);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttribute(attrName, attrValue);
+                }
             }
         }
     }
