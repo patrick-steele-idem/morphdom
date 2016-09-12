@@ -774,10 +774,7 @@ function addTests() {
             el1.type = 'text';
             el1.value = 'Hello World';
 
-            var el2 = markoVDOM.createElement('input', 2 /*attr count*/, 0)
-                .a('type', 'text')
-                .a('value', 'Hello World 2');
-
+            var el2 = markoVDOM.createElement('input', { type: 'text', value: 'Hello World 2'}, 0);
 
             morphdom(el1, el2);
 
@@ -789,9 +786,8 @@ function addTests() {
             el1.className = 'foo';
             el1.appendChild(document.createTextNode('FOO'));
 
-            var el2 = markoVDOM.createElement('div', 1 /*attr count*/, 1 /* child count */)
-                .a('class', 'bar')
-                    .t('BAR');
+            var el2 = markoVDOM.createElement('div', { class: 'bar' }, 1 /* child count */)
+                .t('BAR');
 
             morphdom(el1, el2);
 
@@ -803,10 +799,8 @@ function addTests() {
             var el1 = document.createElement('div');
             el1.className = 'foo';
 
-            var el2 = markoVDOM.createElement('div', 1, 1)
-                .a('class', 'bar')
-                .e('span', 1, 1)
-                    .a('class', 'baz')
+            var el2 = markoVDOM.createElement('div', { class: 'bar' }, 1)
+                .e('span', { class: 'baz' }, 1)
                     .t('foo');
 
             morphdom(el1, el2);
