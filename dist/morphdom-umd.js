@@ -9,7 +9,8 @@ var testEl = doc ?
     doc.body || doc.createElement('div') :
     {};
 
-var XHTML = 'http://www.w3.org/1999/xhtml';
+var NS_XHTML = 'http://www.w3.org/1999/xhtml';
+
 var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
@@ -116,18 +117,23 @@ function noop() {}
  * @return {boolean}
  */
 function compareNodeNames(fromEl, toEl) {
-    var aNodeName = fromEl.nodeName;
-    var bNodeName = toEl.nodeName;
+    var fromNodeName = fromEl.nodeName;
+    var toNodeName = toEl.nodeName;
 
-    // If the target element is a virtual DOM node then we may need to normalize the tag name
-    // before comparing. Normal HTML elements that are in the "http://www.w3.org/1999/xhtml"
-    // are converted to upper case
-    if (toEl.actualize &&
-        aNodeName.charCodeAt(0) < 91 /* from tag name is upper case */ &&
-        bNodeName.charCodeAt(0) > 90 /* target tag name is lower case */) {
-        return aNodeName === bNodeName.toUpperCase();
+    if (fromNodeName === toNodeName) {
+        return true;
     }
-    return aNodeName === bNodeName;
+
+    if (toEl.actualize &&
+        fromNodeName.charCodeAt(0) < 91 && /* from tag name is upper case */
+        toNodeName.charCodeAt(0) > 90 /* target tag name is lower case */) {
+        // If the target element is a virtual DOM node then we may need to normalize the tag name
+        // before comparing. Normal HTML elements that are in the "http://www.w3.org/1999/xhtml"
+        // are converted to upper case
+        return fromNodeName === toNodeName.toUpperCase();
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -140,7 +146,7 @@ function compareNodeNames(fromEl, toEl) {
  * @return {Element}
  */
 function createElementNS(name, namespaceURI) {
-    return !namespaceURI || namespaceURI === XHTML ?
+    return !namespaceURI || namespaceURI === NS_XHTML ?
         doc.createElement(name) :
         doc.createElementNS(namespaceURI, name);
 }
@@ -162,24 +168,28 @@ function morphAttrs(fromNode, toNode) {
     var attrValue;
     var fromValue;
 
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        attrName = attr.name;
-        attrNamespaceURI = attr.namespaceURI;
-        attrValue = attr.value;
+    if (toNode.assignAttributes) {
+        toNode.assignAttributes(fromNode);
+    } else {
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            attrName = attr.name;
+            attrNamespaceURI = attr.namespaceURI;
+            attrValue = attr.value;
 
-        if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+            if (attrNamespaceURI) {
+                attrName = attr.localName || attrName;
+                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-            }
-        } else {
-            fromValue = fromNode.getAttribute(attrName);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+                }
+            } else {
+                fromValue = fromNode.getAttribute(attrName);
 
-            if (fromValue !== attrValue) {
-                fromNode.setAttribute(attrName, attrValue);
+                if (fromValue !== attrValue) {
+                    fromNode.setAttribute(attrName, attrValue);
+                }
             }
         }
     }
