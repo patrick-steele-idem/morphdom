@@ -93,6 +93,9 @@ Supported options (all optional):
 ```javascript
 var morphdom = require('morphdom');
 var morphedNode = morphdom(fromNode, toNode, {
+    getNodeKey: function(node) {
+        return node.id;
+    },
     onBeforeNodeAdded: function(node) {
         return true;
     },
@@ -156,11 +159,14 @@ The premise for using a virtual DOM is that the DOM is "slow". While there is sl
 
 See the [Benchmarks](#benchmarks) below for a comparison of `morphdom` with [virtual-dom](https://github.com/Matt-Esch/virtual-dom).
 
+___UPDATE:___ As of `v2.1.0`, `morphdom` supports both diffing a real DOM tree with another real DOM tree and diffing a real DOM tree with a _virtual_ DOM tree. See: [docs/virtual-dom.md](docs/virtual-dom.md) for more details.
+
 ## Which is better: rendering to an HTML string or rendering virtual DOM nodes?
 
 There are many high performance templating engines that stream out HTML strings with no intermediate virtual DOM nodes being produced. On the server, rendering directly to an HTML string will _always_ be faster than rendering virtual DOM nodes (that then get serialized to an HTML string). In a benchmark where we compared server-side rendering for [Marko](https://github.com/marko-js/marko) (with [Marko Widgets](https://github.com/marko-js/marko-widgets)) and React we found that Marko was able to render pages ten times faster than React with much lower CPU usage (see: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react))
 
-In theory, templating languages such as Marko could support two compiled outputs: one that produces HTML strings (for use on the server) and another that produces DOM nodes (for use in the browser). However, based on our benchmarks we see no reason to switch over to rendering DOM nodes. Rendering to an HTML string performs very well on both the server and in the browser and it simplifies template compilers.
+A good strategy to optimize for performance is to render a template to an HTML string on the server, but to compile the template such that it renders to a DOM/virtual DOM in the browser. This approach offers the best performance for both the server and the browser. In the near future, support for rendering to a virtual DOM will be added to the
+[Marko](https://github.com/marko-js/marko) templating engine.
 
 ## What projects are using `morphdom`?
 
@@ -405,5 +411,5 @@ npm test
 
 # License
 
-ISC
+MIT
 
