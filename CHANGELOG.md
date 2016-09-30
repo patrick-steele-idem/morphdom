@@ -5,6 +5,10 @@ Changelog
 
 ## 2.1.x
 
+### 2.1.1
+
+- Fixed [#84](https://github.com/patrick-steele-idem/morphdom/issues/84) - unexpected repaint of `<select>` tag
+
 ### 2.1.0
 
 - Added simple mechanism to support using cached nodes ([Pull Request #81](https://github.com/patrick-steele-idem/morphdom/pull/81) by [@AutoSponge](https://github.com/AutoSponge))
