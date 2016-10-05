@@ -5,6 +5,10 @@ Changelog
 
 ## 2.1.x
 
+### 2.1.2
+
+- Fixed [#85](https://github.com/patrick-steele-idem/morphdom/issues/85) - Siblings not diffed/patched after `isSameNode()` returns `true` ([PR #86](https://github.com/patrick-steele-idem/morphdom/pull/86) by [@AutoSponge](https://github.com/AutoSponge))
+
 ### 2.1.1
 
 - Fixed [#84](https://github.com/patrick-steele-idem/morphdom/issues/84) - unexpected repaint of `<select>` tag
