@@ -423,12 +423,15 @@ function morphdom(fromNode, toNode, options) {
                 curToNodeKey = getNodeKey(curToNodeChild);
 
                 while (curFromNodeChild) {
+                    fromNextSibling = curFromNodeChild.nextSibling;
+
                     if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
-                        return;
+                        curToNodeChild = toNextSibling;
+                        curFromNodeChild = fromNextSibling;
+                        continue outer;
                     }
 
                     curFromNodeKey = getNodeKey(curFromNodeChild);
-                    fromNextSibling = curFromNodeChild.nextSibling;
 
                     var curFromNodeType = curFromNodeChild.nodeType;
 

@@ -830,6 +830,29 @@ function addTests() {
             expect(el1.innerHTML).to.equal('stay gold');
         });
 
+        it('should morph siblings of reference proxies', function() {
+            var parentFrom = document.createElement('div');
+            var html = '';
+            html += '<div class="one">one</div>';
+            html += '<div class="two">two</div>';
+            html += '<div class="three">three</div>';
+            parentFrom.innerHTML = html;
+            var parentTo = parentFrom.cloneNode(true);
+            var hasProxy = parentFrom.querySelector('.two');
+            hasProxy.innerHTML = 'hasProxy';
+            var proxy = parentTo.querySelector('.two');
+            proxy.isSameNode = function (el) {
+                return el.isSameNode(hasProxy)
+            };
+            parentTo.querySelector('.three').innerHTML = 'four';
+
+            morphdom(parentFrom, parentTo);
+
+            var child = parentFrom.querySelectorAll('*');
+            expect(child[0].outerHTML).to.equal('<div class="one">one</div>');
+            expect(child[1].outerHTML).to.equal('<div class="two">hasProxy</div>');
+            expect(child[2].outerHTML).to.equal('<div class="three">four</div>');
+        });
         // xit('should reuse DOM element with matching ID and class name (2)', function() {
         //     // NOTE: This test is currently failing. We need to improve the special case code
         //     //       for handling incompatible root nodes.
