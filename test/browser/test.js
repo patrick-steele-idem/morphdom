@@ -590,6 +590,22 @@ function addTests() {
             expect(el1.firstChild.value).to.equal('bar');
         });
 
+        it('should preserve placeholder in an empty textarea el', function() {
+            var el1 = document.createElement('div');
+            el1.innerHTML = '<textarea placeholder="foo"></textarea>';
+            var textarea1 = el1.firstChild;
+
+            // Special test for IE behavior.
+            if (textarea1.firstChild && textarea1.firstChild.nodeValue === 'foo') {
+              var el2 = document.createElement('div');
+              el2.innerHTML = '<textarea placeholder="foo"></textarea>';
+
+              morphdom(el1, el2);
+
+              expect(textarea1.firstChild.nodeValue).to.equal('foo');
+            }
+        });
+
         it('should not change caret position if input value did not change', function() {
             var inputEl = document.createElement('input');
             inputEl.type = 'text';
