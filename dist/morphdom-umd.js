@@ -155,17 +155,17 @@ function createElementNS(name, namespaceURI) {
  * @param  {Element} toNode
  */
 function morphAttrs(fromNode, toNode) {
-    var attrs = toNode.attributes;
-    var i;
-    var attr;
-    var attrName;
-    var attrNamespaceURI;
-    var attrValue;
-    var fromValue;
-
     if (toNode.assignAttributes) {
         toNode.assignAttributes(fromNode);
     } else {
+        var attrs = toNode.attributes;
+        var i;
+        var attr;
+        var attrName;
+        var attrNamespaceURI;
+        var attrValue;
+        var fromValue;
+
         for (i = attrs.length - 1; i >= 0; --i) {
             attr = attrs[i];
             attrName = attr.name;
@@ -187,27 +187,27 @@ function morphAttrs(fromNode, toNode) {
                 }
             }
         }
-    }
 
-    // Remove any extra attributes found on the original DOM element that
-    // weren't found on the target element.
-    attrs = fromNode.attributes;
+        // Remove any extra attributes found on the original DOM element that
+        // weren't found on the target element.
+        attrs = fromNode.attributes;
 
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        if (attr.specified !== false) {
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            if (attr.specified !== false) {
+                attrName = attr.name;
+                attrNamespaceURI = attr.namespaceURI;
 
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
+                if (attrNamespaceURI) {
+                    attrName = attr.localName || attrName;
 
-                if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                }
-            } else {
-                if (!hasAttributeNS(toNode, null, attrName)) {
-                    fromNode.removeAttribute(attrName);
+                    if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
+                        fromNode.removeAttributeNS(attrNamespaceURI, attrName);
+                    }
+                } else {
+                    if (!hasAttributeNS(toNode, null, attrName)) {
+                        fromNode.removeAttribute(attrName);
+                    }
                 }
             }
         }
