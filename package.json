@@ -32,7 +32,7 @@
     "lasso": "^2.4.1",
     "lasso-marko": "^2.0.7",
     "marko": "^3.3.0",
-    "marko-vdom": "^0.3.0",
+    "marko-vdom": "^1.0.1",
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^4.1.0",
     "phantomjs-prebuilt": "^2.1.13",
