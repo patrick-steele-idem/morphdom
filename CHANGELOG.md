@@ -3,7 +3,21 @@ Changelog
 
 # 2.x
 
+## 2.2.x
+
+### 2.2.1
+
+- IE-specific bug: fix `<textarea>` with `placeholder` attribute on IE ([PR #87](https://github.com/patrick-steele-idem/morphdom/pull/87) by [@ahdinosaur](https://github.com/ahdinosaur))
+- Fixed [#92](https://github.com/patrick-steele-idem/morphdom/issues/92) - `morphdom` fails to discard all removed child nodes when first child element is keyed
+- Docs: fixed docs for `onBeforeNodeAdded` (function should return a node) ([PR #91](https://github.com/patrick-steele-idem/morphdom/pull/91) by [@MelleB](https://github.com/MelleB))
+
+### 2.2.0
+
+- Allow `toNode.assignAttributes` full control
+
 ## 2.1.x
+
+### 2.1.3
 
 ### 2.1.2
 
