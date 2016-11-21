@@ -94,6 +94,12 @@ var specialElHandlers = {
         }
 
         if (fromEl.firstChild) {
+            // Needed for IE. Apparently IE sets the placeholder as the
+            // node value and vise versa. This ignores an empty update.
+            if (newValue === '' && fromEl.firstChild.nodeValue === fromEl.placeholder) {
+                return;
+            }
+
             fromEl.firstChild.nodeValue = newValue;
         }
     }
@@ -467,6 +473,8 @@ function morphdom(fromNode, toNode, options) {
                                             // all lifecycle hooks are correctly invoked
                                             fromEl.insertBefore(matchingFromEl, curFromNodeChild);
 
+                                            fromNextSibling = curFromNodeChild.nextSibling;
+
                                             if (curFromNodeKey) {
                                                 // Since the node is keyed it might be matched up later so we defer
                                                 // the actual removal to later
@@ -475,9 +483,8 @@ function morphdom(fromNode, toNode, options) {
                                                 // NOTE: we skip nested keyed nodes from being removed since there is
                                                 //       still a chance they will be matched up later
                                                 removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-
                                             }
-                                            fromNextSibling = curFromNodeChild.nextSibling;
+
                                             curFromNodeChild = matchingFromEl;
                                         }
                                     } else {
