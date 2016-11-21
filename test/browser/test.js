@@ -878,4 +878,46 @@ function addTests() {
 
 if (require('../mocha-phantomjs/generated/config').runTests === true) {
     addTests();
+
+    describe('Morphdom bug removing child nodes' , function() {
+
+        // Helper function to create a node
+        function node(tag, id) {
+            var el = document.createElement(tag);
+            if (id) {
+                el.id = id;
+            }
+            return el;
+        }
+
+        it('Should remove child nodes - nodes to be removed first ', function() {
+            var el1 = node('div', 'el')
+            el1.appendChild(node('span'));
+            el1.appendChild(node('span'));
+            el1.appendChild(node('span'));
+            el1.appendChild(node('span', 'child4'));
+
+            var el2 = node('div', 'el')
+            el2.appendChild(node('span', 'child4'));
+
+            morphdom(el1, el2);
+
+            expect(el1.children.length).to.equal(1);
+        });
+
+        it('Should remove child nodes - nodes to be removed last ', function() {
+            var el1 = node('div', 'el')
+            el1.appendChild(node('span', 'child1'));
+            el1.appendChild(node('span'));
+            el1.appendChild(node('span'));
+            el1.appendChild(node('span'));
+
+            var el2 = node('div', 'el')
+            el2.appendChild(node('span', 'child1'));
+
+            morphdom(el1, el2);
+
+            expect(el1.children.length).to.equal(1);
+        });
+    })
 }
