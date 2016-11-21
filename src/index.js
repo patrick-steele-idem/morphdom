@@ -466,6 +466,8 @@ function morphdom(fromNode, toNode, options) {
                                             // all lifecycle hooks are correctly invoked
                                             fromEl.insertBefore(matchingFromEl, curFromNodeChild);
 
+                                            fromNextSibling = curFromNodeChild.nextSibling;
+
                                             if (curFromNodeKey) {
                                                 // Since the node is keyed it might be matched up later so we defer
                                                 // the actual removal to later
@@ -474,9 +476,8 @@ function morphdom(fromNode, toNode, options) {
                                                 // NOTE: we skip nested keyed nodes from being removed since there is
                                                 //       still a chance they will be matched up later
                                                 removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-
                                             }
-                                            fromNextSibling = curFromNodeChild.nextSibling;
+
                                             curFromNodeChild = matchingFromEl;
                                         }
                                     } else {
