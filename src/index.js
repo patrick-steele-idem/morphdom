@@ -93,6 +93,12 @@ var specialElHandlers = {
         }
 
         if (fromEl.firstChild) {
+            // Needed for IE. Apparently IE sets the placeholder as the
+            // node value and vise versa. This ignores an empty update.
+            if (newValue === '' && fromEl.firstChild.nodeValue === fromEl.placeholder) {
+                return;
+            }
+
             fromEl.firstChild.nodeValue = newValue;
         }
     }
