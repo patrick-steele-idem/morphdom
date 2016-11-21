@@ -81,7 +81,7 @@ The returned value will typically be the `fromNode`. However, in situations wher
 Supported options (all optional):
 
 - **getNodeKey** (`Function(node)`) - Called to get the `Node`'s unique identifier. This is used by `morphdom` to rearrange elements rather than creating and destroying an element that already exists. This defaults to using the `Node`'s `id` attribute.
-- **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added.
+- **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added. Should return the node to be added.
 - **onNodeAdded** (`Function(node)`) - Called after a `Node` in the `to` tree has been added to the `from` tree.
 - **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated.
 - **onElUpdated** (`Function(el)`) - Called after a `HTMLElement` in the `from` tree has been updated.
@@ -97,7 +97,7 @@ var morphedNode = morphdom(fromNode, toNode, {
         return node.id;
     },
     onBeforeNodeAdded: function(node) {
-        return true;
+        return node;
     },
     onNodeAdded: function(node) {
 
