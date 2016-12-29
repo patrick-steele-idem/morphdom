@@ -242,7 +242,7 @@ function runTest(name, autoTest, virtual) {
 
     var elLookupAfter = buildElLookup(morphedNode);
 
-    var resultHtml = resultTemplate.renderSync({
+    var resultHtml = resultTemplate.renderToString({
         name: name,
         fromHtml: fromHtml,
         expectedHtml: toHtml,
@@ -314,11 +314,19 @@ function runTest(name, autoTest, virtual) {
     }
 }
 
+function node(tag, id, opts) {
+    if (opts == null) {
+      opts = {};
+    }
 
-function node(tag, id) {
     var el = document.createElement(tag);
     if (id) {
         el.id = id;
+    }
+    if (opts.attrs != null) {
+      for (var attr in opts.attrs) {
+        el.setAttribute(attr, opts.attrs[attr]);
+      }
     }
     return el;
 }
@@ -906,6 +914,20 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.children.length).to.equal(1);
+    });
+
+    it('should update selection state on select elements', function () {
+      var el1 = node('select', 'el');
+      el1.appendChild(node('option', 'child1', {attrs: {'selected': '',},}));
+      el1.appendChild(node('option', 'child2'));
+
+      var el2 = node('select', 'el');
+      el2.appendChild(node('option', 'child1'));
+      el2.appendChild(node('option', 'child2', {attrs: {'selected': '',},}));
+
+      morphdom(el1, el2);
+
+      expect(el1.selectedIndex).to.equal(1);
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {

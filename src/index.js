@@ -101,6 +101,17 @@ var specialElHandlers = {
 
             fromEl.firstChild.nodeValue = newValue;
         }
+    },
+    SELECT: function(fromEl) {
+      for (var i = 0; i < fromEl.children.length; ++i) {
+        var child = fromEl.children[i];
+        if (child.tagName.toLowerCase() === 'option') {
+          var selectedValue = child.getAttribute('selected');
+          if (selectedValue != null) {
+            fromEl.selectedIndex = i;
+          }
+        }
+      }
     }
 };
 
