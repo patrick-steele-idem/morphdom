@@ -102,6 +102,26 @@ var specialElHandlers = {
 
             fromEl.firstChild.nodeValue = newValue;
         }
+    },
+    SELECT: function(fromEl, toEl) {
+        if (!hasAttributeNS(toEl, null, 'multiple')) {
+            var selectedIndex = -1;
+            var i = 0;
+            var curChild = toEl.firstChild;
+            while(curChild) {
+                var nodeName = curChild.nodeName;
+                if (nodeName && nodeName.toUpperCase() === 'OPTION') {
+                    if (hasAttributeNS(curChild, null, 'selected')) {
+                        selectedIndex = i;
+                        break;
+                    }
+                    i++;
+                }
+                curChild = curChild.nextSibling;
+            }
+
+            fromEl.selectedIndex = i;
+        }
     }
 };
 
