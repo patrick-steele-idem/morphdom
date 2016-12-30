@@ -314,19 +314,20 @@ function runTest(name, autoTest, virtual) {
     }
 }
 
-function node(tag, id, opts) {
-    if (opts == null) {
-      opts = {};
+function node(tag, attrs, body) {
+    var el = document.createElement(tag);
+
+    if (typeof attrs === 'string') {
+        var id = attrs;
+        el.id = id;
+    } else if (attrs != null) {
+        for (var attr in attrs) {
+            el.setAttribute(attr, attrs[attr]);
+        }
     }
 
-    var el = document.createElement(tag);
-    if (id) {
-        el.id = id;
-    }
-    if (opts.attrs != null) {
-      for (var attr in opts.attrs) {
-        el.setAttribute(attr, opts.attrs[attr]);
-      }
+    if (body) {
+        el.innerHTML = body;
     }
     return el;
 }
@@ -917,17 +918,19 @@ describe('morphdom' , function() {
     });
 
     it('should update selection state on select elements', function () {
-      var el1 = node('select', 'el');
-      el1.appendChild(node('option', 'child1', {attrs: {'selected': '',},}));
-      el1.appendChild(node('option', 'child2'));
+        var el1 = node('select');
+        el1.appendChild(node('option', {'selected': ''}, 'Option 1'));
+        el1.appendChild(node('option', {}, 'Option 2'));
 
-      var el2 = node('select', 'el');
-      el2.appendChild(node('option', 'child1'));
-      el2.appendChild(node('option', 'child2', {attrs: {'selected': '',},}));
+        document.body.appendChild(el1);
 
-      morphdom(el1, el2);
+        var el2 = node('select');
+        el2.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(node('option', {'selected': ''}, 'Option 2'));
 
-      expect(el1.selectedIndex).to.equal(1);
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(1);
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
