@@ -5,6 +5,10 @@ Changelog
 
 ## 2.2.x
 
+### 2.2.2
+
+- Changes to ensure that `selectedIndex` is updated correctly in all browsers ([PR #94](https://github.com/patrick-steele-idem/morphdom/pull/94) by [@aknuds1](https://github.com/aknuds1))
+
 ### 2.2.1
 
 - IE-specific bug: fix `<textarea>` with `placeholder` attribute on IE ([PR #87](https://github.com/patrick-steele-idem/morphdom/pull/87) by [@ahdinosaur](https://github.com/ahdinosaur))
