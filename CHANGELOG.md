@@ -3,6 +3,12 @@ Changelog
 
 # 2.x
 
+## 2.3.x
+
+### 2.3.0
+
+- Changes to improve code maintainability. Single file is now split out into multiple modules and [rollup](https://github.com/rollup/rollup) is used to build the distribution files.
+
 ## 2.2.x
 
 ### 2.2.2
