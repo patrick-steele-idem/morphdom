@@ -1,15 +1,14 @@
-var morphdom = require('../../src/index');
+var morphdom = require('../../');
 var resultsTemplate = require('./benchmark-results.marko');
 var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
 var vdomVirtualize = require('vdom-virtualize');
 var series = require('async').series;
-var markoVDOMVirtualize = require('marko-vdom/virtualize');
 var diffhtml;
 
 try {
     diffhtml = require('diffhtml');
-} catch(e) {};
+} catch(e) {}
 
 var now;
 
@@ -107,32 +106,32 @@ function addBenchmarks() {
                 morphdom(fromNode, toNode);
             }
         },
-        'morphdom - marko-vdom': {
-            enabled: true,
-            setup: function(autoTest, iterations) {
-                var workingDataArray = this.workingDataArray = [];
-                var i;
-
-                var fromNode = parseHtml(autoTest.from);
-                var toNode = parseHtml(autoTest.to);
-                var toNodeVDOM = markoVDOMVirtualize(toNode);
-
-                for (i=0; i<iterations; i++) {
-                    workingDataArray.push({
-                        fromNode: fromNode.cloneNode(true),
-                        toNodeVDOM: toNodeVDOM
-                    });
-                }
-            },
-
-            runIteration: function(i) {
-                var workingData = this.workingDataArray[i];
-                var fromNode = workingData.fromNode;
-                var toNodeVDOM = workingData.toNodeVDOM;
-
-                morphdom(fromNode, toNodeVDOM);
-            }
-        },
+        // 'morphdom - marko-vdom': {
+        //     enabled: true,
+        //     setup: function(autoTest, iterations) {
+        //         var workingDataArray = this.workingDataArray = [];
+        //         var i;
+        //
+        //         var fromNode = parseHtml(autoTest.from);
+        //         var toNode = parseHtml(autoTest.to);
+        //         var toNodeVDOM = markoVDOMVirtualize(toNode);
+        //
+        //         for (i=0; i<iterations; i++) {
+        //             workingDataArray.push({
+        //                 fromNode: fromNode.cloneNode(true),
+        //                 toNodeVDOM: toNodeVDOM
+        //             });
+        //         }
+        //     },
+        //
+        //     runIteration: function(i) {
+        //         var workingData = this.workingDataArray[i];
+        //         var fromNode = workingData.fromNode;
+        //         var toNodeVDOM = workingData.toNodeVDOM;
+        //
+        //         morphdom(fromNode, toNodeVDOM);
+        //     }
+        // },
         'diffHTML': {
             enabled: false && diffhtml != null,
             setup: function(autoTest, iterations) {
@@ -282,55 +281,55 @@ function addBenchmarks() {
         });
         after(function() {
             console.log(JSON.stringify(results, null, 4));
-
-            var resultHtml = resultsTemplate.renderSync({
-                moduleNames: moduleNames,
-                testNames: Object.keys(results.tests),
-                getTotalTimeForTest: function(moduleName, testName) {
-                    var testResults = results.tests[testName].modules[moduleName];
-                    if (!testResults) {
-                        return '-';
-                    }
-                    var totalTime  = testResults.totalTime;
-                    return totalTime + 'ms';
-                },
-                getAverageTimeForTest: function(moduleName, testName) {
-                    var testResults = results.tests[testName].modules[moduleName];
-                    if (!testResults) {
-                        return '-';
-                    }
-                    var avgTime  = testResults.avgTime;
-                    return avgTime + 'ms';
-                },
-                isWinnerForTest: function(moduleName, testName) {
-                    var fastest = results.tests[testName].fastest;
-                    return fastest && fastest.moduleName === moduleName;
-                },
-                isWinner: function(moduleName) {
-                    var fastest = null;
-
-                    for (var currentModuleName in results.moduleTotalTimes) {
-                        var current = results.moduleTotalTimes[currentModuleName];
-                        if (!fastest) {
-                            fastest = current;
-                        } else if (current.totalTime < fastest.totalTime) {
-                            fastest = current;
-                        }
-                    }
-                    return fastest && fastest.moduleName === moduleName;
-                },
-                getTotalTime: function(moduleName) {
-                    var entry = results.moduleTotalTimes[moduleName];
-                    if (entry == null) {
-                        return '-';
-                    }
-
-                    return entry.totalTime.toFixed(2) + 'ms';
-                },
-            });
-
             var containerEl = document.createElement('div');
-            containerEl.innerHTML = resultHtml;
+
+            resultsTemplate.renderSync({
+                    moduleNames: moduleNames,
+                    testNames: Object.keys(results.tests),
+                    getTotalTimeForTest: function(moduleName, testName) {
+                        var testResults = results.tests[testName].modules[moduleName];
+                        if (!testResults) {
+                            return '-';
+                        }
+                        var totalTime  = testResults.totalTime;
+                        return totalTime + 'ms';
+                    },
+                    getAverageTimeForTest: function(moduleName, testName) {
+                        var testResults = results.tests[testName].modules[moduleName];
+                        if (!testResults) {
+                            return '-';
+                        }
+                        var avgTime  = testResults.avgTime;
+                        return avgTime + 'ms';
+                    },
+                    isWinnerForTest: function(moduleName, testName) {
+                        var fastest = results.tests[testName].fastest;
+                        return fastest && fastest.moduleName === moduleName;
+                    },
+                    isWinner: function(moduleName) {
+                        var fastest = null;
+
+                        for (var currentModuleName in results.moduleTotalTimes) {
+                            var current = results.moduleTotalTimes[currentModuleName];
+                            if (!fastest) {
+                                fastest = current;
+                            } else if (current.totalTime < fastest.totalTime) {
+                                fastest = current;
+                            }
+                        }
+                        return fastest && fastest.moduleName === moduleName;
+                    },
+                    getTotalTime: function(moduleName) {
+                        var entry = results.moduleTotalTimes[moduleName];
+                        if (entry == null) {
+                            return '-';
+                        }
+
+                        return entry.totalTime.toFixed(2) + 'ms';
+                    },
+                })
+                .appendTo(containerEl);
+
             document.getElementById('benchmark-results').appendChild(containerEl);
         });
 

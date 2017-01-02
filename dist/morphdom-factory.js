@@ -1,8 +1,4 @@
-(function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global.morphdom = factory());
-}(this, (function () { 'use strict';
+'use strict';
 
 var range; // Create a range object for efficently rendering strings to elements.
 var NS_XHTML = 'http://www.w3.org/1999/xhtml';
@@ -106,62 +102,6 @@ function moveChildren(fromEl, toEl) {
         curChild = nextChild;
     }
     return toEl;
-}
-
-function morphAttrs(fromNode, toNode) {
-    var attrs = toNode.attributes;
-    var i;
-    var attr;
-    var attrName;
-    var attrNamespaceURI;
-    var attrValue;
-    var fromValue;
-
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        attrName = attr.name;
-        attrNamespaceURI = attr.namespaceURI;
-        attrValue = attr.value;
-
-        if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
-
-            if (fromValue !== attrValue) {
-                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-            }
-        } else {
-            fromValue = fromNode.getAttribute(attrName);
-
-            if (fromValue !== attrValue) {
-                fromNode.setAttribute(attrName, attrValue);
-            }
-        }
-    }
-
-    // Remove any extra attributes found on the original DOM element that
-    // weren't found on the target element.
-    attrs = fromNode.attributes;
-
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        if (attr.specified !== false) {
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
-
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
-
-                if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                }
-            } else {
-                if (!hasAttributeNS(toNode, null, attrName)) {
-                    fromNode.removeAttribute(attrName);
-                }
-            }
-        }
-    }
 }
 
 function syncBooleanAttrProp(fromEl, toEl, name) {
@@ -672,8 +612,4 @@ function morphdomFactory(morphAttrs) {
     };
 }
 
-var morphdom = morphdomFactory(morphAttrs);
-
-return morphdom;
-
-})));
+module.exports = morphdomFactory;

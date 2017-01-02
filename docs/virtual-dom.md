@@ -16,7 +16,6 @@ Using `morphdom` with a virtual DOM
 - `node.hasAttributeNS(namespaceURI, name)`
 - `node.actualize(document)` <sup><a href="#actualize">[1]</a><sup>
 - `node.isSameNode(anotherNode)` <sup><a href="#isSameNode">[2]</a><sup>
-- `node.assignAttributes(targetNode)` <sup><a href="#assignAttributes">[3]</a><sup>
 
 NOTES:
 
