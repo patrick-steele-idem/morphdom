@@ -1,7 +1,7 @@
 var range; // Create a range object for efficently rendering strings to elements.
 var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
-export var doc = document;
+export var doc = typeof document === 'undefined' ? undefined : document;
 
 var testEl = doc ?
     doc.body || doc.createElement('div') :
