@@ -113,9 +113,9 @@ function morphAttrs(fromNode, toNode, options) {
     var attrValue;
     var fromValue;
 
-    var onBeforeElAttributeAdded = options.onBeforeElAttributeAdded || noop;
-    var onBeforeElAttributeUpdated = options.onBeforeElAttributeUpdated || noop;
-    var onBeforeElAttributeRemoved = options.onBeforeElAttributeRemoved || noop;
+    var onBeforeElAttributeAdded = options.onBeforeElAttributeAdded;
+    var onBeforeElAttributeUpdated = options.onBeforeElAttributeUpdated;
+    var onBeforeElAttributeRemoved = options.onBeforeElAttributeRemoved;
 
     for (i = attrs.length - 1; i >= 0; --i) {
         attr = attrs[i];
@@ -256,7 +256,7 @@ var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
 
-function noop$1() {}
+function noop() {}
 
 function defaultGetNodeKey(node) {
     return node.id;
@@ -280,13 +280,13 @@ function morphdomFactory(morphAttrs) {
         }
 
         var getNodeKey = options.getNodeKey || defaultGetNodeKey;
-        var onBeforeNodeAdded = options.onBeforeNodeAdded || noop$1;
-        var onNodeAdded = options.onNodeAdded || noop$1;
-        var onBeforeElUpdated = options.onBeforeElUpdated || noop$1;
-        var onElUpdated = options.onElUpdated || noop$1;
-        var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop$1;
-        var onNodeDiscarded = options.onNodeDiscarded || noop$1;
-        var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop$1;
+        var onBeforeNodeAdded = options.onBeforeNodeAdded || noop;
+        var onNodeAdded = options.onNodeAdded || noop;
+        var onBeforeElUpdated = options.onBeforeElUpdated || noop;
+        var onElUpdated = options.onElUpdated || noop;
+        var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
+        var onNodeDiscarded = options.onNodeDiscarded || noop;
+        var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop;
         var childrenOnly = options.childrenOnly === true;
 
         // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.

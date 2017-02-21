@@ -9,9 +9,9 @@ export default function morphAttrs(fromNode, toNode, options) {
     var attrValue;
     var fromValue;
 
-    var onBeforeElAttributeAdded = options.onBeforeElAttributeAdded || noop;
-    var onBeforeElAttributeUpdated = options.onBeforeElAttributeUpdated || noop;
-    var onBeforeElAttributeRemoved = options.onBeforeElAttributeRemoved || noop;
+    var onBeforeElAttributeAdded = options.onBeforeElAttributeAdded;
+    var onBeforeElAttributeUpdated = options.onBeforeElAttributeUpdated;
+    var onBeforeElAttributeRemoved = options.onBeforeElAttributeRemoved;
 
     for (i = attrs.length - 1; i >= 0; --i) {
         attr = attrs[i];
