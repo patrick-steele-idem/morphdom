@@ -104,7 +104,7 @@ function moveChildren(fromEl, toEl) {
     return toEl;
 }
 
-function morphAttrs(fromNode, toNode) {
+function morphAttrs(fromNode, toNode, options) {
     var attrs = toNode.attributes;
     var i;
     var attr;
@@ -112,6 +112,10 @@ function morphAttrs(fromNode, toNode) {
     var attrNamespaceURI;
     var attrValue;
     var fromValue;
+
+    var onBeforeElAttributeAdded = options.onBeforeElAttributeAdded || noop;
+    var onBeforeElAttributeUpdated = options.onBeforeElAttributeUpdated || noop;
+    var onBeforeElAttributeRemoved = options.onBeforeElAttributeRemoved || noop;
 
     for (i = attrs.length - 1; i >= 0; --i) {
         attr = attrs[i];
@@ -122,14 +126,24 @@ function morphAttrs(fromNode, toNode) {
         if (attrNamespaceURI) {
             attrName = attr.localName || attrName;
             fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
-
-            if (fromValue !== attrValue) {
+            if ( ! hasAttributeNS(fromNode, attrNamespaceURI, attrName)) {
+                // onBeforeElAttributeAdded
+                if (onBeforeElAttributeAdded && ! onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue)) continue;
+                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+            } else if (fromValue !== attrValue) {
+                // onBeforeElAttributeAdded
+                if (onBeforeElAttributeUpdated && ! onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue)) continue;
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
             fromValue = fromNode.getAttribute(attrName);
-
-            if (fromValue !== attrValue) {
+            if ( ! fromNode.hasAttribute(attrName)) {
+                // onBeforeElAttributeAdded
+                if (onBeforeElAttributeAdded && ! onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue)) continue;
+                fromNode.setAttribute(attrName, attrValue);
+            } else if (fromValue !== attrValue) {
+                // onBeforeElAttributeAdded
+                if (onBeforeElAttributeUpdated && ! onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue)) continue;
                 fromNode.setAttribute(attrName, attrValue);
             }
         }
@@ -149,10 +163,12 @@ function morphAttrs(fromNode, toNode) {
                 attrName = attr.localName || attrName;
 
                 if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
+                    if (onBeforeElAttributeRemoved && ! onBeforeElAttributeRemoved(fromNode, toNode, attrName)) continue;
                     fromNode.removeAttributeNS(attrNamespaceURI, attrName);
                 }
             } else {
                 if (!hasAttributeNS(toNode, null, attrName)) {
+                    if (onBeforeElAttributeRemoved && ! onBeforeElAttributeRemoved(fromNode, toNode, attrName)) continue;
                     fromNode.removeAttribute(attrName);
                 }
             }
@@ -240,7 +256,7 @@ var ELEMENT_NODE = 1;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
 
-function noop() {}
+function noop$1() {}
 
 function defaultGetNodeKey(node) {
     return node.id;
@@ -264,13 +280,13 @@ function morphdomFactory(morphAttrs) {
         }
 
         var getNodeKey = options.getNodeKey || defaultGetNodeKey;
-        var onBeforeNodeAdded = options.onBeforeNodeAdded || noop;
-        var onNodeAdded = options.onNodeAdded || noop;
-        var onBeforeElUpdated = options.onBeforeElUpdated || noop;
-        var onElUpdated = options.onElUpdated || noop;
-        var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
-        var onNodeDiscarded = options.onNodeDiscarded || noop;
-        var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop;
+        var onBeforeNodeAdded = options.onBeforeNodeAdded || noop$1;
+        var onNodeAdded = options.onNodeAdded || noop$1;
+        var onBeforeElUpdated = options.onBeforeElUpdated || noop$1;
+        var onElUpdated = options.onElUpdated || noop$1;
+        var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop$1;
+        var onNodeDiscarded = options.onNodeDiscarded || noop$1;
+        var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop$1;
         var childrenOnly = options.childrenOnly === true;
 
         // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
@@ -419,7 +435,7 @@ function morphdomFactory(morphAttrs) {
                     return;
                 }
 
-                morphAttrs(fromEl, toEl);
+                morphAttrs(fromEl, toEl, options);
                 onElUpdated(fromEl);
 
                 if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {

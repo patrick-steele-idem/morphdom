@@ -363,7 +363,7 @@ function morphdomFactory(morphAttrs) {
                     return;
                 }
 
-                morphAttrs(fromEl, toEl);
+                morphAttrs(fromEl, toEl, options);
                 onElUpdated(fromEl);
 
                 if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
