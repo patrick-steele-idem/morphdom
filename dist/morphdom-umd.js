@@ -132,22 +132,22 @@ function morphAttrs(fromNode, toNode, options) {
             fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
             if ( ! hasAttributeNS(fromNode, attrNamespaceURI, attrName)) {
                 // onBeforeElAttributeAdded
-                if (onBeforeElAttributeAdded && ! onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue)) continue;
+                if (onBeforeElAttributeAdded && onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue) === false) continue;
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             } else if (fromValue !== attrValue) {
                 // onBeforeElAttributeAdded
-                if (onBeforeElAttributeUpdated && ! onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue)) continue;
+                if (onBeforeElAttributeUpdated && onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue) === false) continue;
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
             fromValue = fromNode.getAttribute(attrName);
             if ( ! fromNode.hasAttribute(attrName)) {
                 // onBeforeElAttributeAdded
-                if (onBeforeElAttributeAdded && ! onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue)) continue;
+                if (onBeforeElAttributeAdded && onBeforeElAttributeAdded(fromNode, toNode, attrName, attrValue) === false) continue;
                 fromNode.setAttribute(attrName, attrValue);
             } else if (fromValue !== attrValue) {
                 // onBeforeElAttributeAdded
-                if (onBeforeElAttributeUpdated && ! onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue)) continue;
+                if (onBeforeElAttributeUpdated && onBeforeElAttributeUpdated(fromNode, toNode, attrName, fromValue, attrValue) === false) continue;
                 fromNode.setAttribute(attrName, attrValue);
             }
         }
@@ -167,12 +167,12 @@ function morphAttrs(fromNode, toNode, options) {
                 attrName = attr.localName || attrName;
 
                 if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                    if (onBeforeElAttributeRemoved && ! onBeforeElAttributeRemoved(fromNode, toNode, attrName)) continue;
+                    if (onBeforeElAttributeRemoved && onBeforeElAttributeRemoved(fromNode, toNode, attrName) === false) continue;
                     fromNode.removeAttributeNS(attrNamespaceURI, attrName);
                 }
             } else {
                 if (!hasAttributeNS(toNode, null, attrName)) {
-                    if (onBeforeElAttributeRemoved && ! onBeforeElAttributeRemoved(fromNode, toNode, attrName)) continue;
+                    if (onBeforeElAttributeRemoved && onBeforeElAttributeRemoved(fromNode, toNode, attrName) === false) continue;
                     fromNode.removeAttribute(attrName);
                 }
             }
