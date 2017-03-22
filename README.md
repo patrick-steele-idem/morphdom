@@ -88,6 +88,9 @@ Supported options (all optional):
 - **onBeforeNodeDiscarded** (`Function(node)`) - Called before a `Node` in the `from` tree is discarded. If this function returns `false` then the node will not be discarded.
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
 - **onBeforeElChildrenUpdated** (`Function(fromEl, toEl)`) - Called before the children of a `HTMLElement` in the `from` tree are updated. If this function returns `false` then the child nodes will not be updated.
+- **onBeforeElAttributeAdded** (`Function(fromEl, toEl, attrName, attrValue)`) - Called before an attribute on a `HTMLElement` in the `from` tree has been added. If this function return `false` then the attribute will not be added.
+- **onBeforeElAttributeUpdated** (`Function(fromEl, toEl, attrName, fromAttrValue, toAttrValue)`) - Called before an attribute on a `HTMLElement` in the `from` tree has been updated. If this function return `false` then the attribute will not be updated.
+- **onBeforeElAttributeRemoved** (`Function(fromEl, toEl, attrName)`) - Called before an attribute on a `HTMLElement` in the `from` tree has been removed. If this function return `false` then the attribute will not be removed.
 - **childrenOnly** (`Boolean`) - If `true` then only the children of the `fromNode` and `toNode` nodes will be morphed (the containing element will be skipped). Defaults to `false`.
 
 ```javascript
@@ -114,6 +117,15 @@ var morphedNode = morphdom(fromNode, toNode, {
     onNodeDiscarded: function(node) {
 
     },
+    onBeforeElAttributeAdded: function(fromEl, toEl, attrName, attrValue) {
+        return true;
+    },
+    onBeforeElAttributeUpdated: function(fromEl, toEl, attrName, fromAttrValue, toAttrValue) {
+        return true;
+    }
+    onBeforeElAttributeRemoved: function(fromEl, toEl, attrName) {
+        return true;
+    }
     onBeforeElChildrenUpdated: function(fromEl, toEl) {
         return true;
     },
@@ -415,4 +427,3 @@ npm test
 # License
 
 MIT
-
