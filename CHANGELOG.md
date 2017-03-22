@@ -5,6 +5,10 @@ Changelog
 
 ## 2.3.x
 
+### 2.3.1
+
+- Bug: Fixed losing cursor position in Edge ([PR #100](https://github.com/patrick-steele-idem/morphdom/pull/100) by [@zastavnitskiy](https://github.com/zastavnitskiy))
+
 ### 2.3.0
 
 - Changes to improve code maintainability. Single file is now split out into multiple modules and [rollup](https://github.com/rollup/rollup) is used to build the distribution files.
