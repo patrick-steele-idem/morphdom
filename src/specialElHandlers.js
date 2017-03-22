@@ -44,16 +44,17 @@ export default {
             fromEl.value = newValue;
         }
 
-        if (fromEl.firstChild) {
+        var firstChild = fromEl.firstChild;
+        if (firstChild) {
             // Needed for IE. Apparently IE sets the placeholder as the
             // node value and vise versa. This ignores an empty update.
-            if (newValue === '' && fromEl.firstChild.nodeValue === fromEl.placeholder) {
+            var oldValue = firstChild.nodeValue;
+
+            if (oldValue == newValue || (!newValue && oldValue == fromEl.placeholder)) {
                 return;
             }
 
-            if (fromEl.firstChild && fromEl.firstChild.nodeValue !== newValue) {
-             fromEl.firstChild.nodeValue = newValue;
-           }
+            firstChild.nodeValue = newValue;
         }
     },
     SELECT: function(fromEl, toEl) {
