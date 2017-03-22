@@ -51,7 +51,9 @@ export default {
                 return;
             }
 
-            fromEl.firstChild.nodeValue = newValue;
+            if (fromEl.firstChild && fromEl.firstChild.nodeValue !== newValue) {
+             fromEl.firstChild.nodeValue = newValue;
+           }
         }
     },
     SELECT: function(fromEl, toEl) {
