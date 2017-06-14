@@ -48,7 +48,7 @@
     "virtual-dom": "^2.1.1"
   },
   "dependencies": {},
-  "version": "2.3.2",
+  "version": "2.3.3",
   "keywords": [
     "dom",
     "diff",
