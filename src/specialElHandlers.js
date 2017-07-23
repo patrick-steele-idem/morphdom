@@ -6,7 +6,7 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
         if (fromEl[name]) {
             fromEl.setAttribute(name, '');
         } else {
-            fromEl.removeAttribute(name, '');
+            fromEl.removeAttribute(name);
         }
     }
 }
