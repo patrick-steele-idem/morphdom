@@ -784,6 +784,28 @@ describe('morphdom' , function() {
         expect(el1.querySelector('#skipMeChild') != null).to.equal(true);
     });
 
+    it('should use isSameNode to allow out of morphdom managed elements', function() {
+        var containEl1 = document.createElement('div');
+        containEl1.innerHTML = '<p>Jackie Brown</p>'
+        var containRegion1 = document.createElement('div');
+        var childview = document.createElement('p');
+        childview.innerHTML = 'by Quentin Tarantino';
+        containRegion1.appendChild(childview);
+        containEl1.appendChild(containRegion1);
+
+        var containEl2 = document.createElement('div');
+        containEl2.innerHTML = '<p>Pulp Fiction</p>';
+        var containRegion2 = document.createElement('div');
+        containEl2.appendChild(containRegion2);
+
+        containRegion1.isSameNode = function() {
+            return true;
+        };
+
+        morphdom(containEl1, containEl2);
+        expect(containEl1.innerHTML).to.equal('<p>Pulp Fiction</p><div><p>by Quentin Tarantino</p></div>');
+    });
+
     it('should use isSameNode to allow reference proxies', function() {
         var el1 = document.createElement('div');
         el1.innerHTML = 'stay gold';

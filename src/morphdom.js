@@ -167,6 +167,10 @@ export default function morphdomFactory(morphAttrs) {
             }
         }
 
+        function isSameNode(toNode, fromNode) {
+            return (toNode.isSameNode && toNode.isSameNode(fromNode)) || (fromNode.isSameNode && fromNode.isSameNode(toNode));
+        }
+
         function morphEl(fromEl, toEl, childrenOnly) {
             var toElKey = getNodeKey(toEl);
             var curFromNodeKey;
@@ -177,7 +181,7 @@ export default function morphdomFactory(morphAttrs) {
                 delete fromNodesLookup[toElKey];
             }
 
-            if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
+            if (isSameNode(toNode, fromNode)) {
                 return;
             }
 
@@ -210,7 +214,7 @@ export default function morphdomFactory(morphAttrs) {
                     while (curFromNodeChild) {
                         fromNextSibling = curFromNodeChild.nextSibling;
 
-                        if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
+                        if (isSameNode(curToNodeChild, curFromNodeChild)) {
                             curToNodeChild = toNextSibling;
                             curFromNodeChild = fromNextSibling;
                             continue outer;
