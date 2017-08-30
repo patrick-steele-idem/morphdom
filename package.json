@@ -2,6 +2,7 @@
   "name": "morphdom",
   "description": "Morph a DOM tree to another DOM tree (no virtual DOM needed)",
   "main": "dist/morphdom.js",
+  "types": "typings/morphdom.d.ts",
   "scripts": {
     "build": "npm run rollup && npm run minify",
     "test": "npm run build && npm run test-browser && npm run lint",
