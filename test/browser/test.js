@@ -748,6 +748,39 @@ describe('morphdom' , function() {
         expect(finalEl.innerHTML).to.equal('<div id="boo"></div>');
     });
 
+    it('deal with duplicate ids before', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = '<span id="foo"></span><span id="boo"><span id="foo"></span></span>';
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<span id="boo"><span id="foo"></span></span>';
+
+        var finalEl = morphdom(el1, el2);
+        expect(finalEl.innerHTML).to.equal('<span id="boo"><span id="foo"></span></span>');
+    });
+
+    it('deal with duplicate ids after', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = '<span id="boo"><span id="foo"></span></span><span id="foo"></span>';
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<span id="boo"><span id="foo"></span></span>';
+
+        var finalEl = morphdom(el1, el2);
+        expect(finalEl.innerHTML).to.equal('<span id="boo"><span id="foo"></span></span>');
+    });
+
+    it('deal with duplicate ids as siblings', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = '<span id="boo"><span id="foo"></span><span id="foo"></span></span>';
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<span id="boo"><span id="foo"></span></span>';
+
+        var finalEl = morphdom(el1, el2);
+        expect(finalEl.innerHTML).to.equal('<span id="boo"><span id="foo"></span></span>');
+    });
+
     it('should not remove keyed elements that are part of a DOM subtree that is skipped using onBeforeElUpdated', function() {
         var el1 = document.createElement('div');
         el1.innerHTML = '<span id="skipMe"><span id="skipMeChild"></span></span>';

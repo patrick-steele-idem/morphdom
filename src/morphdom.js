@@ -43,12 +43,13 @@ export default function morphdomFactory(morphAttrs) {
         // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
         var fromNodesLookup = {};
         var keyedRemovalList;
+        var morphedEls = {};
 
-        function addKeyedRemoval(key) {
+        function addKeyedRemoval(key, el) {
             if (keyedRemovalList) {
-                keyedRemovalList.push(key);
+                keyedRemovalList.push([key, el]);
             } else {
-                keyedRemovalList = [key];
+                keyedRemovalList = [[key, el]];
             }
         }
 
@@ -62,7 +63,7 @@ export default function morphdomFactory(morphAttrs) {
                     if (skipKeyedNodes && (key = getNodeKey(curChild))) {
                         // If we are skipping keyed nodes then we add the key
                         // to a list so that it can be handled at the very end.
-                        addKeyedRemoval(key);
+                        addKeyedRemoval(key, curChild);
                     } else {
                         // Only report the node as discarded if it is not keyed. We do this because
                         // at the end we loop through all keyed elements that were unmatched
@@ -174,6 +175,10 @@ export default function morphdomFactory(morphAttrs) {
             if (toElKey) {
                 // If an element with an ID is being morphed then it is will be in the final
                 // DOM so clear it out of the saved elements collection
+                morphedEls[toElKey] = morphedEls[toElKey] || [];
+                morphedEls[toElKey].push(toEl);
+                if (fromEl) morphedEls[toElKey].push(fromEl);
+
                 delete fromNodesLookup[toElKey];
             }
 
@@ -256,7 +261,7 @@ export default function morphdomFactory(morphAttrs) {
                                                 if (curFromNodeKey) {
                                                     // Since the node is keyed it might be matched up later so we defer
                                                     // the actual removal to later
-                                                    addKeyedRemoval(curFromNodeKey);
+                                                    addKeyedRemoval(curFromNodeKey, curFromNodeChild);
                                                 } else {
                                                     // NOTE: we skip nested keyed nodes from being removed since there is
                                                     //       still a chance they will be matched up later
@@ -312,7 +317,7 @@ export default function morphdomFactory(morphAttrs) {
                         if (curFromNodeKey) {
                             // Since the node is keyed it might be matched up later so we defer
                             // the actual removal to later
-                            addKeyedRemoval(curFromNodeKey);
+                            addKeyedRemoval(curFromNodeKey, curFromNodeChild);
                         } else {
                             // NOTE: we skip nested keyed nodes from being removed since there is
                             //       still a chance they will be matched up later
@@ -356,7 +361,7 @@ export default function morphdomFactory(morphAttrs) {
                     if ((curFromNodeKey = getNodeKey(curFromNodeChild))) {
                         // Since the node is keyed it might be matched up later so we defer
                         // the actual removal to later
-                        addKeyedRemoval(curFromNodeKey);
+                        addKeyedRemoval(curFromNodeKey, curFromNodeChild);
                     } else {
                         // NOTE: we skip nested keyed nodes from being removed since there is
                         //       still a chance they will be matched up later
@@ -417,9 +422,14 @@ export default function morphdomFactory(morphAttrs) {
             // if a keyed node has been matched up or not
             if (keyedRemovalList) {
                 for (var i=0, len=keyedRemovalList.length; i<len; i++) {
-                    var elToRemove = fromNodesLookup[keyedRemovalList[i]];
+                    var key = keyedRemovalList[i][0];
+                    var el = keyedRemovalList[i][1];
+                    var elToRemove = fromNodesLookup[key];
                     if (elToRemove) {
                         removeNode(elToRemove, elToRemove.parentNode, false);
+                    }
+                    if (morphedEls[key] && (morphedEls[key].indexOf(el) == -1)) {
+                        removeNode(el, el.parentNode, false);
                     }
                 }
             }
