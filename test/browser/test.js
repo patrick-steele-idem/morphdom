@@ -873,6 +873,34 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(1);
     });
 
+    it('should update selection state on select elements when adding options', function () {
+        var el1 = node('select');
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(node('option', {'selected': ''}, 'Option 2'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(1);
+    });
+
+    it('should select first option on select elements when no option explicitly selected', function () {
+        var el1 = node('select');
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(node('option', {}, 'Option 2'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(0);
+    });
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.

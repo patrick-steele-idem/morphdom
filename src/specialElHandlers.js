@@ -12,11 +12,14 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
 }
 
 export default {
-    /**
-     * Needed for IE. Apparently IE doesn't think that "selected" is an
-     * attribute when reading over the attributes using selectEl.attributes
-     */
     OPTION: function(fromEl, toEl) {
+        var parentNode = fromEl.parentNode;
+        if (parentNode && parentNode.nodeName === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
+            // We have to reset select element's selectedIndex to -1, otherwise setting
+            // fromEl.selected using the syncBooleanAttrProp below has no effect.
+            // The correct selectedIndex will be set in the SELECT special handler below.
+            parentNode.selectedIndex = -1;
+        }
         syncBooleanAttrProp(fromEl, toEl, 'selected');
     },
     /**
@@ -61,10 +64,14 @@ export default {
         if (!hasAttributeNS(toEl, null, 'multiple')) {
             var selectedIndex = -1;
             var i = 0;
-            var curChild = toEl.firstChild;
+            // We have to loop through children of fromEl, not toEl since nodes can be moved
+            // from toEl to fromEl directly when morphing.
+            // At the time this special handler is invoked, all children have already been morphed
+            // and appended to / removed from fromEl, so using fromEl here is safe and correct.
+            var curChild = fromEl.firstChild;
             while(curChild) {
                 var nodeName = curChild.nodeName;
-                if (nodeName && nodeName.toUpperCase() === 'OPTION') {
+                if (nodeName === 'OPTION') {
                     if (hasAttributeNS(curChild, null, 'selected')) {
                         selectedIndex = i;
                         break;
@@ -74,7 +81,11 @@ export default {
                 curChild = curChild.nextSibling;
             }
 
-            fromEl.selectedIndex = i;
+            // If there's at least one option, the first option should be selected by default.
+            if (selectedIndex === -1 && i > 0) {
+                selectedIndex = 0;
+            }
+            fromEl.selectedIndex = selectedIndex;
         }
     }
 };
