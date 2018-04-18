@@ -16,11 +16,17 @@ export default function morphAttrs(fromNode, toNode) {
         attrValue = attr.value;
 
         if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+            var attrLocalName = attr.localName
 
+            // Important: getAttributeNS expects the localName of a namespaced attribute
+            // but setAttributeNS requires the fully qualified name
+            // ref: https://dom.spec.whatwg.org/#dom-element-getattributens
+            // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-localname
+            // ref: https://dom.spec.whatwg.org/#dom-element-setattributens
+            // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-qualifiedname
+            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrLocalName)
             if (fromValue !== attrValue) {
-                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+                fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue)
             }
         } else {
             fromValue = fromNode.getAttribute(attrName);
