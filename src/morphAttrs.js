@@ -16,10 +16,16 @@ export default function morphAttrs(fromNode, toNode) {
         attrValue = attr.value;
 
         if (attrNamespaceURI) {
-            attrName = attr.localName || attrName;
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+            var attrLocalName = attr.localName;
 
+            // Important: getAttributeNS expects the localName of a namespaced attribute
+            // ref: https://dom.spec.whatwg.org/#dom-element-getattributens
+            // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-localname
+            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrLocalName || attrName);
             if (fromValue !== attrValue) {
+                // but setAttributeNS requires the fully qualified name
+                // ref: https://dom.spec.whatwg.org/#dom-element-setattributens
+                // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-qualifiedname
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
