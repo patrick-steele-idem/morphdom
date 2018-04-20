@@ -24,7 +24,7 @@ export default function morphAttrs(fromNode, toNode) {
             // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-localname
             // ref: https://dom.spec.whatwg.org/#dom-element-setattributens
             // ref: https://www.w3.org/TR/DOM-Level-2-Core/glossary.html#dt-qualifiedname
-            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrLocalName);
+            fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrLocalName || attrName);
             if (fromValue !== attrValue) {
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
