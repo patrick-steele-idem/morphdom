@@ -14,7 +14,7 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
 export default {
     OPTION: function(fromEl, toEl) {
         var parentNode = fromEl.parentNode;
-        if (parentNode && parentNode.nodeName === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
+        if (parentNode && parentNode.nodeName.toUpperCase() === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
             // We have to reset select element's selectedIndex to -1, otherwise setting
             // fromEl.selected using the syncBooleanAttrProp below has no effect.
             // The correct selectedIndex will be set in the SELECT special handler below.
@@ -71,7 +71,7 @@ export default {
             var curChild = fromEl.firstChild;
             while(curChild) {
                 var nodeName = curChild.nodeName;
-                if (nodeName === 'OPTION') {
+                if (nodeName && nodeName.toUpperCase() === 'OPTION') {
                     if (hasAttributeNS(curChild, null, 'selected')) {
                         selectedIndex = i;
                         break;
