@@ -81,10 +81,6 @@ export default {
                 curChild = curChild.nextSibling;
             }
 
-            // If there's at least one option, the first option should be selected by default.
-            if (selectedIndex === -1 && i > 0) {
-                selectedIndex = 0;
-            }
             fromEl.selectedIndex = selectedIndex;
         }
     }
