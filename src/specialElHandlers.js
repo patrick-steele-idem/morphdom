@@ -15,6 +15,13 @@ export default {
     OPTION: function(fromEl, toEl) {
         var parentNode = fromEl.parentNode;
         if (parentNode && parentNode.nodeName.toUpperCase() === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
+            if (hasAttributeNS(fromEl, null, 'selected') && !toEl.selected) {
+                // Workaround for MS Edge bug where the 'selected' attribute can only be
+                // removed if set to a non-empty value:
+                // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12087679/
+                fromEl.setAttribute('selected', 'selected');
+                fromEl.removeAttribute('selected');
+            }
             // We have to reset select element's selectedIndex to -1, otherwise setting
             // fromEl.selected using the syncBooleanAttrProp below has no effect.
             // The correct selectedIndex will be set in the SELECT special handler below.
