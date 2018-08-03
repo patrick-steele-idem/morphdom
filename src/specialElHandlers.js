@@ -60,7 +60,11 @@ export default {
     SELECT: function(fromEl, toEl) {
         if (!hasAttributeNS(toEl, null, 'multiple')) {
             var selectedIndex = -1;
-            var options = toEl.getElementsByTagName('option');
+            // We have to loop through children of fromEl, not toEl since nodes can be moved
+            // from toEl to fromEl directly when morphing.
+            // At the time this special handler is invoked, all children have already been morphed
+            // and appended to / removed from fromEl, so using fromEl here is safe and correct.
+            var options = fromEl.getElementsByTagName('option');
             var curChild;
             for (var i = 0; i < options.length; i++) {
                 curChild = options[i];
