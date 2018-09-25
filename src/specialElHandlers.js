@@ -14,18 +14,25 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
 export default {
     OPTION: function(fromEl, toEl) {
         var parentNode = fromEl.parentNode;
-        if (parentNode && parentNode.nodeName.toUpperCase() === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
-            if (hasAttributeNS(fromEl, null, 'selected') && !toEl.selected) {
-                // Workaround for MS Edge bug where the 'selected' attribute can only be
-                // removed if set to a non-empty value:
-                // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12087679/
-                fromEl.setAttribute('selected', 'selected');
-                fromEl.removeAttribute('selected');
+        if (parentNode) {
+            var parentName = parentNode.nodeName.toUpperCase();
+            if (parentName === 'OPTGROUP') {
+                parentNode = parentNode.parentNode;
+                parentName = parentNode && parentNode.nodeName.toUpperCase();
             }
-            // We have to reset select element's selectedIndex to -1, otherwise setting
-            // fromEl.selected using the syncBooleanAttrProp below has no effect.
-            // The correct selectedIndex will be set in the SELECT special handler below.
-            parentNode.selectedIndex = -1;
+            if (parentName === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
+                if (hasAttributeNS(fromEl, null, 'selected') && !toEl.selected) {
+                    // Workaround for MS Edge bug where the 'selected' attribute can only be
+                    // removed if set to a non-empty value:
+                    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12087679/
+                    fromEl.setAttribute('selected', 'selected');
+                    fromEl.removeAttribute('selected');
+                }
+                // We have to reset select element's selectedIndex to -1, otherwise setting
+                // fromEl.selected using the syncBooleanAttrProp below has no effect.
+                // The correct selectedIndex will be set in the SELECT special handler below.
+                parentNode.selectedIndex = -1;
+            }
         }
         syncBooleanAttrProp(fromEl, toEl, 'selected');
     },
@@ -76,16 +83,27 @@ export default {
             // At the time this special handler is invoked, all children have already been morphed
             // and appended to / removed from fromEl, so using fromEl here is safe and correct.
             var curChild = fromEl.firstChild;
+            var optgroup;
+            var nodeName;
             while(curChild) {
-                var nodeName = curChild.nodeName;
-                if (nodeName && nodeName.toUpperCase() === 'OPTION') {
-                    if (hasAttributeNS(curChild, null, 'selected')) {
-                        selectedIndex = i;
-                        break;
+                nodeName = curChild.nodeName && curChild.nodeName.toUpperCase();
+                if (nodeName === 'OPTGROUP') {
+                    optgroup = curChild;
+                    curChild = optgroup.firstChild;
+                } else {
+                    if (nodeName === 'OPTION') {
+                        if (hasAttributeNS(curChild, null, 'selected')) {
+                            selectedIndex = i;
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
+                    curChild = curChild.nextSibling;
+                    if (!curChild && optgroup) {
+                        curChild = optgroup.nextSibling;
+                        optgroup = null;
+                    }
                 }
-                curChild = curChild.nextSibling;
             }
 
             fromEl.selectedIndex = selectedIndex;
