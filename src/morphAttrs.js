@@ -19,6 +19,9 @@ export default function morphAttrs(fromNode, toNode) {
             fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
 
             if (fromValue !== attrValue) {
+                if (attr.prefix === 'xmlns'){
+                    attrName = attr.name; // It's not allowed to set an attribute with the XMLNS namespace without specifying the `xmlns` prefix
+                }
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
