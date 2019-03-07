@@ -49,7 +49,7 @@
     "virtual-dom": "^2.1.1"
   },
   "dependencies": {},
-  "version": "2.3.3",
+  "version": "2.4.0",
   "keywords": [
     "dom",
     "diff",
