@@ -41,7 +41,7 @@
     "mocha": "^2.2.4",
     "mocha-phantomjs": "^4.1.0",
     "phantomjs-prebuilt": "^2.1.13",
-    "rollup": "^0.39.2",
+    "rollup": "^1.4.1",
     "uglify-js": "^2.6.2",
     "umd": "^3.0.1",
     "vdom-virtualize": "0.0.12",
