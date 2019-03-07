@@ -110,7 +110,7 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
         if (fromEl[name]) {
             fromEl.setAttribute(name, '');
         } else {
-            fromEl.removeAttribute(name, '');
+            fromEl.removeAttribute(name);
         }
     }
 }
@@ -163,14 +163,12 @@ var specialElHandlers = {
     },
     SELECT: function(fromEl, toEl) {
         if (!hasAttributeNS(toEl, null, 'multiple')) {
-            var selectedIndex = -1;
             var i = 0;
             var curChild = toEl.firstChild;
             while(curChild) {
                 var nodeName = curChild.nodeName;
                 if (nodeName && nodeName.toUpperCase() === 'OPTION') {
                     if (hasAttributeNS(curChild, null, 'selected')) {
-                        selectedIndex = i;
                         break;
                     }
                     i++;
