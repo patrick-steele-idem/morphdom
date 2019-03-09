@@ -22,7 +22,9 @@ First install the module into your project:
 npm install morphdom --save
 ```
 
-_NOTE: There is also a UMD version of this module in the published npm package: `dist/morphdom-umd.js`_
+_NOTE: Published npm packages:_
+  - `dist/morphdom-umd.js`
+  - `dist/morphdom-esm.js`
 
 The code below shows how to morph one `<div>` element to another `<div>` element.
 
@@ -63,7 +65,7 @@ See: [./examples/](./examples/)
 
 # Browser Support
 
-- IE7+ and any modern browser
+- IE9+ and any modern browser
 - Proper namespace support added in `v1.4.0`
 
 # API
@@ -403,6 +405,7 @@ _NOTE: Safari Version 9.1.1 (11601.6.17)_
 
 * [Patrick Steele-Idem](https://github.com/patrick-steele-idem) (Twitter: [@psteeleidem](http://twitter.com/psteeleidem))
 * [Paul Grenier](https://github.com/AutoSponge) (Twitter: [@autosponge](https://twitter.com/autosponge))
+* [Scott Newcomer](https://github.com/snewcomer) (Twitter: [@puekey](https://twitter.com/puekey))
 
 # Contribute
 
