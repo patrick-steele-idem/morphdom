@@ -25,10 +25,6 @@
         actualHasAttributeNS = function(el, namespaceURI, name) {
             return el.hasAttribute(name);
         };
-    } else {
-        actualHasAttributeNS = function(el, namespaceURI, name) {
-            return el.getAttributeNode(namespaceURI, name) != null;
-        };
     }
 
     var hasAttributeNS = actualHasAttributeNS;
