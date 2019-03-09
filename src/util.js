@@ -3,31 +3,6 @@ var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
 export var doc = typeof document === 'undefined' ? undefined : document;
 
-var testEl = doc ?
-    doc.body || doc.createElement('div') :
-    {};
-
-// Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
-// (IE7+ support) <=IE7 does not support el.hasAttribute(name)
-var actualHasAttributeNS;
-
-if (testEl.hasAttributeNS) {
-    actualHasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttributeNS(namespaceURI, name);
-    };
-} else if (testEl.hasAttribute) {
-    actualHasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttribute(name);
-    };
-} else {
-    actualHasAttributeNS = function(el, namespaceURI, name) {
-        return el.getAttributeNode(namespaceURI, name) != null;
-    };
-}
-
-export var hasAttributeNS = actualHasAttributeNS;
-
-
 export function toElement(str) {
     if (!range && doc.createRange) {
         range = doc.createRange();
