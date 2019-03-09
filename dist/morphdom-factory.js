@@ -5,27 +5,6 @@ var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
 var doc = typeof document === 'undefined' ? undefined : document;
 
-var testEl = doc ?
-    doc.body || doc.createElement('div') :
-    {};
-
-// Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
-// (IE7+ support) <=IE7 does not support el.hasAttribute(name)
-var actualHasAttributeNS;
-
-if (testEl.hasAttributeNS) {
-    actualHasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttributeNS(namespaceURI, name);
-    };
-} else if (testEl.hasAttribute) {
-    actualHasAttributeNS = function(el, namespaceURI, name) {
-        return el.hasAttribute(name);
-    };
-}
-
-var hasAttributeNS = actualHasAttributeNS;
-
-
 function toElement(str) {
     if (!range && doc.createRange) {
         range = doc.createRange();
@@ -133,7 +112,7 @@ var specialElHandlers = {
             fromEl.value = toEl.value;
         }
 
-        if (!hasAttributeNS(toEl, null, 'value')) {
+        if (!toEl.hasAttribute('value')) {
             fromEl.removeAttribute('value');
         }
     },
@@ -158,13 +137,13 @@ var specialElHandlers = {
         }
     },
     SELECT: function(fromEl, toEl) {
-        if (!hasAttributeNS(toEl, null, 'multiple')) {
+        if (!toEl.hasAttribute('multiple')) {
             var i = 0;
             var curChild = toEl.firstChild;
             while(curChild) {
                 var nodeName = curChild.nodeName;
                 if (nodeName && nodeName.toUpperCase() === 'OPTION') {
-                    if (hasAttributeNS(curChild, null, 'selected')) {
+                    if (curChild.hasAttribute('selected')) {
                         break;
                     }
                     i++;

@@ -1,5 +1,3 @@
-import { hasAttributeNS } from './util';
-
 export default function morphAttrs(fromNode, toNode) {
     var attrs = toNode.attributes;
     var i;
@@ -44,11 +42,11 @@ export default function morphAttrs(fromNode, toNode) {
             if (attrNamespaceURI) {
                 attrName = attr.localName || attrName;
 
-                if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
+                if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
                     fromNode.removeAttributeNS(attrNamespaceURI, attrName);
                 }
             } else {
-                if (!hasAttributeNS(toNode, null, attrName)) {
+                if (!toNode.hasAttribute(attrName)) {
                     fromNode.removeAttribute(attrName);
                 }
             }

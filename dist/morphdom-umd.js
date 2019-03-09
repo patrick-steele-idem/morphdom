@@ -4,31 +4,66 @@
     (global = global || self, global.morphdom = factory());
 }(this, function () { 'use strict';
 
+    function morphAttrs(fromNode, toNode) {
+        var attrs = toNode.attributes;
+        var i;
+        var attr;
+        var attrName;
+        var attrNamespaceURI;
+        var attrValue;
+        var fromValue;
+
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            attrName = attr.name;
+            attrNamespaceURI = attr.namespaceURI;
+            attrValue = attr.value;
+
+            if (attrNamespaceURI) {
+                attrName = attr.localName || attrName;
+                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
+
+                if (fromValue !== attrValue) {
+                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+                }
+            } else {
+                fromValue = fromNode.getAttribute(attrName);
+
+                if (fromValue !== attrValue) {
+                    fromNode.setAttribute(attrName, attrValue);
+                }
+            }
+        }
+
+        // Remove any extra attributes found on the original DOM element that
+        // weren't found on the target element.
+        attrs = fromNode.attributes;
+
+        for (i = attrs.length - 1; i >= 0; --i) {
+            attr = attrs[i];
+            if (attr.specified !== false) {
+                attrName = attr.name;
+                attrNamespaceURI = attr.namespaceURI;
+
+                if (attrNamespaceURI) {
+                    attrName = attr.localName || attrName;
+
+                    if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
+                        fromNode.removeAttributeNS(attrNamespaceURI, attrName);
+                    }
+                } else {
+                    if (!toNode.hasAttribute(attrName)) {
+                        fromNode.removeAttribute(attrName);
+                    }
+                }
+            }
+        }
+    }
+
     var range; // Create a range object for efficently rendering strings to elements.
     var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
     var doc = typeof document === 'undefined' ? undefined : document;
-
-    var testEl = doc ?
-        doc.body || doc.createElement('div') :
-        {};
-
-    // Fixes <https://github.com/patrick-steele-idem/morphdom/issues/32>
-    // (IE7+ support) <=IE7 does not support el.hasAttribute(name)
-    var actualHasAttributeNS;
-
-    if (testEl.hasAttributeNS) {
-        actualHasAttributeNS = function(el, namespaceURI, name) {
-            return el.hasAttributeNS(namespaceURI, name);
-        };
-    } else if (testEl.hasAttribute) {
-        actualHasAttributeNS = function(el, namespaceURI, name) {
-            return el.hasAttribute(name);
-        };
-    }
-
-    var hasAttributeNS = actualHasAttributeNS;
-
 
     function toElement(str) {
         if (!range && doc.createRange) {
@@ -104,62 +139,6 @@
         return toEl;
     }
 
-    function morphAttrs(fromNode, toNode) {
-        var attrs = toNode.attributes;
-        var i;
-        var attr;
-        var attrName;
-        var attrNamespaceURI;
-        var attrValue;
-        var fromValue;
-
-        for (i = attrs.length - 1; i >= 0; --i) {
-            attr = attrs[i];
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
-            attrValue = attr.value;
-
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
-                fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
-
-                if (fromValue !== attrValue) {
-                    fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
-                }
-            } else {
-                fromValue = fromNode.getAttribute(attrName);
-
-                if (fromValue !== attrValue) {
-                    fromNode.setAttribute(attrName, attrValue);
-                }
-            }
-        }
-
-        // Remove any extra attributes found on the original DOM element that
-        // weren't found on the target element.
-        attrs = fromNode.attributes;
-
-        for (i = attrs.length - 1; i >= 0; --i) {
-            attr = attrs[i];
-            if (attr.specified !== false) {
-                attrName = attr.name;
-                attrNamespaceURI = attr.namespaceURI;
-
-                if (attrNamespaceURI) {
-                    attrName = attr.localName || attrName;
-
-                    if (!hasAttributeNS(toNode, attrNamespaceURI, attrName)) {
-                        fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                    }
-                } else {
-                    if (!hasAttributeNS(toNode, null, attrName)) {
-                        fromNode.removeAttribute(attrName);
-                    }
-                }
-            }
-        }
-    }
-
     function syncBooleanAttrProp(fromEl, toEl, name) {
         if (fromEl[name] !== toEl[name]) {
             fromEl[name] = toEl[name];
@@ -193,7 +172,7 @@
                 fromEl.value = toEl.value;
             }
 
-            if (!hasAttributeNS(toEl, null, 'value')) {
+            if (!toEl.hasAttribute('value')) {
                 fromEl.removeAttribute('value');
             }
         },
@@ -218,13 +197,13 @@
             }
         },
         SELECT: function(fromEl, toEl) {
-            if (!hasAttributeNS(toEl, null, 'multiple')) {
+            if (!toEl.hasAttribute('multiple')) {
                 var i = 0;
                 var curChild = toEl.firstChild;
                 while(curChild) {
                     var nodeName = curChild.nodeName;
                     if (nodeName && nodeName.toUpperCase() === 'OPTION') {
-                        if (hasAttributeNS(curChild, null, 'selected')) {
+                        if (curChild.hasAttribute('selected')) {
                             break;
                         }
                         i++;
