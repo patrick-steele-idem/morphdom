@@ -3,6 +3,16 @@ Changelog
 
 # 2.x
 
+## 2.5.0
+
+- Enhancement: Publish es6 format as morphdom-esm.js ([PR #141](https://github.com/patrick-steele-idem/morphdom/pull/141)
+- Enhancement: Start removing old browser support code paths ([PR #140](https://github.com/patrick-steele-idem/morphdom/pull/140)
+
+## 2.4.0
+
+- Enhancement: Rollup 1.0 ([PR #139](https://github.com/patrick-steele-idem/morphdom/pull/139)
+- Enhancement: Add Typescript declaration file ([PR #138](https://github.com/patrick-steele-idem/morphdom/pull/138)
+
 ## 2.3.x
 
 ### 2.3.1
