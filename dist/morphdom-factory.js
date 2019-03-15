@@ -345,7 +345,7 @@ function morphdomFactory(morphAttrs) {
                     var unmatchedFromEl = fromNodesLookup[key];
                     if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
-                        morphEl(unmatchedFromEl, curChild);
+                        morphChildren(unmatchedFromEl, curChild);
                     }
                 }
 
@@ -354,7 +354,7 @@ function morphdomFactory(morphAttrs) {
             }
         }
 
-        function morphEl(fromEl, toEl, childrenOnly) {
+        function morphChildren(fromEl, toEl, childrenOnly) {
             var toElKey = getNodeKey(toEl);
             var curFromNodeKey;
 
@@ -474,7 +474,7 @@ function morphdomFactory(morphAttrs) {
                                     // the current "from" node to match the current
                                     // target DOM node.
                                     // MORPH
-                                    morphEl(curFromNodeChild, curToNodeChild);
+                                    morphChildren(curFromNodeChild, curToNodeChild);
                                 }
 
                             } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
@@ -522,7 +522,7 @@ function morphdomFactory(morphAttrs) {
                     if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
                         fromEl.appendChild(matchingFromEl);
                         // MORPH
-                        morphEl(matchingFromEl, curToNodeChild);
+                        morphChildren(matchingFromEl, curToNodeChild);
                     } else {
                         var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
                         if (onBeforeNodeAddedResult !== false) {
@@ -564,7 +564,7 @@ function morphdomFactory(morphAttrs) {
             if (specialElHandler) {
                 specialElHandler(fromEl, toEl);
             }
-        } // END: morphEl(...)
+        } // END: morphChildren(...)
 
         var morphedNode = fromNode;
         var morphedNodeType = morphedNode.nodeType;
@@ -602,7 +602,7 @@ function morphdomFactory(morphAttrs) {
             // toss out the "from node" and use the "to node"
             onNodeDiscarded(fromNode);
         } else {
-            morphEl(morphedNode, toNode, childrenOnly);
+            morphChildren(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be
             // removed. We only do the removal if we know that the keyed node
