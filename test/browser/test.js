@@ -386,6 +386,7 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('text');
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {
@@ -556,6 +557,7 @@ describe('morphdom' , function() {
 
         expect(el1.className).to.equal('bar');
         expect(el1.firstChild.nodeName).to.equal('BUTTON');
+        expect(el1.firstChild.textContent).to.equal('Click Me');
     });
 
     it('should allow updates to child nodes only', function() {
