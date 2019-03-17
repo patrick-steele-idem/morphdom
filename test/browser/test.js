@@ -335,7 +335,7 @@ describe('morphdom' , function() {
     });
 
     describe('auto tests', function() {
-        var autoTests = require('../mocha-phantomjs/generated/auto-tests');
+        var autoTests = require('../mocha-headless/generated/auto-tests');
 
         Object.keys(autoTests).forEach(function(name) {
             var test = autoTests[name];

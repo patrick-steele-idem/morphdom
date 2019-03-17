@@ -106,12 +106,12 @@ function run() {
             runBenchmarks: testConfig.runBenchmarks === true
         }, out)
         .on('finish', function() {
-            console.log('Running client tests using mocha-phantomjs...');
+            console.log('Running client tests using mocha-chrome...');
             spawn(
                 'npm',
                 [
                     'run',
-                    'mocha-phantomjs-run',
+                    'mocha-chrome-run',
                     '--loglevel=silent'],
                 {
                     cwd: rootDir,
