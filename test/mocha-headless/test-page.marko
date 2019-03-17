@@ -17,11 +17,13 @@
     <div id="test-results">
     </div>
 
-    <div if(data.runBenchmarks)>
+    <if(data.runBenchmarks)>
+      <div>
         <button type="button" onclick="window.startBenchmarks()">Start Benchmarks</button>
         <div id="benchmark-results">
         </div>
-    </div>
+      </div>
+    </if>
 
     <lasso-body/>
 

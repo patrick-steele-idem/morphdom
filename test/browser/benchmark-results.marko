@@ -4,7 +4,7 @@
 
 <div class="results">
     <ul>
-        <li for(moduleName in data.moduleNames)>
+        <li for|moduleName| of=data.moduleNames>
             Total time for ${moduleName}: ${data.getTotalTime(moduleName)}
             <if(data.isWinner(moduleName))>
                 (winner)
@@ -15,17 +15,17 @@
         <thead>
             <tr>
                 <td></td>
-                <td for(moduleName in data.moduleNames)>
+                <td for|moduleName| of=data.moduleNames>
                     ${moduleName}
                 </td>
             </tr>
         </thead>
         <tbody>
-            <tr for(testName in data.testNames)>
+            <tr for|testName| for=data.testNames>
                 <td class="test-name">
                     ${testName}
                 </td>
-                <td for(moduleName in data.moduleNames)>
+                <td for|moduleName| of=data.moduleNames>
                     <if(data.isWinnerForTest(moduleName, testName))>
                         <b><times(moduleName, testName)/></b>
                     </if>

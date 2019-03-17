@@ -35,7 +35,7 @@ var interval = {
 };
 
 
-var autoTests = require('../mocha-phantomjs/generated/auto-tests');
+var autoTests = require('../mocha-headless/generated/auto-tests');
 var ITERATIONS = 100;
 
 function parseHtml(html) {
@@ -336,6 +336,6 @@ function addBenchmarks() {
     });
 }
 
-if (require('../mocha-phantomjs/generated/config').runBenchmarks === true) {
+if (require('../mocha-headless/generated/config').runBenchmarks === true) {
     addBenchmarks();
 }
