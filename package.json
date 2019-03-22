@@ -32,6 +32,7 @@
     "url": "https://github.com/patrick-steele-idem/morphdom.git"
   },
   "devDependencies": {
+    "@lasso/marko-taglib": "^1.0.15",
     "async": "^2.0.0",
     "browser-refresh-taglib": "^1.1.0",
     "chai": "^4.2.0",
@@ -50,9 +51,7 @@
     "vdom-virtualize": "2.0.0",
     "virtual-dom": "^2.1.1"
   },
-  "dependencies": {
-    "@lasso/marko-taglib": "^1.0.15"
-  },
+  "dependencies": {},
   "version": "2.5.2",
   "keywords": [
     "dom",
