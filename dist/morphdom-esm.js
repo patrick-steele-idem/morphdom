@@ -1,5 +1,3 @@
-'use strict';
-
 function morphAttrs(fromNode, toNode) {
     var attrs = toNode.attributes;
     var i;
@@ -652,4 +650,4 @@ function morphdomFactory(morphAttrs) {
 
 var morphdom = morphdomFactory(morphAttrs);
 
-module.exports = morphdom;
+export default morphdom;

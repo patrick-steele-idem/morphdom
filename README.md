@@ -22,7 +22,9 @@ First install the module into your project:
 npm install morphdom --save
 ```
 
-_NOTE: There is also a UMD version of this module in the published npm package: `dist/morphdom-umd.js`_
+_NOTE: Published npm packages:_
+  - `dist/morphdom-umd.js`
+  - `dist/morphdom-esm.js`
 
 The code below shows how to morph one `<div>` element to another `<div>` element.
 
@@ -63,7 +65,7 @@ See: [./examples/](./examples/)
 
 # Browser Support
 
-- IE7+ and any modern browser
+- IE9+ and any modern browser
 - Proper namespace support added in `v1.4.0`
 
 # API
@@ -172,6 +174,7 @@ A good strategy to optimize for performance is to render a template to an HTML s
 
 `morphdom` is being used in the following projects:
 
+- __[Phoenix Live View](https://github.com/phoenixframework/phoenix_live_view)__ (`v0.0.1+`) - Rich, real-time user experiences with server-rendered HTML
 - __[Omi.js](https://github.com/AlloyTeam/omi)__ (`v1.0.1+`) - Open and modern framework for building user interfaces.
 - __[Marko Widgets](https://github.com/marko-js/marko-widgets)__ (`v5.0.0-beta+`) - Marko Widgets is a high performance and lightweight UI components framework that uses the [Marko templating engine](https://github.com/marko-js/marko) for rendering UI components. You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
 - __[Catberry.js](https://github.com/catberry/catberry)__ (`v6.0.0+`) - Catberry is a framework with Flux architecture, isomorphic web-components and progressive rendering.
@@ -403,6 +406,7 @@ _NOTE: Safari Version 9.1.1 (11601.6.17)_
 
 * [Patrick Steele-Idem](https://github.com/patrick-steele-idem) (Twitter: [@psteeleidem](http://twitter.com/psteeleidem))
 * [Paul Grenier](https://github.com/AutoSponge) (Twitter: [@autosponge](https://twitter.com/autosponge))
+* [Scott Newcomer](https://github.com/snewcomer) (Twitter: [@puekey](https://twitter.com/puekey))
 
 # Contribute
 

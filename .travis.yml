@@ -6,9 +6,8 @@ node_js:
   - "node"
   - "10"
   - "8"
-  - "6"
 
 install:
   - npm install
 
-script: "npm test"
+script: "npm run test"

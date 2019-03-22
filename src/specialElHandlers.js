@@ -1,5 +1,3 @@
-import { hasAttributeNS } from './util';
-
 function syncBooleanAttrProp(fromEl, toEl, name) {
     if (fromEl[name] !== toEl[name]) {
         fromEl[name] = toEl[name];
@@ -50,7 +48,7 @@ export default {
             fromEl.value = toEl.value;
         }
 
-        if (!hasAttributeNS(toEl, null, 'value')) {
+        if (!toEl.hasAttribute('value')) {
             fromEl.removeAttribute('value');
         }
     },
@@ -75,7 +73,7 @@ export default {
         }
     },
     SELECT: function(fromEl, toEl) {
-        if (!hasAttributeNS(toEl, null, 'multiple')) {
+        if (!toEl.hasAttribute('multiple')) {
             var selectedIndex = -1;
             var i = 0;
             // We have to loop through children of fromEl, not toEl since nodes can be moved
@@ -92,7 +90,7 @@ export default {
                     curChild = optgroup.firstChild;
                 } else {
                     if (nodeName === 'OPTION') {
-                        if (hasAttributeNS(curChild, null, 'selected')) {
+                        if (curChild.hasAttribute('selected')) {
                             selectedIndex = i;
                             break;
                         }
