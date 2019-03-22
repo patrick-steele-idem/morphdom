@@ -291,9 +291,6 @@ function addBenchmarks() {
                         return totalTime + 'ms';
                     },
                     getAverageTimeForTest: function(moduleName, testName) {
-                        if (!testName) {
-                            return '-';
-                        }
                         var testResults = results.tests[testName].modules[moduleName];
                         if (!testResults) {
                             return '-';
