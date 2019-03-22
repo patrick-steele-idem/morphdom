@@ -7,6 +7,7 @@ export default function morphAttrs(fromNode, toNode) {
     var attrValue;
     var fromValue;
 
+    // update attributes on original DOM element
     for (i = attrs.length - 1; i >= 0; --i) {
         attr = attrs[i];
         attrName = attr.name;

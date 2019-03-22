@@ -7,6 +7,7 @@ function morphAttrs(fromNode, toNode) {
     var attrValue;
     var fromValue;
 
+    // update attributes on original DOM element
     for (i = attrs.length - 1; i >= 0; --i) {
         attr = attrs[i];
         attrName = attr.name;
@@ -399,7 +400,7 @@ function morphdomFactory(morphAttrs) {
                     var unmatchedFromEl = fromNodesLookup[key];
                     if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
-                        morphEl(unmatchedFromEl, curChild);
+                        morphChildren(unmatchedFromEl, curChild);
                     }
                 }
 
@@ -408,12 +409,12 @@ function morphdomFactory(morphAttrs) {
             }
         }
 
-        function morphEl(fromEl, toEl, childrenOnly) {
+        function morphChildren(fromEl, toEl, childrenOnly) {
             var toElKey = getNodeKey(toEl);
             var curFromNodeKey;
 
             if (toElKey) {
-                // If an element with an ID is being morphed then it is will be in the final
+                // If an element with an ID is being morphed then it will be in the final
                 // DOM so clear it out of the saved elements collection
                 delete fromNodesLookup[toElKey];
             }
@@ -423,11 +424,14 @@ function morphdomFactory(morphAttrs) {
             }
 
             if (!childrenOnly) {
+                // optional
                 if (onBeforeElUpdated(fromEl, toEl) === false) {
                     return;
                 }
 
+                // update attributes on original DOM element first
                 morphAttrs(fromEl, toEl);
+                // optional
                 onElUpdated(fromEl);
 
                 if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
@@ -444,10 +448,12 @@ function morphdomFactory(morphAttrs) {
                 var toNextSibling;
                 var matchingFromEl;
 
+                // walk the children
                 outer: while (curToNodeChild) {
                     toNextSibling = curToNodeChild.nextSibling;
                     curToNodeKey = getNodeKey(curToNodeChild);
 
+                    // walk the fromNode children all the way through
                     while (curFromNodeChild) {
                         fromNextSibling = curFromNodeChild.nextSibling;
 
@@ -475,7 +481,7 @@ function morphdomFactory(morphAttrs) {
                                         // let's check our lookup to see if there is a matching element in the original
                                         // DOM tree
                                         if ((matchingFromEl = fromNodesLookup[curToNodeKey])) {
-                                            if (curFromNodeChild.nextSibling === matchingFromEl) {
+                                            if (fromNextSibling === matchingFromEl) {
                                                 // Special case for single element removals. To avoid removing the original
                                                 // DOM node out of the tree (since that can break CSS transitions, etc.),
                                                 // we will instead discard the current node and wait until the next
@@ -484,7 +490,7 @@ function morphdomFactory(morphAttrs) {
                                                 isCompatible = false;
                                             } else {
                                                 // We found a matching keyed element somewhere in the original DOM tree.
-                                                // Let's moving the original DOM node into the current position and morph
+                                                // Let's move the original DOM node into the current position and morph
                                                 // it.
 
                                                 // NOTE: We use insertBefore instead of replaceChild because we want to go through
@@ -492,7 +498,7 @@ function morphdomFactory(morphAttrs) {
                                                 // all lifecycle hooks are correctly invoked
                                                 fromEl.insertBefore(matchingFromEl, curFromNodeChild);
 
-                                                fromNextSibling = curFromNodeChild.nextSibling;
+                                                // fromNextSibling = curFromNodeChild.nextSibling;
 
                                                 if (curFromNodeKey) {
                                                     // Since the node is keyed it might be matched up later so we defer
@@ -522,7 +528,8 @@ function morphdomFactory(morphAttrs) {
                                     // We found compatible DOM elements so transform
                                     // the current "from" node to match the current
                                     // target DOM node.
-                                    morphEl(curFromNodeChild, curToNodeChild);
+                                    // MORPH
+                                    morphChildren(curFromNodeChild, curToNodeChild);
                                 }
 
                             } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
@@ -561,7 +568,7 @@ function morphdomFactory(morphAttrs) {
                         }
 
                         curFromNodeChild = fromNextSibling;
-                    }
+                    } // END: while(curFromNodeChild) {}
 
                     // If we got this far then we did not find a candidate match for
                     // our "to node" and we exhausted all of the children "from"
@@ -569,7 +576,8 @@ function morphdomFactory(morphAttrs) {
                     // to the end
                     if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
                         fromEl.appendChild(matchingFromEl);
-                        morphEl(matchingFromEl, curToNodeChild);
+                        // MORPH
+                        morphChildren(matchingFromEl, curToNodeChild);
                     } else {
                         var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
                         if (onBeforeNodeAddedResult !== false) {
@@ -611,7 +619,7 @@ function morphdomFactory(morphAttrs) {
             if (specialElHandler) {
                 specialElHandler(fromEl, toEl);
             }
-        } // END: morphEl(...)
+        } // END: morphChildren(...)
 
         var morphedNode = fromNode;
         var morphedNodeType = morphedNode.nodeType;
@@ -649,7 +657,7 @@ function morphdomFactory(morphAttrs) {
             // toss out the "from node" and use the "to node"
             onNodeDiscarded(fromNode);
         } else {
-            morphEl(morphedNode, toNode, childrenOnly);
+            morphChildren(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be
             // removed. We only do the removal if we know that the keyed node
