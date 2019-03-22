@@ -873,6 +873,58 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(1);
     });
 
+    it('should update selection state on select elements with optgroups', function () {
+        var el1 = node('select');
+        var optgroup1_1 = node('optgroup');
+        optgroup1_1.appendChild(node('option', {'selected': ''}, 'Option 1'));
+        el1.appendChild(optgroup1_1);
+        var optgroup1_2 = node('optgroup');
+        optgroup1_2.appendChild(node('option', {}, 'Option 2'));
+        el1.appendChild(optgroup1_2);
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        var optgroup2_1 = node('optgroup');
+        optgroup2_1.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(optgroup2_1);
+        var optgroup2_2 = node('optgroup');
+        optgroup2_2.appendChild(node('option', {'selected': ''}, 'Option 2'));
+        el2.appendChild(optgroup2_2);
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(1);
+    });
+
+    it('should update selection state on select elements when adding options', function () {
+        var el1 = node('select');
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(node('option', {'selected': ''}, 'Option 2'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(1);
+    });
+
+    it('should set selectedIndex to -1 when no option explicitly selected', function () {
+        var el1 = node('select');
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {}, 'Option 1'));
+        el2.appendChild(node('option', {}, 'Option 2'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(-1);
+    });
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.
