@@ -127,6 +127,8 @@ var morphedNode = morphdom(fromNode, toNode, {
 
 ## Isn't the DOM slow?
 
+___UPDATE:___ As of `v2.1.0`, `morphdom` supports both diffing a real DOM tree with another real DOM tree and diffing a real DOM tree with a _virtual_ DOM tree. See: [docs/virtual-dom.md](docs/virtual-dom.md) for more details.
+
 No, the DOM _data structure_ is not slow. The DOM is a key part of any web browser so it must be fast. Walking a DOM tree and reading the attributes on DOM nodes is _not_ slow. However, if you attempt to read a computed property on a DOM node that requires a relayout of the page then _that_ will be slow. However, `morphdom` only cares about the following properties and methods of a DOM node:
 
 - `node.firstChild`
@@ -148,7 +150,7 @@ Libraries such as a [React](http://facebook.github.io/react/) and [virtual-dom](
 
 Both `morphdom` and virtual DOM based solutions update the _real_ DOM with the minimum number of changes. The only difference is in how the differences are determined. `morphdom` compares real DOM nodes while `virtual-dom` and others only compare virtual DOM nodes.
 
-There are some drawbacks to using a virtual DOM-based approach:
+There are some drawbacks to using a virtual DOM-based approach even though the _Virtual DOM_ has improved considerably over the last few years.  :
 
 - The real DOM is not the source of truth (the persistent virtual DOM tree is the source of truth)
 - The real DOM _cannot_ be modified behind the scenes (e.g., no jQuery) because the diff is done against the virtual DOM tree
@@ -157,11 +159,9 @@ There are some drawbacks to using a virtual DOM-based approach:
 - The virtual DOM representations are not standardized and will vary by implementation
 - The virtual DOM can only efficiently be used with code and templating languages that produce a virtual DOM tree
 
-The premise for using a virtual DOM is that the DOM is "slow". While there is slightly more overhead in creating actual DOM nodes instead of lightweight virtual DOM nodes, we are not seeing any noticeable slowness in our benchmarks. In addition, as web browsers get faster the DOM data structure will also likely continue to get faster so there benefits to avoiding the abstraction layer.
+The premise for using a virtual DOM is that the DOM is "slow". While there is slightly more overhead in creating actual DOM nodes instead of lightweight virtual DOM nodes, in practice there isnt much difference. In addition, as web browsers get faster the DOM data structure will also likely continue to get faster so there benefits to avoiding the abstraction layer.
 
 See the [Benchmarks](#benchmarks) below for a comparison of `morphdom` with [virtual-dom](https://github.com/Matt-Esch/virtual-dom).
-
-___UPDATE:___ As of `v2.1.0`, `morphdom` supports both diffing a real DOM tree with another real DOM tree and diffing a real DOM tree with a _virtual_ DOM tree. See: [docs/virtual-dom.md](docs/virtual-dom.md) for more details.
 
 ## Which is better: rendering to an HTML string or rendering virtual DOM nodes?
 
