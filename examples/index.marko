@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-html lang="en"
-    head
-        meta charset="UTF-8"
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
         <title>morphdom examples</title>
-    body
-        ul
-            for(example in data.examples)
-                li
-                    a href=example.route - ${example.name}
+    </head>
+
+    <body>
+        <ul>
+            <for|example| of=data.examples>
+                <li>
+                  <a href=`${example.route}`>${example.name}></a>
+                </li>
+            </for>
+        </ul>
+    </body>
+</html>
 

@@ -1,20 +1,24 @@
 lasso-page package-path="./browser.json"
 
 <!DOCTYPE html>
-html lang="en"
-    head
-        meta charset="UTF-8"
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
         <title>Lifecycle Events | morphdom</title>
-        lasso-head
-    body
-        include("./todos.marko")
+        <lasso-head/>
+    </head>
+    <body>
+        <include-html("./todos.marko")/>
 
-        h2 - Add todo:
+        <h2>Add todo:</h2>
 
-        form onsubmit="window.handleTodoFormSubmit(event)"
-            input#todoInput type="text" value="Code"
+        <form onsubmit="window.handleTodoFormSubmit(event)">
+            <input id="todoInput" type="text" value="Code">
+        </form>
 
-        lasso-body
+        <lasso-body/>
 
-        browser-refresh
+        <browser-refresh/>
+    </body>
+</html>
 
