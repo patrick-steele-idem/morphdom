@@ -18,7 +18,7 @@ export default {
                 parentNode = parentNode.parentNode;
                 parentName = parentNode && parentNode.nodeName.toUpperCase();
             }
-            if (parentName === 'SELECT' && !hasAttributeNS(parentNode, null, 'multiple')) {
+            if (parentName === 'SELECT' && !parentNode.hasAttribute('multiple')) {
                 if (fromEl.hasAttribute('selected') && !toEl.selected) {
                     // Workaround for MS Edge bug where the 'selected' attribute can only be
                     // removed if set to a non-empty value:
