@@ -5,10 +5,17 @@ var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
 var doc = typeof document === 'undefined' ? undefined : document;
 
+/**
+ * This is about the same
+ * var html = new DOMParser().parseFromString(str, 'text/html');
+ * return html.body.firstChild;
+ *
+ * @method toElement
+ * @param {String} str
+ */
 function toElement(str) {
     if (!range && doc.createRange) {
         range = doc.createRange();
-        range.selectNode(doc.body);
     }
 
     var fragment;
