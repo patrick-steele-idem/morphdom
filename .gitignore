@@ -9,7 +9,7 @@
 coverage
 *.marko.js
 /.cache
-/test/client/mocha-phantomjs/generated
-/test/client/mocha-phantomjs/.cache
+/test/mocha-headless/generated
+/test/mocha-headless/.cache
 .cache
 ~*

@@ -4,36 +4,44 @@
 
 <div class="results">
     <ul>
-        <li for|moduleName| of=data.moduleNames>
-            Total time for ${moduleName}: ${data.getTotalTime(moduleName)}
-            <if(data.isWinner(moduleName))>
-                (winner)
-            </if>
-        </li>
+      <for|moduleName| of=data.moduleNames>
+          <li>
+              Total time for ${moduleName}: ${data.getTotalTime(moduleName)}
+              <if(data.isWinner(moduleName))>
+                  (winner)
+              </if>
+          </li>
+      </for>
     </ul>
     <table>
         <thead>
             <tr>
                 <td></td>
-                <td for|moduleName| of=data.moduleNames>
-                    ${moduleName}
-                </td>
+                <for|moduleName| of=data.moduleNames>
+                    <td>
+                        ${moduleName}
+                    </td>
+                </for>
             </tr>
         </thead>
         <tbody>
-            <tr for|testName| for=data.testNames>
-                <td class="test-name">
-                    ${testName}
-                </td>
-                <td for|moduleName| of=data.moduleNames>
-                    <if(data.isWinnerForTest(moduleName, testName))>
-                        <b><times(moduleName, testName)/></b>
-                    </if>
-                    <else>
-                        <times(moduleName, testName)/>
-                    </else>
-                </td>
-            </tr>
+          <for|testName| of=data.testNames>
+              <tr>
+                  <td class="test-name">
+                      ${testName}
+                  </td>
+                  <for|moduleName| of=data.moduleNames>
+                      <td>
+                          <if(data.isWinnerForTest(moduleName, testName))>
+                              <b><times moduleName=moduleName testName=testName/></b>
+                          </if>
+                          <else>
+                              <times moduleName=moduleName testName=testName/>
+                          </else>
+                      </td>
+                  </for>
+              </tr>
+          </for>
         </tbody>
     </table>
 </div>
