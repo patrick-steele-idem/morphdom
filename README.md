@@ -150,7 +150,7 @@ Libraries such as a [React](http://facebook.github.io/react/) and [virtual-dom](
 
 Both `morphdom` and virtual DOM based solutions update the _real_ DOM with the minimum number of changes. The only difference is in how the differences are determined. `morphdom` compares real DOM nodes while `virtual-dom` and others only compare virtual DOM nodes.
 
-There are some drawbacks to using a virtual DOM-based approach even though the _Virtual DOM_ has improved considerably over the last few years.  :
+There are some drawbacks to using a virtual DOM-based approach even though the _Virtual DOM_ has improved considerably over the last few years:
 
 - The real DOM is not the source of truth (the persistent virtual DOM tree is the source of truth)
 - The real DOM _cannot_ be modified behind the scenes (e.g., no jQuery) because the diff is done against the virtual DOM tree
@@ -160,6 +160,8 @@ There are some drawbacks to using a virtual DOM-based approach even though the _
 - The virtual DOM can only efficiently be used with code and templating languages that produce a virtual DOM tree
 
 The premise for using a virtual DOM is that the DOM is "slow". While there is slightly more overhead in creating actual DOM nodes instead of lightweight virtual DOM nodes, in practice there isnt much difference. In addition, as web browsers get faster the DOM data structure will also likely continue to get faster so there benefits to avoiding the abstraction layer.
+
+Moreover, we have found that diffing small changes may be faster with actual DOM.  As the diffing become larger, the cost of diffs slow down due to IO and virtual dom benefits begin to show.
 
 See the [Benchmarks](#benchmarks) below for a comparison of `morphdom` with [virtual-dom](https://github.com/Matt-Esch/virtual-dom).
 
@@ -187,7 +189,7 @@ _NOTE: If you are using a `morphdom` in your project please send a PR to add you
 
 # Benchmarks
 
-Below are the results on running benchmarks on various DOM transformations for both `morphdom` and [virtual-dom](https://github.com/Matt-Esch/virtual-dom). This benchmark uses a high performance timer (i.e., `window.performance.now()`) if available. For each test the benchmark runner will run `100` iterations. After all of the iterations are completed for one test the average time per iteration is calculated by dividing the total time by the number of iterations.
+Below are the results on running benchmarks on various DOM transformations for both `morphdom`, [`nanomorph`](https://github.com/choojs/nanomorph) and [virtual-dom](https://github.com/Matt-Esch/virtual-dom). This benchmark uses a high performance timer (i.e., `window.performance.now()`) if available. For each test the benchmark runner will run `100` iterations. After all of the iterations are completed for one test the average time per iteration is calculated by dividing the total time by the number of iterations.
 
 To run the benchmarks:
 
@@ -195,212 +197,11 @@ To run the benchmarks:
 npm run benchmark
 ```
 
-The table below shows some sample benchmark results when running the benchmarks on a MacBook Pro (2.8 GHz Intel Core i7, 16 GB 1600 MHz DDR3). The average time per iteration for each test is shown in the table below:
+The table below shows some sample benchmark results when running the benchmarks on a MacBook Pro (2.3 GHz Intel Core i5, 8 GB 2133 MHz LPDDR3). Remember, as noted above, the larger the diff needed to evaluate, the more vdom will perform better. The average time per iteration for each test is shown in the table below:
 
-<div class="results">
-    <ul>
-        <li> Total time for morphdom: 359.02ms (winner) </li>
-        <li> Total time for virtual-dom: 438.30ms </li>
-    </ul>
-    <table>
-        <thead>
-            <tr>
-                <td></td>
-                <td> morphdom </td>
-                <td> virtual-dom </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="test-name"> change-tagname </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> change-tagname-ids </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> data-table </td>
-                <td> <b>0.22ms</b> </td>
-                <td> 0.65ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> data-table2 </td>
-                <td> <b>0.96ms</b> </td>
-                <td> 2.00ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> id-change-tag-name </td>
-                <td> <b>0.00ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-2 </td>
-                <td> 0.02ms </td>
-                <td> <b>0.02ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-3 </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-4 </td>
-                <td> <b>0.02ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-5 </td>
-                <td> <b>0.02ms</b> </td>
-                <td> 0.04ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-6 </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-nested-7 </td>
-                <td> 0.02ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> ids-prepend </td>
-                <td> <b>0.02ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> input-element </td>
-                <td> 0.01ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> input-element-disabled </td>
-                <td> 0.01ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> input-element-enabled </td>
-                <td> 0.01ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> large </td>
-                <td> 1.56ms </td>
-                <td> <b>0.98ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> lengthen </td>
-                <td> <b>0.02ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> one </td>
-                <td> <b>0.00ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> reverse </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> reverse-ids </td>
-                <td> 0.03ms </td>
-                <td> <b>0.02ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> select-element </td>
-                <td> 0.04ms </td>
-                <td> <b>0.03ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> shorten </td>
-                <td> 0.02ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> simple </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> simple-ids </td>
-                <td> 0.04ms </td>
-                <td> <b>0.03ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> simple-text-el </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.02ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> svg </td>
-                <td> 0.02ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> svg-append </td>
-                <td> 0.04ms </td>
-                <td> <b>0.04ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> svg-append-new </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.04ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> svg-no-default-namespace </td>
-                <td> 0.03ms </td>
-                <td> <b>0.02ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> svg-xlink </td>
-                <td> 0.03ms </td>
-                <td> <b>0.00ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> tag-to-text </td>
-                <td> <b>0.00ms</b> </td>
-                <td> 0.00ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> text-to-tag </td>
-                <td> <b>0.00ms</b> </td>
-                <td> 0.00ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> text-to-text </td>
-                <td> <b>0.00ms</b> </td>
-                <td> 0.00ms </td>
-            </tr>
-            <tr>
-                <td class="test-name"> textarea </td>
-                <td> 0.01ms </td>
-                <td> <b>0.01ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> todomvc </td>
-                <td> 0.36ms </td>
-                <td> <b>0.25ms</b> </td>
-            </tr>
-            <tr>
-                <td class="test-name"> two </td>
-                <td> <b>0.01ms</b> </td>
-                <td> 0.01ms </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<div class="results"> <ul> <li> Total time for morphdom: 820.02ms </li> <li> Total time for virtual-dom: 333.81ms (winner) </li> <li> Total time for nanomorph: 3,177.85ms </li> </ul> <table> <thead> <tr> <td></td> <td> morphdom </td> <td> nanomorph </td> <td> virtual-dom </td> </tr> </thead> <tbody> <tr> <td class="test-name"> attr-value-empty-string </td> <td> <b> 0.01ms </b> </td> <td> 0.02ms </td> <td> <b> 0.01ms</b> </td> </tr> <tr> <td class="test-name"> change-tagname </td> <td> 0.01ms </td> <td> <b> 0.00ms</b> </td> <td> 0.01ms </td> </tr> <tr> <td class="test-name"> change-tagname-ids </td> <td> 0.02ms </td> <td> <b> 0.00ms</b> </td> <td> 0.02ms </td> </tr> <tr> <td class="test-name"> data-table </td> <td> <b> 0.60ms</b> </td> <td> 1.38ms </td> <td> 0.80ms </td> </tr> <tr> <td class="test-name"> data-table2 </td> <td> 2.72ms </td> <td> 12.42ms </td> <td> <b> 0.84ms</b> </td> </tr> <tr> <td class="test-name"> equal </td> <td> 0.50ms </td> <td> 1.33ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> id-change-tag-name </td> <td> <b> 0.03ms</b> </td> <td> 0.04ms </td> <td> 0.04ms </td> </tr> <tr> <td class="test-name"> ids-nested </td> <td> 0.08ms </td> <td> 0.02ms </td> <td> <b> 0.01ms</b> </td> </tr> <tr> <td class="test-name"> ids-nested-2 </td> <td> 0.03ms </td> <td> <b> 0.02ms</b> </td> <td> 0.05ms </td> </tr> <tr> <td class="test-name"> ids-nested-3 </td> <td> 0.03ms </td> <td> <b> 0.01ms</b> </td> <td> 0.02ms </td> </tr> <tr> <td class="test-name"> ids-nested-4 </td> <td> 0.04ms </td> <td> 0.04ms </td> <td> <b> 0.03ms</b> </td> </tr> <tr> <td class="test-name"> ids-nested-5 </td> <td> <b> 0.04ms</b> </td> <td> 0.08ms </td> <td> 0.06ms </td> </tr> <tr> <td class="test-name"> ids-nested-6 </td> <td> <b> 0.03ms</b> </td> <td> 0.03ms </td> <td> 0.03ms </td> </tr> <tr> <td class="test-name"> ids-nested-7 </td> <td> <b> 0.02ms</b> </td> <td> 0.03ms </td> <td> 0.02ms </td> </tr> <tr> <td class="test-name"> ids-prepend </td> <td> 0.03ms </td> <td> 0.03ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> input-element </td> <td> 0.02ms </td> <td> 0.04ms </td> <td> <b> 0.00ms</b> </td> </tr> <tr> <td class="test-name"> input-element-disabled </td> <td> <b> 0.01ms</b> </td> <td> 0.02ms </td> <td> <b> 0.01ms </b> </td> </tr> <tr> <td class="test-name"> input-element-enabled </td> <td> <b> 0.01ms </b> </td> <td> 0.02ms </td> <td> <b> 0.01ms</b> </td> </tr> <tr> <td class="test-name"> large </td> <td> 2.88ms </td> <td> 12.11ms </td> <td> <b> 0.35ms</b> </td> </tr> <tr> <td class="test-name"> lengthen </td> <td> <b> 0.03ms</b> </td> <td> 0.15ms </td> <td> 0.04ms </td> </tr> <tr> <td class="test-name"> one </td> <td> <b> 0.01ms</b> </td> <td> 0.03ms </td> <td> 0.01ms </td> </tr> <tr> <td class="test-name"> reverse </td> <td> 0.03ms </td> <td> 0.05ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> reverse-ids </td> <td> 0.05ms </td> <td> 0.07ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> select-element </td> <td> 0.07ms </td> <td> 0.14ms </td> <td> <b> 0.03ms</b> </td> </tr> <tr> <td class="test-name"> shorten </td> <td> 0.03ms </td> <td> 0.07ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> simple </td> <td> <b> 0.02ms </b> </td> <td> 0.05ms </td> <td> <b> 0.02ms</b> </td> </tr> <tr> <td class="test-name"> simple-ids </td> <td> 0.05ms </td> <td> 0.09ms </td> <td> <b> 0.04ms</b> </td> </tr> <tr> <td class="test-name"> simple-text-el </td> <td> <b> 0.03ms</b> </td> <td> 0.04ms </td> <td> <b> 0.03ms </b> </td> </tr> <tr> <td class="test-name"> svg </td> <td> 0.03ms </td> <td> 0.05ms </td> <td> <b> 0.01ms</b> </td> </tr> <tr> <td class="test-name"> svg-append </td> <td> <b> 0.06ms</b> </td> <td> 0.06ms </td> <td> 0.07ms </td> </tr> <tr> <td class="test-name"> svg-append-new </td> <td> <b> 0.02ms </b> </td> <td> <b> 0.02ms</b> </td> <td> 0.18ms </td> </tr> <tr> <td class="test-name"> svg-no-default-namespace </td> <td> 0.05ms </td> <td> 0.09ms </td> <td> <b> 0.04ms</b> </td> </tr> <tr> <td class="test-name"> svg-xlink </td> <td> 0.01ms </td> <td> 0.05ms </td> <td> <b> 0.00ms</b> </td> </tr> <tr> <td class="test-name"> tag-to-text </td> <td> <b> 0.00ms </b> </td> <td> <b> 0.00ms</b> </td> <td> 0.01ms </td> </tr> <tr> <td class="test-name"> text-to-tag </td> <td> <b> 0.00ms </b> </td> <td> <b> 0.00ms</b> </td> <td> 0.01ms </td> </tr> <tr> <td class="test-name"> text-to-text </td> <td> <b> 0.00ms</b> </td> <td> 0.01ms </td> <td> 0.00ms </td> </tr> <tr> <td class="test-name"> textarea </td> <td> <b> 0.01ms</b> </td> <td> 0.02ms </td> <td> 0.01ms </td> </tr> <tr> <td class="test-name"> todomvc </td> <td> 0.55ms </td> <td> 3.05ms </td> <td> <b> 0.32ms</b> </td> </tr> <tr> <td class="test-name"> todomvc2 </td> <td> <b> 0.05ms</b> </td> <td> 0.07ms </td> <td> 0.09ms </td> </tr> <tr> <td class="test-name"> two </td> <td> <b> 0.01ms </b> </td> <td> 0.02ms </td> <td> <b> 0.01ms</b> </td> </tr> </tbody> </table></div>
 
-_NOTE: Safari Version 9.1.1 (11601.6.17)_
+_NOTE: Chrome 72.0.3626.121_
 
 # Maintainers
 

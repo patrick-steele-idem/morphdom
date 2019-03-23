@@ -1,5 +1,6 @@
 var morphdom = require('../../');
 var resultsTemplate = require('./benchmark-results.marko');
+var nanomorph = require('nanomorph');
 var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
 var vdomVirtualize = require('vdom-virtualize');
@@ -104,6 +105,29 @@ function addBenchmarks() {
                 var fromNode = workingData.fromNode;
                 var toNode = workingData.toNode;
                 morphdom(fromNode, toNode);
+            }
+        },
+        nanomorph: {
+            enabled: true,
+            setup: function(autoTest, iterations) {
+                var workingDataArray = this.workingDataArray = [];
+                var i;
+
+                var fromNode = parseHtml(autoTest.from);
+                var toNode = parseHtml(autoTest.to);
+
+                for (i=0; i<iterations; i++) {
+                    workingDataArray.push({
+                        fromNode: fromNode.cloneNode(true),
+                        toNode: toNode.cloneNode(true)
+                    });
+                }
+            },
+            runIteration: function(i) {
+                var workingData = this.workingDataArray[i];
+                var fromNode = workingData.fromNode;
+                var toNode = workingData.toNode;
+                nanomorph(fromNode, toNode);
             }
         },
         // 'morphdom - marko-vdom': {
