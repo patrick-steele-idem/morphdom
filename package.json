@@ -48,7 +48,6 @@
     "nanomorph": "^5.4.0",
     "rollup": "^1.4.1",
     "uglify-js": "^3.5.1",
-    "umd": "^3.0.1",
     "vdom-virtualize": "2.0.0",
     "virtual-dom": "^2.1.1"
   },

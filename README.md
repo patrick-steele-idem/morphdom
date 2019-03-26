@@ -1,7 +1,10 @@
 morphdom
 ========
 
+![Download count all time](https://img.shields.io/npm/dt/morphdom.svg)
+
 [![Build Status](https://travis-ci.org/patrick-steele-idem/morphdom.svg?branch=master)](https://travis-ci.org/patrick-steele-idem/morphdom)
+
 [![NPM](https://nodei.co/npm/morphdom.png)](https://www.npmjs.com/package/morphdom)
 
 Lightweight module for morphing an existing DOM node tree to match a target DOM node tree. It's fast and works with the real DOM—no virtual DOM needed!
