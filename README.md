@@ -128,6 +128,23 @@ var morphedNode = morphdom(fromNode, toNode, {
 
 # FAQ
 
+## Can I make morphdom blaze through the DOM tree even faster? Yes.
+
+```js
+morphdom(fromNode, toNode, {
+    onBeforeElUpdated: function(fromEl, toEl) {
+        // spec - https://dom.spec.whatwg.org/#concept-node-equals
+        if (fromEl.isEqualNode(toEl)) {
+            return false
+        }
+
+        return true
+    }
+})
+```
+
+This avoids traversing through the entire subtree when you know they are equal.  While we haven't added this to the core lib yet due to very minor concerns, this is an easy way to make DOM diffing speeds on par with virtual DOM.
+
 ## Isn't the DOM slow?
 
 ___UPDATE:___ As of `v2.1.0`, `morphdom` supports both diffing a real DOM tree with another real DOM tree and diffing a real DOM tree with a _virtual_ DOM tree. See: [docs/virtual-dom.md](docs/virtual-dom.md) for more details.
