@@ -24,7 +24,7 @@ export default function morphdomFactory(morphAttrs) {
             if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
                 var toNodeHtml = toNode;
                 toNode = doc.createElement('html');
-                toNode.innerHTML = toNodeHtml;
+                toNode.insertAdjacentHTML('beforeend', toNodeHtml);
             } else {
                 toNode = toElement(toNode);
             }

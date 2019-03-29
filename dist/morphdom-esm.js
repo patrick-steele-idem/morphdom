@@ -273,7 +273,7 @@ function morphdomFactory(morphAttrs) {
             if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
                 var toNodeHtml = toNode;
                 toNode = doc.createElement('html');
-                toNode.innerHTML = toNodeHtml;
+                toNode.insertAdjacentHTML('beforeend', toNodeHtml);
             } else {
                 toNode = toElement(toNode);
             }
@@ -474,6 +474,7 @@ function morphdomFactory(morphAttrs) {
 
                         var curFromNodeType = curFromNodeChild.nodeType;
 
+                        // this means if the curFromNodeChild doesnt have a match with the curToNodeChild
                         var isCompatible = undefined;
 
                         if (curFromNodeType === curToNodeChild.nodeType) {
@@ -553,6 +554,7 @@ function morphdomFactory(morphAttrs) {
 
                         if (isCompatible) {
                             // Advance both the "to" child and the "from" child since we found a match
+                            // Nothing else to do as we already recursively called morphChildren above
                             curToNodeChild = toNextSibling;
                             curFromNodeChild = fromNextSibling;
                             continue outer;
