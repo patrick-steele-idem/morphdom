@@ -273,7 +273,7 @@ function morphdomFactory(morphAttrs) {
             if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML') {
                 var toNodeHtml = toNode;
                 toNode = doc.createElement('html');
-                toNode.insertAdjacentHTML('beforeend', toNodeHtml);
+                toNode.innerHTML = toNodeHtml;
             } else {
                 toNode = toElement(toNode);
             }
@@ -407,7 +407,7 @@ function morphdomFactory(morphAttrs) {
                     var unmatchedFromEl = fromNodesLookup[key];
                     if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
-                        morphChildren(unmatchedFromEl, curChild);
+                        morphEl(unmatchedFromEl, curChild);
                     }
                 }
 
@@ -416,9 +416,8 @@ function morphdomFactory(morphAttrs) {
             }
         }
 
-        function morphChildren(fromEl, toEl, childrenOnly) {
+        function morphEl(fromEl, toEl, childrenOnly) {
             var toElKey = getNodeKey(toEl);
-            var curFromNodeKey;
 
             if (toElKey) {
                 // If an element with an ID is being morphed then it will be in the final
@@ -445,173 +444,135 @@ function morphdomFactory(morphAttrs) {
                     return;
                 }
             }
-
             if (fromEl.nodeName !== 'TEXTAREA') {
-                var curToNodeChild = toEl.firstChild;
-                var curFromNodeChild = fromEl.firstChild;
-                var curToNodeKey;
+              morphChildren(fromEl, toEl);
+            } else {
+              specialElHandlers.TEXTAREA(fromEl, toEl);
+            }
+        }
 
-                var fromNextSibling;
-                var toNextSibling;
-                var matchingFromEl;
+        function morphChildren(fromEl, toEl) {
+            var curToNodeChild = toEl.firstChild;
+            var curFromNodeChild = fromEl.firstChild;
+            var curToNodeKey;
+            var curFromNodeKey;
 
-                // walk the children
-                outer: while (curToNodeChild) {
-                    toNextSibling = curToNodeChild.nextSibling;
-                    curToNodeKey = getNodeKey(curToNodeChild);
+            var fromNextSibling;
+            var toNextSibling;
+            var matchingFromEl;
 
-                    // walk the fromNode children all the way through
-                    while (curFromNodeChild) {
-                        fromNextSibling = curFromNodeChild.nextSibling;
+            // walk the children
+            outer: while (curToNodeChild) {
+                toNextSibling = curToNodeChild.nextSibling;
+                curToNodeKey = getNodeKey(curToNodeChild);
 
-                        if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
-                            curToNodeChild = toNextSibling;
-                            curFromNodeChild = fromNextSibling;
-                            continue outer;
-                        }
+                // walk the fromNode children all the way through
+                while (curFromNodeChild) {
+                    fromNextSibling = curFromNodeChild.nextSibling;
 
-                        curFromNodeKey = getNodeKey(curFromNodeChild);
-
-                        var curFromNodeType = curFromNodeChild.nodeType;
-
-                        // this means if the curFromNodeChild doesnt have a match with the curToNodeChild
-                        var isCompatible = undefined;
-
-                        if (curFromNodeType === curToNodeChild.nodeType) {
-                            if (curFromNodeType === ELEMENT_NODE) {
-                                // Both nodes being compared are Element nodes
-
-                                if (curToNodeKey) {
-                                    // The target node has a key so we want to match it up with the correct element
-                                    // in the original DOM tree
-                                    if (curToNodeKey !== curFromNodeKey) {
-                                        // The current element in the original DOM tree does not have a matching key so
-                                        // let's check our lookup to see if there is a matching element in the original
-                                        // DOM tree
-                                        if ((matchingFromEl = fromNodesLookup[curToNodeKey])) {
-                                            if (fromNextSibling === matchingFromEl) {
-                                                // Special case for single element removals. To avoid removing the original
-                                                // DOM node out of the tree (since that can break CSS transitions, etc.),
-                                                // we will instead discard the current node and wait until the next
-                                                // iteration to properly match up the keyed target element with its matching
-                                                // element in the original tree
-                                                isCompatible = false;
-                                            } else {
-                                                // We found a matching keyed element somewhere in the original DOM tree.
-                                                // Let's move the original DOM node into the current position and morph
-                                                // it.
-
-                                                // NOTE: We use insertBefore instead of replaceChild because we want to go through
-                                                // the `removeNode()` function for the node that is being discarded so that
-                                                // all lifecycle hooks are correctly invoked
-                                                fromEl.insertBefore(matchingFromEl, curFromNodeChild);
-
-                                                // fromNextSibling = curFromNodeChild.nextSibling;
-
-                                                if (curFromNodeKey) {
-                                                    // Since the node is keyed it might be matched up later so we defer
-                                                    // the actual removal to later
-                                                    addKeyedRemoval(curFromNodeKey);
-                                                } else {
-                                                    // NOTE: we skip nested keyed nodes from being removed since there is
-                                                    //       still a chance they will be matched up later
-                                                    removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-                                                }
-
-                                                curFromNodeChild = matchingFromEl;
-                                            }
-                                        } else {
-                                            // The nodes are not compatible since the "to" node has a key and there
-                                            // is no matching keyed node in the source tree
-                                            isCompatible = false;
-                                        }
-                                    }
-                                } else if (curFromNodeKey) {
-                                    // The original has a key
-                                    isCompatible = false;
-                                }
-
-                                isCompatible = isCompatible !== false && compareNodeNames(curFromNodeChild, curToNodeChild);
-                                if (isCompatible) {
-                                    // We found compatible DOM elements so transform
-                                    // the current "from" node to match the current
-                                    // target DOM node.
-                                    // MORPH
-                                    morphChildren(curFromNodeChild, curToNodeChild);
-                                }
-
-                            } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
-                                // Both nodes being compared are Text or Comment nodes
-                                isCompatible = true;
-                                // Simply update nodeValue on the original node to
-                                // change the text value
-                                if (curFromNodeChild.nodeValue !== curToNodeChild.nodeValue) {
-                                    curFromNodeChild.nodeValue = curToNodeChild.nodeValue;
-                                }
-
-                            }
-                        }
-
-                        if (isCompatible) {
-                            // Advance both the "to" child and the "from" child since we found a match
-                            // Nothing else to do as we already recursively called morphChildren above
-                            curToNodeChild = toNextSibling;
-                            curFromNodeChild = fromNextSibling;
-                            continue outer;
-                        }
-
-                        // No compatible match so remove the old node from the DOM and continue trying to find a
-                        // match in the original DOM. However, we only do this if the from node is not keyed
-                        // since it is possible that a keyed node might match up with a node somewhere else in the
-                        // target tree and we don't want to discard it just yet since it still might find a
-                        // home in the final DOM tree. After everything is done we will remove any keyed nodes
-                        // that didn't find a home
-                        if (curFromNodeKey) {
-                            // Since the node is keyed it might be matched up later so we defer
-                            // the actual removal to later
-                            addKeyedRemoval(curFromNodeKey);
-                        } else {
-                            // NOTE: we skip nested keyed nodes from being removed since there is
-                            //       still a chance they will be matched up later
-                            removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
-                        }
-
+                    if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
+                        curToNodeChild = toNextSibling;
                         curFromNodeChild = fromNextSibling;
-                    } // END: while(curFromNodeChild) {}
+                        continue outer;
+                    }
 
-                    // If we got this far then we did not find a candidate match for
-                    // our "to node" and we exhausted all of the children "from"
-                    // nodes. Therefore, we will just append the current "to" node
-                    // to the end
-                    if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
-                        fromEl.appendChild(matchingFromEl);
-                        // MORPH
-                        morphChildren(matchingFromEl, curToNodeChild);
-                    } else {
-                        var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
-                        if (onBeforeNodeAddedResult !== false) {
-                            if (onBeforeNodeAddedResult) {
-                                curToNodeChild = onBeforeNodeAddedResult;
+                    curFromNodeKey = getNodeKey(curFromNodeChild);
+
+                    var curFromNodeType = curFromNodeChild.nodeType;
+
+                    // this means if the curFromNodeChild doesnt have a match with the curToNodeChild
+                    var isCompatible = undefined;
+
+                    if (curFromNodeType === curToNodeChild.nodeType) {
+                        if (curFromNodeType === ELEMENT_NODE) {
+                            // Both nodes being compared are Element nodes
+
+                            if (curToNodeKey) {
+                                // The target node has a key so we want to match it up with the correct element
+                                // in the original DOM tree
+                                if (curToNodeKey !== curFromNodeKey) {
+                                    // The current element in the original DOM tree does not have a matching key so
+                                    // let's check our lookup to see if there is a matching element in the original
+                                    // DOM tree
+                                    if ((matchingFromEl = fromNodesLookup[curToNodeKey])) {
+                                        if (fromNextSibling === matchingFromEl) {
+                                            // Special case for single element removals. To avoid removing the original
+                                            // DOM node out of the tree (since that can break CSS transitions, etc.),
+                                            // we will instead discard the current node and wait until the next
+                                            // iteration to properly match up the keyed target element with its matching
+                                            // element in the original tree
+                                            isCompatible = false;
+                                        } else {
+                                            // We found a matching keyed element somewhere in the original DOM tree.
+                                            // Let's move the original DOM node into the current position and morph
+                                            // it.
+
+                                            // NOTE: We use insertBefore instead of replaceChild because we want to go through
+                                            // the `removeNode()` function for the node that is being discarded so that
+                                            // all lifecycle hooks are correctly invoked
+                                            fromEl.insertBefore(matchingFromEl, curFromNodeChild);
+
+                                            // fromNextSibling = curFromNodeChild.nextSibling;
+
+                                            if (curFromNodeKey) {
+                                                // Since the node is keyed it might be matched up later so we defer
+                                                // the actual removal to later
+                                                addKeyedRemoval(curFromNodeKey);
+                                            } else {
+                                                // NOTE: we skip nested keyed nodes from being removed since there is
+                                                //       still a chance they will be matched up later
+                                                removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
+                                            }
+
+                                            curFromNodeChild = matchingFromEl;
+                                        }
+                                    } else {
+                                        // The nodes are not compatible since the "to" node has a key and there
+                                        // is no matching keyed node in the source tree
+                                        isCompatible = false;
+                                    }
+                                }
+                            } else if (curFromNodeKey) {
+                                // The original has a key
+                                isCompatible = false;
                             }
 
-                            if (curToNodeChild.actualize) {
-                                curToNodeChild = curToNodeChild.actualize(fromEl.ownerDocument || doc);
+                            isCompatible = isCompatible !== false && compareNodeNames(curFromNodeChild, curToNodeChild);
+                            if (isCompatible) {
+                                // We found compatible DOM elements so transform
+                                // the current "from" node to match the current
+                                // target DOM node.
+                                // MORPH
+                                morphEl(curFromNodeChild, curToNodeChild);
                             }
-                            fromEl.appendChild(curToNodeChild);
-                            handleNodeAdded(curToNodeChild);
+
+                        } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
+                            // Both nodes being compared are Text or Comment nodes
+                            isCompatible = true;
+                            // Simply update nodeValue on the original node to
+                            // change the text value
+                            if (curFromNodeChild.nodeValue !== curToNodeChild.nodeValue) {
+                                curFromNodeChild.nodeValue = curToNodeChild.nodeValue;
+                            }
+
                         }
                     }
 
-                    curToNodeChild = toNextSibling;
-                    curFromNodeChild = fromNextSibling;
-                }
+                    if (isCompatible) {
+                        // Advance both the "to" child and the "from" child since we found a match
+                        // Nothing else to do as we already recursively called morphChildren above
+                        curToNodeChild = toNextSibling;
+                        curFromNodeChild = fromNextSibling;
+                        continue outer;
+                    }
 
-                // We have processed all of the "to nodes". If curFromNodeChild is
-                // non-null then we still have some from nodes left over that need
-                // to be removed
-                while (curFromNodeChild) {
-                    fromNextSibling = curFromNodeChild.nextSibling;
-                    if ((curFromNodeKey = getNodeKey(curFromNodeChild))) {
+                    // No compatible match so remove the old node from the DOM and continue trying to find a
+                    // match in the original DOM. However, we only do this if the from node is not keyed
+                    // since it is possible that a keyed node might match up with a node somewhere else in the
+                    // target tree and we don't want to discard it just yet since it still might find a
+                    // home in the final DOM tree. After everything is done we will remove any keyed nodes
+                    // that didn't find a home
+                    if (curFromNodeKey) {
                         // Since the node is keyed it might be matched up later so we defer
                         // the actual removal to later
                         addKeyedRemoval(curFromNodeKey);
@@ -620,8 +581,52 @@ function morphdomFactory(morphAttrs) {
                         //       still a chance they will be matched up later
                         removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
                     }
+
                     curFromNodeChild = fromNextSibling;
+                } // END: while(curFromNodeChild) {}
+
+                // If we got this far then we did not find a candidate match for
+                // our "to node" and we exhausted all of the children "from"
+                // nodes. Therefore, we will just append the current "to" node
+                // to the end
+                if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
+                    fromEl.appendChild(matchingFromEl);
+                    // MORPH
+                    morphEl(matchingFromEl, curToNodeChild);
+                } else {
+                    var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
+                    if (onBeforeNodeAddedResult !== false) {
+                        if (onBeforeNodeAddedResult) {
+                            curToNodeChild = onBeforeNodeAddedResult;
+                        }
+
+                        if (curToNodeChild.actualize) {
+                            curToNodeChild = curToNodeChild.actualize(fromEl.ownerDocument || doc);
+                        }
+                        fromEl.appendChild(curToNodeChild);
+                        handleNodeAdded(curToNodeChild);
+                    }
                 }
+
+                curToNodeChild = toNextSibling;
+                curFromNodeChild = fromNextSibling;
+            }
+
+            // We have processed all of the "to nodes". If curFromNodeChild is
+            // non-null then we still have some from nodes left over that need
+            // to be removed
+            while (curFromNodeChild) {
+                fromNextSibling = curFromNodeChild.nextSibling;
+                if ((curFromNodeKey = getNodeKey(curFromNodeChild))) {
+                    // Since the node is keyed it might be matched up later so we defer
+                    // the actual removal to later
+                    addKeyedRemoval(curFromNodeKey);
+                } else {
+                    // NOTE: we skip nested keyed nodes from being removed since there is
+                    //       still a chance they will be matched up later
+                    removeNode(curFromNodeChild, fromEl, true /* skip keyed nodes */);
+                }
+                curFromNodeChild = fromNextSibling;
             }
 
             var specialElHandler = specialElHandlers[fromEl.nodeName];
@@ -666,7 +671,7 @@ function morphdomFactory(morphAttrs) {
             // toss out the "from node" and use the "to node"
             onNodeDiscarded(fromNode);
         } else {
-            morphChildren(morphedNode, toNode, childrenOnly);
+            morphEl(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be
             // removed. We only do the removal if we know that the keyed node
