@@ -73,6 +73,7 @@ var doc = typeof document === 'undefined' ? undefined : document;
 function toElement(str) {
     if (!range && doc.createRange) {
         range = doc.createRange();
+        range.selectNode(doc.body);
     }
 
     var fragment;
