@@ -927,6 +927,29 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(-1);
     });
 
+    it('should handle document fragment removal', function () {
+        var html = `<form>
+            <label>This should be removed</label>
+            <input type="checkbox" id="element-to-be-removed">
+            <p>Element to keep in dom</p>
+          </form>`;
+        var container = document.createElement('div');
+        container.className = 'shadow-root-container';
+        container.innerHTML = html;
+
+        var form = container.querySelector('form');
+        form = form.cloneNode(true);
+        container.createShadowRoot().appendChild(form);
+
+        var morphedEl = morphdom(
+          container.shadowRoot,
+          '<div id="shadow-root-container"><form><p>Element to keep in dom</p></form></div>',
+          { childrenOnly: true }
+        );
+
+        expect(morphedEl.querySelector('input') === null).to.equal(true);
+    });
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.
