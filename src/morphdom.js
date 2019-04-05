@@ -4,6 +4,7 @@ import { compareNodeNames, toElement, moveChildren, createElementNS, doc } from 
 import specialElHandlers from './specialElHandlers';
 
 var ELEMENT_NODE = 1;
+var DOCUMENT_FRAGMENT_NODE = 11;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
 
@@ -128,7 +129,7 @@ export default function morphdomFactory(morphAttrs) {
         // }
 
         function indexTree(node) {
-            if (node.nodeType === ELEMENT_NODE) {
+            if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE) {
                 var curChild = node.firstChild;
                 while (curChild) {
                     var key = getNodeKey(curChild);
