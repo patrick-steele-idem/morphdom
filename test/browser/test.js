@@ -927,7 +927,7 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(-1);
     });
 
-    it('should handle document fragment removal', function () {
+    it('should handle shadow DOM removal', function () {
         var html = `<form>
             <label>This should be removed</label>
             <input type="checkbox" id="element-to-be-removed">
@@ -948,6 +948,22 @@ describe('morphdom' , function() {
         );
 
         expect(morphedEl.querySelector('input') === null).to.equal(true);
+    });
+
+    it('should handle document fragment removal', function () {
+      var element = document.createElement('div');
+      element.innerHTML = '<span>Hello</span>';
+
+      // Build the fragment to match the children.
+      var fragment = document.createDocumentFragment();
+      fragment.appendChild(document.createElement('span'));
+      fragment.firstChild.appendChild(document.createTextNode('World'));
+
+      // This currently does not error, but does not diff the children.
+      var morphedEl = morphdom(element, fragment);
+
+      expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
+      expect(morphedEl.firstChild.textContent).to.equal('World');
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
