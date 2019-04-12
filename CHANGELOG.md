@@ -3,15 +3,35 @@ Changelog
 
 # 2.x
 
+## 2.5.4
+
+- Enhancement: Fix id key removal from tree when the element with key is inside a document fragment node (ex: shadow dom) [PR #119](https://github.com/patrick-steele-idem/morphdom/pull/119)
+- Minor: small refactor to morphEl to own function [PR #149](small refactor to morphEl to own function)
+- selectNode for range b/c documentElement not avail in Safari [commit](https://github.com/patrick-steele-idem/morphdom/commit/6afd2976ab4fac4d8e1575975531644ecc62bc1d)
+- clarify getNodeKey docs [PR #151](https://github.com/patrick-steele-idem/morphdom/pull/151)
+
+## 2.5.3
+
+- Minor: update deps [PR #145](https://github.com/patrick-steele-idem/morphdom/pull/145)
+- Minor: Minor comments and very very minor refactors [PR #143](https://github.com/patrick-steele-idem/morphdom/pull/143)
+
+## 2.5.2
+
+- New dist for 2.5.1.  My bad!
+
+## 2.5.1
+
+- Bugfix: Fix bug where wrong select option would get selected. [PR #117](https://github.com/patrick-steele-idem/morphdom/pull/117)
+
 ## 2.5.0
 
-- Enhancement: Publish es6 format as morphdom-esm.js ([PR #141](https://github.com/patrick-steele-idem/morphdom/pull/141)
-- Enhancement: Start removing old browser support code paths ([PR #140](https://github.com/patrick-steele-idem/morphdom/pull/140)
+- Enhancement: Publish es6 format as morphdom-esm.js [PR #141](https://github.com/patrick-steele-idem/morphdom/pull/141)
+- Enhancement: Start removing old browser support code paths [PR #140](https://github.com/patrick-steele-idem/morphdom/pull/140)
 
 ## 2.4.0
 
-- Enhancement: Rollup 1.0 ([PR #139](https://github.com/patrick-steele-idem/morphdom/pull/139)
-- Enhancement: Add Typescript declaration file ([PR #138](https://github.com/patrick-steele-idem/morphdom/pull/138)
+- Enhancement: Rollup 1.0 [PR #139](https://github.com/patrick-steele-idem/morphdom/pull/139)
+- Enhancement: Add Typescript declaration file [PR #138](https://github.com/patrick-steele-idem/morphdom/pull/138)
 
 ## 2.3.x
 
