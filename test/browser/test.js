@@ -913,6 +913,38 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(1);
     });
 
+    it('should update selection state on select elements when removing options', function () {
+        var el1 = node('select');
+        el1.appendChild(node('option', {}, 'Option 1'));
+        el1.appendChild(node('option', {'selected': ''}, 'Option 2'));
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {'selected': ''}, 'Option 1'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(0);
+    });
+
+    it('should update selection state with last one on select elements when multiple selected', function () {
+        var el1 = node('select');
+        el1.appendChild(node('option', {}, 'Option 1'));
+        el1.appendChild(node('option', {'selected': ''}, 'Option 2'));
+
+        document.body.appendChild(el1);
+
+        var el2 = node('select');
+        el2.appendChild(node('option', {'selected': ''}, 'Option 0'));
+        el2.appendChild(node('option', 'Option 1'));
+        el2.appendChild(node('option', {'selected': ''}, 'Option 2'));
+
+        morphdom(el1, el2);
+
+        expect(el1.selectedIndex).to.equal(2);
+    });
+
     it('should set selectedIndex to -1 when no option explicitly selected', function () {
         var el1 = node('select');
 
