@@ -452,7 +452,7 @@
                     delete fromNodesLookup[toElKey];
                 }
 
-                if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
+                if (toEl.isSameNode && toEl.isSameNode(fromEl)) {
                     return;
                 }
 
