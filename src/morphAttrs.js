@@ -22,7 +22,7 @@ export default function morphAttrs(fromNode, toNode) {
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
-            fromValue = fromNode.getAttribute(attrName);
+            fromValue = fromNode[attrName];
 
             if (fromValue !== attrValue) {
                 fromNode.setAttribute(attrName, attrValue);
