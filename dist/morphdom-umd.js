@@ -65,6 +65,7 @@
     var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
     var doc = typeof document === 'undefined' ? undefined : document;
+    var hasTemplateSupport = 'content' in document.createElement('template');
 
     /**
      * This is about the same
@@ -81,7 +82,14 @@
         }
 
         var fragment;
-        if (range && range.createContextualFragment) {
+        if (hasTemplateSupport) {
+          // avoid restrictions on content for things like `<tr><th>Hi</th></tr>` which
+          // createContextualFragment doesn't support
+          // <template> support not available in IE
+          var template = document.createElement('template');
+          template.innerHTML = str.trim();
+          fragment = template.content;
+        } else if (range && range.createContextualFragment) {
             fragment = range.createContextualFragment(str);
         } else {
             fragment = doc.createElement('body');
