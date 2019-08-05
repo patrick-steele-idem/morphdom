@@ -3,6 +3,10 @@ Changelog
 
 # 2.x
 
+## 2.5.5
+
+- Template support for creating element from string [PR #159](https://github.com/patrick-steele-idem/morphdom/pull/159)
+
 ## 2.5.4
 
 - Enhancement: Fix id key removal from tree when the element with key is inside a document fragment node (ex: shadow dom) [PR #119](https://github.com/patrick-steele-idem/morphdom/pull/119)
