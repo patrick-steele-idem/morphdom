@@ -2,6 +2,30 @@ var range; // Create a range object for efficently rendering strings to elements
 var NS_XHTML = 'http://www.w3.org/1999/xhtml';
 
 export var doc = typeof document === 'undefined' ? undefined : document;
+var HAS_TEMPLATE_SUPPORT = !!doc && 'content' in doc.createElement('template');
+var HAS_RANGE_SUPPORT = !!doc && doc.createRange && 'createContextualFragment' in doc.createRange();
+
+function createFragmentFromTemplate(str) {
+    var template = doc.createElement('template');
+    template.innerHTML = str;
+    return template.content.childNodes[0];
+}
+
+function createFragmentFromRange(str) {
+    if (!range) {
+        range = doc.createRange();
+        range.selectNode(doc.body);
+    }
+
+    var fragment = range.createContextualFragment(str);
+    return fragment.childNodes[0];
+}
+
+function createFragmentFromWrap(str) {
+    var fragment = doc.createElement('body');
+    fragment.innerHTML = str;
+    return fragment.childNodes[0];
+}
 
 /**
  * This is about the same
@@ -12,19 +36,16 @@ export var doc = typeof document === 'undefined' ? undefined : document;
  * @param {String} str
  */
 export function toElement(str) {
-    if (!range && doc.createRange) {
-        range = doc.createRange();
-        range.selectNode(doc.body);
+    if (HAS_TEMPLATE_SUPPORT) {
+      // avoid restrictions on content for things like `<tr><th>Hi</th></tr>` which
+      // createContextualFragment doesn't support
+      // <template> support not available in IE
+      return createFragmentFromTemplate(str);
+    } else if (HAS_RANGE_SUPPORT) {
+      return createFragmentFromRange(str);
     }
 
-    var fragment;
-    if (range && range.createContextualFragment) {
-        fragment = range.createContextualFragment(str);
-    } else {
-        fragment = doc.createElement('body');
-        fragment.innerHTML = str;
-    }
-    return fragment.childNodes[0];
+    return createFragmentFromWrap(str);
 }
 
 /**
