@@ -560,6 +560,17 @@ describe('morphdom' , function() {
         expect(el1.firstChild.textContent).to.equal('Click Me');
     });
 
+    it('should transform a simple el to a target HTML string with ignore spaces', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML  = '<button>Click Me</button>';
+
+        morphdom(el1, ' <div class="bar"><button>Click Me</button>');
+
+        expect(el1.className).to.equal('bar');
+        expect(el1.firstChild.nodeName).to.equal('BUTTON');
+        expect(el1.firstChild.textContent).to.equal('Click Me');
+    });
+
     it('should allow updates to child nodes only', function() {
         var el1 = document.createElement('div');
         el1.className = 'foo';

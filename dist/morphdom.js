@@ -95,6 +95,7 @@ function createFragmentFromWrap(str) {
  * @param {String} str
  */
 function toElement(str) {
+    str = str.trim();
     if (HAS_TEMPLATE_SUPPORT) {
       // avoid restrictions on content for things like `<tr><th>Hi</th></tr>` which
       // createContextualFragment doesn't support
