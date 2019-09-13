@@ -433,7 +433,9 @@ function morphdomFactory(morphAttrs) {
                 }
             }
             if (fromEl.nodeName !== 'TEXTAREA') {
-              morphChildren(fromEl, toEl);
+              window.requestAnimationFrame(function() {
+                morphChildren(fromEl, toEl);
+              });
             } else {
               specialElHandlers.TEXTAREA(fromEl, toEl);
             }
