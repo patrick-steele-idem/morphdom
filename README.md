@@ -226,7 +226,6 @@ _NOTE: Chrome 72.0.3626.121_
 # Maintainers
 
 * [Patrick Steele-Idem](https://github.com/patrick-steele-idem) (Twitter: [@psteeleidem](http://twitter.com/psteeleidem))
-* [Paul Grenier](https://github.com/AutoSponge) (Twitter: [@autosponge](https://twitter.com/autosponge))
 * [Scott Newcomer](https://github.com/snewcomer) (Twitter: [@puekey](https://twitter.com/puekey))
 
 # Contribute
