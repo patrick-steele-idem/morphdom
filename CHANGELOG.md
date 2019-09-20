@@ -3,6 +3,15 @@ Changelog
 
 # 2.x
 
+## 2.5.7
+
+- Chore: Alternate refactor to #155 - Move isSameNode check [PR #156](https://github.com/patrick-steele-idem/morphdom/pull/156)
+- Use attribute name with the prefix in XMLNS namespace [PR #133](https://github.com/patrick-steele-idem/morphdom/pull/133)
+
+## 2.5.6
+
+- fixed the string with space trouble [PR #161](https://github.com/patrick-steele-idem/morphdom/pull/161)
+
 ## 2.5.5
 
 - Template support for creating element from string [PR #159](https://github.com/patrick-steele-idem/morphdom/pull/159)
