@@ -21,6 +21,9 @@ function morphAttrs(fromNode, toNode) {
             fromValue = fromNode.getAttributeNS(attrNamespaceURI, attrName);
 
             if (fromValue !== attrValue) {
+                if (attr.prefix === 'xmlns'){
+                    attrName = attr.name; // It's not allowed to set an attribute with the XMLNS namespace without specifying the `xmlns` prefix
+                }
                 fromNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
             }
         } else {
@@ -470,10 +473,6 @@ function morphdomFactory(morphAttrs) {
                 delete fromNodesLookup[toElKey];
             }
 
-            if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
-                return;
-            }
-
             if (!childrenOnly) {
                 // optional
                 if (onBeforeElUpdated(fromEl, toEl) === false) {
@@ -701,6 +700,10 @@ function morphdomFactory(morphAttrs) {
             // toss out the "from node" and use the "to node"
             onNodeDiscarded(fromNode);
         } else {
+            if (toNode.isSameNode && toNode.isSameNode(morphedNode)) {
+                return;
+            }
+
             morphEl(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be

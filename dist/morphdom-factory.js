@@ -413,10 +413,6 @@ function morphdomFactory(morphAttrs) {
                 delete fromNodesLookup[toElKey];
             }
 
-            if (toNode.isSameNode && toNode.isSameNode(fromNode)) {
-                return;
-            }
-
             if (!childrenOnly) {
                 // optional
                 if (onBeforeElUpdated(fromEl, toEl) === false) {
@@ -644,6 +640,10 @@ function morphdomFactory(morphAttrs) {
             // toss out the "from node" and use the "to node"
             onNodeDiscarded(fromNode);
         } else {
+            if (toNode.isSameNode && toNode.isSameNode(morphedNode)) {
+                return;
+            }
+
             morphEl(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be
