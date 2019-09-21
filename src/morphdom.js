@@ -183,7 +183,7 @@ export default function morphdomFactory(morphAttrs) {
             }
         }
 
-        function morphEl(fromEl, toEl, childrenOnly = false) {
+        function morphEl(fromEl, toEl, childrenOnly) {
             var toElKey = getNodeKey(toEl);
 
             if (toElKey) {
