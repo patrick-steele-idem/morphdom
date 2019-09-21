@@ -424,7 +424,7 @@ export default function morphdomFactory(morphAttrs) {
                 return;
             }
 
-            Promise.resolve().then(morphEl(morphedNode, toNode, childrenOnly));
+            morphEl(morphedNode, toNode, childrenOnly);
 
             // We now need to loop over any keyed nodes that might need to be
             // removed. We only do the removal if we know that the keyed node
