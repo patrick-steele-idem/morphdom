@@ -259,15 +259,11 @@ function morphdomFactory(morphAttrs) {
         var childrenOnly = options.childrenOnly === true;
 
         // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
-        var fromNodesLookup = {};
-        var keyedRemovalList;
+        var fromNodesLookup = Object.create(null);
+        var keyedRemovalList = [];
 
         function addKeyedRemoval(key) {
-            if (keyedRemovalList) {
-                keyedRemovalList.push(key);
-            } else {
-                keyedRemovalList = [key];
-            }
+            keyedRemovalList.push(key);
         }
 
         function walkDiscardedChildNodes(node, skipKeyedNodes) {
@@ -428,6 +424,7 @@ function morphdomFactory(morphAttrs) {
                     return;
                 }
             }
+
             if (fromEl.nodeName !== 'TEXTAREA') {
               morphChildren(fromEl, toEl);
             } else {
