@@ -323,15 +323,11 @@
             var childrenOnly = options.childrenOnly === true;
 
             // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
-            var fromNodesLookup = {};
-            var keyedRemovalList;
+            var fromNodesLookup = Object.create(null);
+            var keyedRemovalList = [];
 
             function addKeyedRemoval(key) {
-                if (keyedRemovalList) {
-                    keyedRemovalList.push(key);
-                } else {
-                    keyedRemovalList = [key];
-                }
+                keyedRemovalList.push(key);
             }
 
             function walkDiscardedChildNodes(node, skipKeyedNodes) {
@@ -492,6 +488,7 @@
                         return;
                     }
                 }
+
                 if (fromEl.nodeName !== 'TEXTAREA') {
                   morphChildren(fromEl, toEl);
                 } else {
@@ -708,7 +705,7 @@
                     return;
                 }
 
-                morphEl(morphedNode, toNode, childrenOnly);
+                Promise.resolve().then(morphEl(morphedNode, toNode, childrenOnly));
 
                 // We now need to loop over any keyed nodes that might need to be
                 // removed. We only do the removal if we know that the keyed node
