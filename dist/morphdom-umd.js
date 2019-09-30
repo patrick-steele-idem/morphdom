@@ -44,20 +44,18 @@
 
         for (var d = 0; d < fromNodeAttrs.length; d++) {
             attr = fromNodeAttrs[d];
-            if (attr.specified !== false) {
-                attrName = attr.name;
-                attrNamespaceURI = attr.namespaceURI;
+            attrName = attr.name;
+            attrNamespaceURI = attr.namespaceURI;
 
-                if (attrNamespaceURI) {
-                    attrName = attr.localName || attrName;
+            if (attrNamespaceURI) {
+                attrName = attr.localName || attrName;
 
-                    if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
-                        fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                    }
-                } else {
-                    if (!toNode.hasAttribute(attrName)) {
-                        fromNode.removeAttribute(attrName);
-                    }
+                if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
+                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
+                }
+            } else {
+                if (!toNode.hasAttribute(attrName)) {
+                    fromNode.removeAttribute(attrName);
                 }
             }
         }
