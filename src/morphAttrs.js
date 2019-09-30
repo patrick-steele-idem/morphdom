@@ -1,6 +1,5 @@
 export default function morphAttrs(fromNode, toNode) {
-    var attrs = toNode.attributes;
-    var i;
+    var toNodeAttrs = toNode.attributes;
     var attr;
     var attrName;
     var attrNamespaceURI;
@@ -8,8 +7,8 @@ export default function morphAttrs(fromNode, toNode) {
     var fromValue;
 
     // update attributes on original DOM element
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
+    for (var i = 0; i < toNodeAttrs.length; i++) {
+        attr = toNodeAttrs[i];
         attrName = attr.name;
         attrNamespaceURI = attr.namespaceURI;
         attrValue = attr.value;
@@ -35,24 +34,22 @@ export default function morphAttrs(fromNode, toNode) {
 
     // Remove any extra attributes found on the original DOM element that
     // weren't found on the target element.
-    attrs = fromNode.attributes;
+    var fromNodeAttrs = fromNode.attributes;
 
-    for (i = attrs.length - 1; i >= 0; --i) {
-        attr = attrs[i];
-        if (attr.specified !== false) {
-            attrName = attr.name;
-            attrNamespaceURI = attr.namespaceURI;
+    for (var d = 0; d < fromNodeAttrs.length; d++) {
+        attr = fromNodeAttrs[d];
+        attrName = attr.name;
+        attrNamespaceURI = attr.namespaceURI;
 
-            if (attrNamespaceURI) {
-                attrName = attr.localName || attrName;
+        if (attrNamespaceURI) {
+            attrName = attr.localName || attrName;
 
-                if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
-                    fromNode.removeAttributeNS(attrNamespaceURI, attrName);
-                }
-            } else {
-                if (!toNode.hasAttribute(attrName)) {
-                    fromNode.removeAttribute(attrName);
-                }
+            if (!toNode.hasAttributeNS(attrNamespaceURI, attrName)) {
+                fromNode.removeAttributeNS(attrNamespaceURI, attrName);
+            }
+        } else {
+            if (!toNode.hasAttribute(attrName)) {
+                fromNode.removeAttribute(attrName);
             }
         }
     }
