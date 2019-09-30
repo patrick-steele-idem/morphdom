@@ -3,6 +3,14 @@ Changelog
 
 # 2.x
 
+## 2.5.9
+
+- Faster attrs merge [PR #165](https://github.com/patrick-steele-idem/morphdom/pull/165)
+
+## 2.5.8
+
+- Minor improvements [PR #164](https://github.com/patrick-steele-idem/morphdom/pull/164)
+
 ## 2.5.7
 
 - Chore: Alternate refactor to #155 - Move isSameNode check [PR #156](https://github.com/patrick-steele-idem/morphdom/pull/156)
