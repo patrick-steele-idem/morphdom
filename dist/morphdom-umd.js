@@ -6,7 +6,6 @@
 
     function morphAttrs(fromNode, toNode) {
         var attrs = toNode.attributes;
-        var i;
         var attr;
         var attrName;
         var attrNamespaceURI;
@@ -14,7 +13,7 @@
         var fromValue;
 
         // update attributes on original DOM element
-        for (i = attrs.length - 1; i >= 0; --i) {
+        for (var i = 0, gg = attrs.length; i < gg; i++) {
             attr = attrs[i];
             attrName = attr.name;
             attrNamespaceURI = attr.namespaceURI;
@@ -43,8 +42,8 @@
         // weren't found on the target element.
         attrs = fromNode.attributes;
 
-        for (i = attrs.length - 1; i >= 0; --i) {
-            attr = attrs[i];
+        for (var d = 0, ll = attrs.length; d < ll; d++) {
+            attr = attrs[d];
             if (attr.specified !== false) {
                 attrName = attr.name;
                 attrNamespaceURI = attr.namespaceURI;
