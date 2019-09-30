@@ -13,7 +13,7 @@
         var fromValue;
 
         // update attributes on original DOM element
-        for (var i = 0, gg = attrs.length; i < gg; i++) {
+        for (var i = 0; i < attrs.length; i++) {
             attr = attrs[i];
             attrName = attr.name;
             attrNamespaceURI = attr.namespaceURI;
@@ -42,7 +42,7 @@
         // weren't found on the target element.
         attrs = fromNode.attributes;
 
-        for (var d = 0, ll = attrs.length; d < ll; d++) {
+        for (var d = 0; d < attrs.length; d++) {
             attr = attrs[d];
             if (attr.specified !== false) {
                 attrName = attr.name;
