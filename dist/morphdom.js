@@ -1,7 +1,7 @@
 'use strict';
 
 function morphAttrs(fromNode, toNode) {
-    var attrs = toNode.attributes;
+    var toNodeAttrs = toNode.attributes;
     var attr;
     var attrName;
     var attrNamespaceURI;
@@ -9,8 +9,8 @@ function morphAttrs(fromNode, toNode) {
     var fromValue;
 
     // update attributes on original DOM element
-    for (var i = 0; i < attrs.length; i++) {
-        attr = attrs[i];
+    for (var i = 0; i < toNodeAttrs.length; i++) {
+        attr = toNodeAttrs[i];
         attrName = attr.name;
         attrNamespaceURI = attr.namespaceURI;
         attrValue = attr.value;
@@ -36,10 +36,10 @@ function morphAttrs(fromNode, toNode) {
 
     // Remove any extra attributes found on the original DOM element that
     // weren't found on the target element.
-    attrs = fromNode.attributes;
+    var fromNodeAttrs = fromNode.attributes;
 
-    for (var d = 0; d < attrs.length; d++) {
-        attr = attrs[d];
+    for (var d = 0; d < fromNodeAttrs.length; d++) {
+        attr = fromNodeAttrs[d];
         if (attr.specified !== false) {
             attrName = attr.name;
             attrNamespaceURI = attr.namespaceURI;
