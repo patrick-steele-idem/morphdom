@@ -9,6 +9,9 @@ function morphAttrs(fromNode, toNode) {
     var fromValue;
 
     // update attributes on original DOM element
+    if (!toNodeAttrs) {
+      return;
+    }
     for (var i = 0; i < toNodeAttrs.length; i++) {
         attr = toNodeAttrs[i];
         attrName = attr.name;
@@ -37,6 +40,9 @@ function morphAttrs(fromNode, toNode) {
     // Remove any extra attributes found on the original DOM element that
     // weren't found on the target element.
     var fromNodeAttrs = fromNode.attributes;
+    if (!fromNodeAttrs) {
+      return;
+    }
 
     for (var d = 0; d < fromNodeAttrs.length; d++) {
         attr = fromNodeAttrs[d];
