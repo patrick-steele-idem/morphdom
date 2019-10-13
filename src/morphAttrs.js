@@ -1,3 +1,5 @@
+var DOCUMENT_FRAGMENT_NODE = 11;
+
 export default function morphAttrs(fromNode, toNode) {
     var toNodeAttrs = toNode.attributes;
     var attr;
@@ -5,6 +7,11 @@ export default function morphAttrs(fromNode, toNode) {
     var attrNamespaceURI;
     var attrValue;
     var fromValue;
+
+    // document-fragments dont have attributes so lets not do anything
+    if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE || fromNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
+      return;
+    }
 
     // update attributes on original DOM element
     for (var i = 0; i < toNodeAttrs.length; i++) {

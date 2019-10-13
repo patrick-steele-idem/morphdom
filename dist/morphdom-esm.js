@@ -1,3 +1,5 @@
+var DOCUMENT_FRAGMENT_NODE = 11;
+
 function morphAttrs(fromNode, toNode) {
     var toNodeAttrs = toNode.attributes;
     var attr;
@@ -5,6 +7,11 @@ function morphAttrs(fromNode, toNode) {
     var attrNamespaceURI;
     var attrValue;
     var fromValue;
+
+    // document-fragments dont have attributes so lets not do anything
+    if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE || fromNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
+      return;
+    }
 
     // update attributes on original DOM element
     for (var i = 0; i < toNodeAttrs.length; i++) {
@@ -276,7 +283,7 @@ var specialElHandlers = {
 };
 
 var ELEMENT_NODE = 1;
-var DOCUMENT_FRAGMENT_NODE = 11;
+var DOCUMENT_FRAGMENT_NODE$1 = 11;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
 
@@ -397,7 +404,7 @@ function morphdomFactory(morphAttrs) {
         // }
 
         function indexTree(node) {
-            if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE) {
+            if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
                 var curChild = node.firstChild;
                 while (curChild) {
                     var key = getNodeKey(curChild);
