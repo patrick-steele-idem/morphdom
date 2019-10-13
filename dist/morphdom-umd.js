@@ -4,6 +4,8 @@
     (global = global || self, global.morphdom = factory());
 }(this, function () { 'use strict';
 
+    var DOCUMENT_FRAGMENT_NODE = 11;
+
     function morphAttrs(fromNode, toNode) {
         var toNodeAttrs = toNode.attributes;
         var attr;
@@ -12,10 +14,12 @@
         var attrValue;
         var fromValue;
 
-        // update attributes on original DOM element
-        if (!toNodeAttrs) {
+        // document-fragments dont have attributes so lets not do anything
+        if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE || fromNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
           return;
         }
+
+        // update attributes on original DOM element
         for (var i = 0; i < toNodeAttrs.length; i++) {
             attr = toNodeAttrs[i];
             attrName = attr.name;
@@ -44,9 +48,6 @@
         // Remove any extra attributes found on the original DOM element that
         // weren't found on the target element.
         var fromNodeAttrs = fromNode.attributes;
-        if (!fromNodeAttrs) {
-          return;
-        }
 
         for (var d = 0; d < fromNodeAttrs.length; d++) {
             attr = fromNodeAttrs[d];
@@ -288,7 +289,7 @@
     };
 
     var ELEMENT_NODE = 1;
-    var DOCUMENT_FRAGMENT_NODE = 11;
+    var DOCUMENT_FRAGMENT_NODE$1 = 11;
     var TEXT_NODE = 3;
     var COMMENT_NODE = 8;
 
@@ -409,7 +410,7 @@
             // }
 
             function indexTree(node) {
-                if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE) {
+                if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
                     var curChild = node.firstChild;
                     while (curChild) {
                         var key = getNodeKey(curChild);
