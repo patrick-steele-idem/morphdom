@@ -35,7 +35,8 @@ export default function morphAttrs(fromNode, toNode) {
     // Remove any extra attributes found on the original DOM element that
     // weren't found on the target element.
     var fromNodeAttrs = fromNode.attributes;
-
+    if (!fromNodeAttrs) return
+    
     for (var d = 0; d < fromNodeAttrs.length; d++) {
         attr = fromNodeAttrs[d];
         attrName = attr.name;
