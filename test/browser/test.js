@@ -1009,6 +1009,23 @@ describe('morphdom' , function() {
       expect(morphedEl.firstChild.textContent).to.equal('World');
     });
 
+    it('should handle document fragment as target', function () {
+      // Build the fragment to match the children.
+      var spanish = document.createDocumentFragment();
+      spanish.appendChild(document.createElement('div'));
+      spanish.firstChild.appendChild(document.createTextNode('Ola'));
+
+      var english = document.createDocumentFragment();
+      english.appendChild(document.createElement('span'));
+      english.firstChild.appendChild(document.createTextNode('Hello'));
+
+      // This currently does not error, but does not diff the children.
+      var morphedEl = morphdom(spanish, english);
+
+      expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
+      expect(morphedEl.firstChild.textContent).to.equal('Hello');
+    });
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.
