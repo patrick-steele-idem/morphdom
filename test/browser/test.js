@@ -401,16 +401,17 @@ describe('morphdom' , function() {
 
     it('nested duplicate ids are morphed correctly', function() {
         var el1 = document.createElement('div');
-        el1.innerHTML = '<div><p id="hi" class="foo"></p><p id="hi" class="bar"></p>';
+        el1.innerHTML = '<p id="hi" class="foo">A</p><p id="hi" class="bar">B</p>';
 
         var el2 = document.createElement('div');
-        el2.innerHTML = '<div></p><p id="hi" class="foo"></p>';
+        el2.innerHTML = '</p><p id="hi" class="foo">A</p>';
 
         morphdom(el1, el2);
 
         expect(el1.children.length).to.equal(1);
-        expect(el1.children[0].id).to.equal('');
-        expect(el1.children[0].className).to.equal('');
+        expect(el1.children[0].id).to.equal('hi');
+        expect(el1.children[0].className).to.equal('foo');
+        expect(el1.children[0].textContent).to.equal('A');
     });
 
     it('should transform a text input el', function() {
