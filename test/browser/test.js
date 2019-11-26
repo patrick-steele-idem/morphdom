@@ -412,6 +412,7 @@ describe('morphdom' , function() {
         expect(el1.children[0].id).to.equal('hi');
         expect(el1.children[0].className).to.equal('foo');
         expect(el1.children[0].textContent).to.equal('A');
+        // TODO: these should not be here
         expect(el1.children[1].id).to.equal('hi');
         expect(el1.children[1].className).to.equal('bar');
         expect(el1.children[1].textContent).to.equal('B');
