@@ -359,7 +359,7 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
     });
 
-    it('does discard duplicate ids', function() {
+    it('does morph child with dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
         el1.innerHTML = '<div id="el-1">A</dib>';
@@ -375,9 +375,10 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
         expect(el1.id).to.equal('el-1');
         expect(el1.firstElementChild.id).to.equal('el-1');
+        expect(el1.firstElementChild.textContent).to.equal('B');
     });
 
-    it('should keep dup id', function() {
+    it('does keep inner dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
         el1.innerHTML = '<div id="el-1">A</dib>';
@@ -398,7 +399,7 @@ describe('morphdom' , function() {
         expect(el1.children[1].textContent).to.equal('B');
     });
 
-    it('nested duplicate ids are removed', function() {
+    it('nested duplicate ids are morphed correctly', function() {
         var el1 = document.createElement('div');
         el1.innerHTML = '<div><p id="hi" class="foo"></p><p id="hi" class="bar"></p>';
 
