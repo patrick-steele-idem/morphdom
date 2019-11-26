@@ -362,12 +362,12 @@ describe('morphdom' , function() {
     it('does discard duplicate ids', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
-        el1.innerHTML  = '<div id="el-1">A</dib>';
+        el1.innerHTML = '<div id="el-1">A</dib>';
         el1.className = 'foo';
 
         var el2 = document.createElement('div');
         el2.id = 'el-1';
-        el2.innerHTML  = '<div id="el-1">B</dib>';
+        el2.innerHTML = '<div id="el-1">B</dib>';
         el2.className = 'bar';
 
         morphdom(el1, el2);
@@ -377,15 +377,15 @@ describe('morphdom' , function() {
         expect(el1.firstElementChild.id).to.equal('el-1');
     });
 
-    it('should remove dup id', function() {
+    it('should keep dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
-        el1.innerHTML  = '<div id="el-1">A</dib>';
+        el1.innerHTML = '<div id="el-1">A</dib>';
         el1.className = 'foo';
 
         var el2 = document.createElement('div');
         el2.id = 'el-1';
-        el2.innerHTML  = '<div id="el-inner">B</dib>';
+        el2.innerHTML = '<div id="el-inner">B</dib>';
         el2.className = 'zoo';
 
         morphdom(el1, el2);
@@ -396,6 +396,20 @@ describe('morphdom' , function() {
         expect(el1.children[0].textContent).to.equal('A');
         expect(el1.children[1].id).to.equal('el-inner');
         expect(el1.children[1].textContent).to.equal('B');
+    });
+
+    it('nested duplicate ids are removed', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = '<div><p id="hi" class="foo"></p><p id="hi" class="bar"></p>';
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<div></p><p id="hi" class="foo"></p>';
+
+        morphdom(el1, el2);
+
+        expect(el1.children.length).to.equal(1);
+        expect(el1.children[0].id).to.equal('hi');
+        expect(el1.children[0].className).to.equal('foo');
     });
 
     it('should transform a text input el', function() {
