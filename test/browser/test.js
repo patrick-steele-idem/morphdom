@@ -404,14 +404,17 @@ describe('morphdom' , function() {
         el1.innerHTML = '<p id="hi" class="foo">A</p><p id="hi" class="bar">B</p>';
 
         var el2 = document.createElement('div');
-        el2.innerHTML = '</p><p id="hi" class="foo">A</p>';
+        el2.innerHTML = '<p id="hi" class="foo">A</p>';
 
         morphdom(el1, el2);
 
-        expect(el1.children.length).to.equal(1);
+        expect(el1.children.length).to.equal(2);
         expect(el1.children[0].id).to.equal('hi');
         expect(el1.children[0].className).to.equal('foo');
         expect(el1.children[0].textContent).to.equal('A');
+        expect(el1.children[1].id).to.equal('hi');
+        expect(el1.children[1].className).to.equal('bar');
+        expect(el1.children[1].textContent).to.equal('B');
     });
 
     it('should transform a text input el', function() {
