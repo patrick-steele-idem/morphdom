@@ -366,33 +366,33 @@ describe('morphdom' , function() {
         el1.className = 'foo';
 
         var el2 = document.createElement('div');
-        el2.id = 'el-2';
-        el2.innerHTML  = '<div id="el-2">B</dib>';
+        el2.id = 'el-1';
+        el2.innerHTML  = '<div id="el-1">B</dib>';
         el2.className = 'bar';
 
         morphdom(el1, el2);
 
         expect(el1.className).to.equal('bar');
-        expect(el1.id).to.equal('el-2');
-        expect(el1.firstElementChild.id).to.equal('el-2');
+        expect(el1.id).to.equal('el-1');
+        expect(el1.firstElementChild.id).to.equal('el-1');
     });
 
-    it('will remove dup id', function() {
+    it('does not remove dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
         el1.innerHTML  = '<div id="el-1">A</dib>';
         el1.className = 'foo';
 
         var el2 = document.createElement('div');
-        el2.id = 'el-2';
+        el2.id = 'el-1';
         el2.innerHTML  = '<div id="el-inner">B</dib>';
         el2.className = 'bar';
 
         morphdom(el1, el2);
 
         expect(el1.className).to.equal('bar');
-        expect(el1.id).to.equal('el-2');
-        expect(el1.firstElementChild.id).to.equal('el-inner');
+        expect(el1.id).to.equal('el-1');
+        expect(el1.firstElementChild.id).to.equal('el-1');
     });
 
     it('should transform a text input el', function() {
