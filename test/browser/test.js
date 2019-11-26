@@ -377,7 +377,7 @@ describe('morphdom' , function() {
         expect(el1.firstElementChild.id).to.equal('el-1');
     });
 
-    it('does not remove dup id', function() {
+    it('should remove dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
         el1.innerHTML  = '<div id="el-1">A</dib>';
@@ -392,7 +392,7 @@ describe('morphdom' , function() {
 
         expect(el1.className).to.equal('bar');
         expect(el1.id).to.equal('el-1');
-        expect(el1.firstElementChild.id).to.equal('el-1');
+        expect(el1.firstElementChild.id).to.equal('el-inner');
     });
 
     it('should transform a text input el', function() {
