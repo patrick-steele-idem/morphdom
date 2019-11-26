@@ -359,6 +359,24 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
     });
 
+    it('does discard duplicate ids', function() {
+        var el1 = document.createElement('div');
+        el1.id = 'el-1';
+        el1.innerHTML  = '<div id="el-1">A</dib>';
+        el1.className = 'foo';
+
+        var el2 = document.createElement('div');
+        el2.id = 'el-1';
+        el2.innerHTML  = '<div id="el-1">B</dib>';
+        el2.className = 'bar';
+
+        morphdom(el1, el2);
+
+        expect(el1.className).to.equal('bar');
+        expect(el1.id).to.equal('el-1');
+        expect(el1.firstElementChild.id).to.equal('el-1');
+    });
+
     it('should transform a text input el', function() {
         var el1 = document.createElement('input');
         el1.type = 'text';
@@ -982,7 +1000,7 @@ describe('morphdom' , function() {
 
         var form = container.querySelector('form');
         form = form.cloneNode(true);
-        container.createShadowRoot().appendChild(form);
+        container.attachShadow({ mode: 'open' }).appendChild(form);
 
         var morphedEl = morphdom(
           container.shadowRoot,
