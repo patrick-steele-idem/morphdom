@@ -408,7 +408,7 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.children.length).to.equal(1);
-        expect(el1.children[0].id).to.equal('hi');
+        expect(el1.children[0].id).to.equal('');
         expect(el1.children[0].className).to.equal('foo');
     });
 
