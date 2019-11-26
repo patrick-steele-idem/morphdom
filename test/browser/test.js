@@ -409,7 +409,7 @@ describe('morphdom' , function() {
 
         expect(el1.children.length).to.equal(1);
         expect(el1.children[0].id).to.equal('');
-        expect(el1.children[0].className).to.equal('foo');
+        expect(el1.children[0].className).to.equal('');
     });
 
     it('should transform a text input el', function() {
