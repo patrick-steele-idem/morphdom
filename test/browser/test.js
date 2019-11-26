@@ -393,7 +393,9 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('zoo');
         expect(el1.id).to.equal('el-1');
         expect(el1.children[0].id).to.equal('el-1');
+        expect(el1.children[0].textContent).to.equal('A');
         expect(el1.children[1].id).to.equal('el-inner');
+        expect(el1.children[1].textContent).to.equal('B');
     });
 
     it('should transform a text input el', function() {
