@@ -1029,14 +1029,14 @@ describe('morphdom' , function() {
     it('multiple forms and adding additional form', function () {
       // Build the fragment to match the children.
       var english = document.createElement('template');
-      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article></section></div>';
+      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article></section></div>';
       var spanish = document.createElement('template');
-      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
+      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
 
       // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
 
-      expect(morphedEl.querySelectorAll('.foo').length).to.equal(1);
+      expect(morphedEl.querySelectorAll('#form-0').length).to.equal(1);
       // expect(morphedEl.firstChild.textContent).to.equal('Hello');
     });
 
