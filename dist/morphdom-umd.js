@@ -296,7 +296,7 @@
     function noop() {}
 
     function defaultGetNodeKey(node) {
-        return node.id;
+        return node && node.getAttribute && node.getAttribute('id');
     }
 
     function morphdomFactory(morphAttrs) {

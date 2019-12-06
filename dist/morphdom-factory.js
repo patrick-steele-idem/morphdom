@@ -228,7 +228,7 @@ var COMMENT_NODE = 8;
 function noop() {}
 
 function defaultGetNodeKey(node) {
-    return node.id;
+    return node && node.getAttribute && node.getAttribute('id');
 }
 
 function morphdomFactory(morphAttrs) {
