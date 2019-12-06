@@ -982,7 +982,7 @@ describe('morphdom' , function() {
 
         var form = container.querySelector('form');
         form = form.cloneNode(true);
-        container.createShadowRoot().appendChild(form);
+        container.attachShadow({ mode: 'open' });
 
         var morphedEl = morphdom(
           container.shadowRoot,
