@@ -1033,11 +1033,10 @@ describe('morphdom' , function() {
       var spanish = document.createElement('template');
       spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
 
-      // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
 
       expect(morphedEl.querySelectorAll('#form-0').length).to.equal(1);
-      // expect(morphedEl.firstChild.textContent).to.equal('Hello');
+      expect(morphedEl.querySelectorAll('form').length).to.equal(3);
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
