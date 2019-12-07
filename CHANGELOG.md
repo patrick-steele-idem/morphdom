@@ -3,6 +3,14 @@ Changelog
 
 # 2.x
 
+## 2.5.11
+
+- Multiple forms duplication [PR #174](https://github.com/patrick-steele-idem/morphdom/pull/174)
+
+## 2.5.10
+
+- Pr/167 - Allow document fragment patching [PR #168](https://github.com/patrick-steele-idem/morphdom/pull/168)
+
 ## 2.5.9
 
 - Faster attrs merge [PR #165](https://github.com/patrick-steele-idem/morphdom/pull/165)
