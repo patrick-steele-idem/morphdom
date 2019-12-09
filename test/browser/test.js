@@ -1039,7 +1039,7 @@ describe('morphdom' , function() {
       expect(morphedEl.querySelectorAll('form').length).to.equal(3);
     });
 
-    it('disabled works with multiple', function () {
+    it('disabled works with multiple attributes/properties on element (need reverse for loop)', function () {
       var english = document.createElement('template');
       english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
       var spanish = document.createElement('template');
