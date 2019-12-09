@@ -3,6 +3,10 @@ Changelog
 
 # 2.x
 
+## 2.5.12
+
+- Fix merge attrs with multiple properties [PR #175](https://github.com/patrick-steele-idem/morphdom/pull/175)
+
 ## 2.5.11
 
 - Multiple forms duplication [PR #174](https://github.com/patrick-steele-idem/morphdom/pull/174)
