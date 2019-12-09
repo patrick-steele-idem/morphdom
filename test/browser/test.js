@@ -1039,6 +1039,17 @@ describe('morphdom' , function() {
       expect(morphedEl.querySelectorAll('form').length).to.equal(3);
     });
 
+    it('disabled works with multiple', function () {
+      var english = document.createElement('template');
+      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
+      var spanish = document.createElement('template');
+      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article>';
+
+      var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
+
+      expect(morphedEl.querySelector('button').disabled).to.equal(false);
+    });
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.
