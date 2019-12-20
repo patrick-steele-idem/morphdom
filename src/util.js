@@ -1,5 +1,7 @@
 var range; // Create a range object for efficently rendering strings to elements.
 var NS_XHTML = 'http://www.w3.org/1999/xhtml';
+var ELEMENT_NODE = 1;
+var DOCUMENT_FRAGMENT_NODE = 11;
 
 export var doc = typeof document === 'undefined' ? undefined : document;
 var HAS_TEMPLATE_SUPPORT = !!doc && 'content' in doc.createElement('template');
@@ -106,3 +108,37 @@ export function moveChildren(fromEl, toEl) {
     }
     return toEl;
 }
+
+export function transformCheckbox(from, to) {
+    to.checked = from.checked;
+}
+
+export function isCheckbox(node) {
+    return node instanceof HTMLInputElement && node.type === 'checkbox';
+}
+
+export function morphCheckboxProperties(toNode, fromNode) {
+    if (isCheckbox(toNode) && isCheckbox(fromNode)) {
+        return transformCheckbox(fromNode, toNode);
+    }
+
+    if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
+        var curChild = toNode.firstChild;
+        while (curChild) {
+            var key = curChild.id;
+
+            if (isCheckbox(curChild)) {
+                var input = fromNode.querySelector('#' + key);
+                if (input) {
+                    transformCheckbox(input, curChild);
+                }
+            }
+
+            // Walk recursively
+            morphCheckboxProperties(curChild);
+
+            curChild = curChild.nextSibling;
+        }
+    }
+}
+
