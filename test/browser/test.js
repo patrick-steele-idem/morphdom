@@ -389,6 +389,22 @@ describe('morphdom' , function() {
         expect(el1.type).to.equal('text');
     });
 
+    it('should transform a checkbox input attribute as string', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.setAttribute('checked', '');
+        el1.checked = false;
+
+        var el2 = document.createElement('input');
+        el2.setAttribute('type', 'text');
+        el2.setAttribute('checked', '');
+
+        morphdom(el1, el2.outerHTML);
+
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('text');
+    });
+
     it('should transform a checkbox input property', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
@@ -402,6 +418,43 @@ describe('morphdom' , function() {
 
         expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input property as string', function() {
+        var el1 = document.createElement('input');
+        el1.id = 'meade';
+        el1.type = 'checkbox';
+        el1.checked = true;
+
+        var el2 = document.createElement('input');
+        el2.id = 'meade';
+        el2.type = 'checkbox';
+        el2.checked = true;
+
+        morphdom(el1, el2.outerHTML);
+
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input property with container', function() {
+        var div1 = document.createElement('div');
+        var el1 = document.createElement('input');
+        el1.id = 'meade';
+        el1.type = 'checkbox';
+        el1.checked = true;
+        div1.appendChild(el1);
+
+        var div2 = document.createElement('div');
+        var el2 = document.createElement('input');
+        el2.id = 'meade';
+        el2.type = 'checkbox';
+        el2.checked = true;
+        div2.appendChild(el2);
+
+        morphdom(div1, div2.outerHTML);
+
+        expect(div1.firstChild.checked).to.equal(true);
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {

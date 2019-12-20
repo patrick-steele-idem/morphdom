@@ -66,6 +66,8 @@ function morphAttrs(fromNode, toNode) {
 
 var range; // Create a range object for efficently rendering strings to elements.
 var NS_XHTML = 'http://www.w3.org/1999/xhtml';
+var ELEMENT_NODE = 1;
+var DOCUMENT_FRAGMENT_NODE$1 = 11;
 
 var doc = typeof document === 'undefined' ? undefined : document;
 var HAS_TEMPLATE_SUPPORT = !!doc && 'content' in doc.createElement('template');
@@ -171,6 +173,39 @@ function moveChildren(fromEl, toEl) {
         curChild = nextChild;
     }
     return toEl;
+}
+
+function transformCheckbox(from, to) {
+    to.checked = from.checked;
+}
+
+function isCheckbox(node) {
+    return node instanceof HTMLInputElement && node.type === 'checkbox';
+}
+
+function morphCheckboxProperties(toNode, fromNode) {
+    if (isCheckbox(toNode) && isCheckbox(fromNode)) {
+        return transformCheckbox(fromNode, toNode);
+    }
+
+    if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
+        var curChild = toNode.firstChild;
+        while (curChild) {
+            var key = curChild.id;
+
+            if (isCheckbox(curChild)) {
+                var input = fromNode.querySelector('#' + key);
+                if (input) {
+                    transformCheckbox(input, curChild);
+                }
+            }
+
+            // Walk recursively
+            morphCheckboxProperties(curChild);
+
+            curChild = curChild.nextSibling;
+        }
+    }
 }
 
 function syncBooleanAttrProp(fromEl, toEl, name) {
@@ -284,8 +319,8 @@ var specialElHandlers = {
     }
 };
 
-var ELEMENT_NODE = 1;
-var DOCUMENT_FRAGMENT_NODE$1 = 11;
+var ELEMENT_NODE$1 = 1;
+var DOCUMENT_FRAGMENT_NODE$2 = 11;
 var TEXT_NODE = 3;
 var COMMENT_NODE = 8;
 
@@ -311,6 +346,7 @@ function morphdomFactory(morphAttrs) {
                 toNode.innerHTML = toNodeHtml;
             } else {
                 toNode = toElement(toNode);
+                morphCheckboxProperties(toNode, fromNode);
             }
         }
 
@@ -333,7 +369,7 @@ function morphdomFactory(morphAttrs) {
         }
 
         function walkDiscardedChildNodes(node, skipKeyedNodes) {
-            if (node.nodeType === ELEMENT_NODE) {
+            if (node.nodeType === ELEMENT_NODE$1) {
                 var curChild = node.firstChild;
                 while (curChild) {
 
@@ -408,7 +444,7 @@ function morphdomFactory(morphAttrs) {
         // }
 
         function indexTree(node) {
-            if (node.nodeType === ELEMENT_NODE || node.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
+            if (node.nodeType === ELEMENT_NODE$1 || node.nodeType === DOCUMENT_FRAGMENT_NODE$2) {
                 var curChild = node.firstChild;
                 while (curChild) {
                     var key = getNodeKey(curChild);
@@ -531,7 +567,7 @@ function morphdomFactory(morphAttrs) {
                     var isCompatible = undefined;
 
                     if (curFromNodeType === curToNodeChild.nodeType) {
-                        if (curFromNodeType === ELEMENT_NODE) {
+                        if (curFromNodeType === ELEMENT_NODE$1) {
                             // Both nodes being compared are Element nodes
 
                             if (curToNodeKey) {
@@ -674,8 +710,8 @@ function morphdomFactory(morphAttrs) {
         if (!childrenOnly) {
             // Handle the case where we are given two DOM nodes that are not
             // compatible (e.g. <div> --> <span> or <div> --> TEXT)
-            if (morphedNodeType === ELEMENT_NODE) {
-                if (toNodeType === ELEMENT_NODE) {
+            if (morphedNodeType === ELEMENT_NODE$1) {
+                if (toNodeType === ELEMENT_NODE$1) {
                     if (!compareNodeNames(fromNode, toNode)) {
                         onNodeDiscarded(fromNode);
                         morphedNode = moveChildren(fromNode, createElementNS(toNode.nodeName, toNode.namespaceURI));
