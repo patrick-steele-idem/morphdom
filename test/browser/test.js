@@ -373,7 +373,7 @@ describe('morphdom' , function() {
         expect(el1.value).to.equal('Hello World 2');
     });
 
-    it('should transform a checkbox input el', function() {
+    it('should transform a checkbox input attribute', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
         el1.setAttribute('checked', '');
@@ -387,6 +387,21 @@ describe('morphdom' , function() {
 
         expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('text');
+    });
+
+    it('should transform a checkbox input property', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.checked = false;
+
+        var el2 = document.createElement('input');
+        el2.type = 'checkbox';
+        el2.checked = true;
+
+        morphdom(el1, el2);
+
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('checkbox');
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {
