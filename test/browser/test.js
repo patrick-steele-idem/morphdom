@@ -359,6 +359,65 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
     });
 
+    it('does morph child with dup id', function() {
+        var el1 = document.createElement('div');
+        el1.id = 'el-1';
+        el1.innerHTML = '<div id="el-1">A</dib>';
+        el1.className = 'foo';
+
+        var el2 = document.createElement('div');
+        el2.id = 'el-1';
+        el2.innerHTML = '<div id="el-1">B</dib>';
+        el2.className = 'bar';
+
+        morphdom(el1, el2);
+
+        expect(el1.className).to.equal('bar');
+        expect(el1.id).to.equal('el-1');
+        expect(el1.firstElementChild.id).to.equal('el-1');
+        expect(el1.firstElementChild.textContent).to.equal('B');
+    });
+
+    it('does keep inner dup id', function() {
+        var el1 = document.createElement('div');
+        el1.id = 'el-1';
+        el1.innerHTML = '<div id="el-1">A</dib>';
+        el1.className = 'foo';
+
+        var el2 = document.createElement('div');
+        el2.id = 'el-1';
+        el2.innerHTML = '<div id="el-inner">B</dib>';
+        el2.className = 'zoo';
+
+        morphdom(el1, el2);
+
+        expect(el1.className).to.equal('zoo');
+        expect(el1.id).to.equal('el-1');
+        expect(el1.children[0].id).to.equal('el-1');
+        expect(el1.children[0].textContent).to.equal('A');
+        expect(el1.children[1].id).to.equal('el-inner');
+        expect(el1.children[1].textContent).to.equal('B');
+    });
+
+    it('nested duplicate ids are morphed correctly', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = '<p id="hi" class="foo">A</p><p id="hi" class="bar">B</p>';
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<p id="hi" class="foo">A</p>';
+
+        morphdom(el1, el2);
+
+        expect(el1.children.length).to.equal(2);
+        expect(el1.children[0].id).to.equal('hi');
+        expect(el1.children[0].className).to.equal('foo');
+        expect(el1.children[0].textContent).to.equal('A');
+        // TODO: these should not be here
+        expect(el1.children[1].id).to.equal('hi');
+        expect(el1.children[1].className).to.equal('bar');
+        expect(el1.children[1].textContent).to.equal('B');
+    });
+
     it('should transform a text input el', function() {
         var el1 = document.createElement('input');
         el1.type = 'text';
