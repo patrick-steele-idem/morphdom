@@ -432,7 +432,7 @@ describe('morphdom' , function() {
         expect(el1.value).to.equal('Hello World 2');
     });
 
-    it('should transform a checkbox input el', function() {
+    it('should transform a checkbox input attribute', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
         el1.setAttribute('checked', '');
@@ -446,6 +446,21 @@ describe('morphdom' , function() {
 
         expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('text');
+    });
+
+    it('should transform a checkbox input property', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.checked = false;
+
+        var el2 = document.createElement('input');
+        el2.type = 'checkbox';
+        el2.checked = true;
+
+        morphdom(el1, el2);
+
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('checkbox');
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {
@@ -1041,7 +1056,7 @@ describe('morphdom' , function() {
 
         var form = container.querySelector('form');
         form = form.cloneNode(true);
-        container.attachShadow({ mode: 'open' }).appendChild(form);
+        container.attachShadow({ mode: 'open' });
 
         var morphedEl = morphdom(
           container.shadowRoot,
@@ -1083,6 +1098,30 @@ describe('morphdom' , function() {
 
       expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
       expect(morphedEl.firstChild.textContent).to.equal('Hello');
+    });
+
+    it('multiple forms and adding additional form', function () {
+      // Build the fragment to match the children.
+      var english = document.createElement('template');
+      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article></section></div>';
+      var spanish = document.createElement('template');
+      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
+
+      var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
+
+      expect(morphedEl.querySelectorAll('#form-0').length).to.equal(1);
+      expect(morphedEl.querySelectorAll('form').length).to.equal(3);
+    });
+
+    it('disabled works with multiple attributes/properties on element (need reverse for loop)', function () {
+      var english = document.createElement('template');
+      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
+      var spanish = document.createElement('template');
+      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article>';
+
+      var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
+
+      expect(morphedEl.querySelector('button').disabled).to.equal(false);
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
