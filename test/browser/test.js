@@ -1121,7 +1121,7 @@ describe('morphdom' , function() {
 
       var morphedEl = morphdom(input.content.firstChild, output.content.firstChild);
 
-      expect(morphedEl.firstChild.id).to.equal('bar');
+      expect(morphedEl.id).to.equal('bar');
       expect(morphedEl.querySelectorAll('input').length).to.equal(4);
       expect(morphedEl.querySelectorAll('input').length).to.equal(4);
     });
