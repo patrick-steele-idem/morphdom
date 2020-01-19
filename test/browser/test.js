@@ -1113,6 +1113,19 @@ describe('morphdom' , function() {
       expect(morphedEl.querySelectorAll('form').length).to.equal(3);
     });
 
+    it('can work when container id changes', function () {
+      var input = document.createElement('template');
+      input.innerHTML = '<div id="foo"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
+      var output = document.createElement('template');
+      output.innerHTML = '<div id="bar"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
+
+      var morphedEl = morphdom(input.content.firstChild, output.content.firstChild);
+
+      expect(morphedEl.id).to.equal('bar');
+      expect(morphedEl.querySelectorAll('input').length).to.equal(4);
+      expect(morphedEl.querySelectorAll('input').length).to.equal(4);
+    });
+
     it('disabled works with multiple attributes/properties on element (need reverse for loop)', function () {
       var english = document.createElement('template');
       english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
