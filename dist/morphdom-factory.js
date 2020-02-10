@@ -282,6 +282,8 @@ function morphdomFactory(morphAttrs) {
                 toNode.innerHTML = toNodeHtml;
             } else {
                 toNode = toElement(toNode);
+                // we took in a string. We need to assume if the fromNode has a `checked` property (not attribute)
+                // that any toNode's input checkboxes also have the same
                 morphCheckboxProperties(toNode, fromNode);
             }
         }
