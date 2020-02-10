@@ -463,6 +463,18 @@ describe('morphdom' , function() {
         expect(el1.type).to.equal('checkbox');
     });
 
+    it('checkbox outputs getAttribute correctly', function () {
+      var input = document.createElement('template');
+      input.innerHTML = '<div id="phx-FfHldq3JexivVQLC" class="phx-disconnected"><form phx-change="change" phx-submit="submit"><label>check me<input type="checkbox" value="true" checked="true" name="check1"><input type="checkbox" value="true" name="check2"></label><button type="submit">Invert</button></form></div>';
+      var output = document.createElement('template');
+      output.innerHTML = '<div id="phx-FfHldq3JexivVQLC" class="phx-connected"><form phx-change="change" phx-submit="submit"><label>check me<input type="checkbox" value="true" name="check1"><input type="checkbox" value="true" name="check2"></label><button type="submit">Invert</button></form></div>';
+
+      var morphedEl = morphdom(input.content.firstChild, output.content.firstChild);
+
+      expect(morphedEl.querySelector('[name="check1"]').getAttribute('checked')).to.equal(null);
+      expect(morphedEl.querySelector('[name="check2"]').getAttribute('checked')).to.equal(null);
+    });
+
     it('should transform an incompatible node and maintain the same parent', function() {
         var parentEl = document.createElement('div');
 
