@@ -110,6 +110,7 @@ export function moveChildren(fromEl, toEl) {
 }
 
 export function transformCheckbox(from, to) {
+    // pass off checked property
     to.checked = from.checked;
 }
 
@@ -117,6 +118,17 @@ export function isCheckbox(node) {
     return node instanceof HTMLInputElement && node.type === 'checkbox';
 }
 
+/**
+ * Use this function when toNode was a string. The checked property could have been lost in
+ * translation (since it is an idl property).
+ *
+ * This is only relevant for responses that are a string (assuming they were serialized and sent by the server)
+ * If toNode was an HTMLElement to begin with, then it is unsafe to use this function
+ *
+ * @function morphCheckboxProperties
+ * @param {HTMLElement} toNode
+ * @param {HTMLElement} fromNode
+ */
 export function morphCheckboxProperties(toNode, fromNode) {
     if (isCheckbox(toNode) && isCheckbox(fromNode)) {
         return transformCheckbox(fromNode, toNode);
