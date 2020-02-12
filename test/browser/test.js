@@ -671,9 +671,13 @@ describe('morphdom' , function() {
         var el2 = document.createElement('div');
         el2.innerHTML = '<textarea>bar</textarea>';
 
+        expect(el1.firstChild.value).to.equal('foo2');
+        expect(el1.firstChild.innerHTML).to.equal('foo');
+
         morphdom(el1, el2);
 
         expect(el1.firstChild.value).to.equal('bar');
+        expect(el1.firstChild.innerHTML).to.equal('bar');
     });
 
     it('should preserve placeholder in an empty textarea el', function() {
