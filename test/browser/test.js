@@ -475,7 +475,7 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.getAttribute('checked')).to.equal(null);
-        expect(el1.checked).to.equal(true);
+        expect(el1.checked).to.equal(false);
         expect(el1.type).to.equal('checkbox');
     });
 
@@ -494,7 +494,7 @@ describe('morphdom' , function() {
 
         expect(div1.firstChild.type).to.equal('checkbox');
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('should transform a checkbox input property to checked as string with name attribute when container', function() {
@@ -512,7 +512,7 @@ describe('morphdom' , function() {
 
         expect(div1.firstChild.type).to.equal('checkbox');
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('should transform a checkbox input property', function() {
@@ -549,7 +549,7 @@ describe('morphdom' , function() {
         morphdom(div1, div2.outerHTML);
 
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('checkbox outputs getAttribute correctly', function () {
@@ -621,7 +621,7 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.getAttribute('checked')).to.equal(null);
-        expect(el1.checked).to.equal(true);
+        expect(el1.checked).to.equal(false);
         expect(el1.type).to.equal('radio');
     });
 
@@ -640,7 +640,7 @@ describe('morphdom' , function() {
 
         expect(div1.firstChild.type).to.equal('radio');
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('should transform a radio input property to checked as string with name attribute when container', function() {
@@ -658,7 +658,7 @@ describe('morphdom' , function() {
 
         expect(div1.firstChild.type).to.equal('radio');
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('should transform a radio input property', function() {
@@ -695,7 +695,7 @@ describe('morphdom' , function() {
         morphdom(div1, div2.outerHTML);
 
         expect(div1.firstChild.getAttribute('checked')).to.equal(null);
-        expect(div1.firstChild.checked).to.equal(true);
+        expect(div1.firstChild.checked).to.equal(false);
     });
 
     it('should transform an incompatible node and maintain the same parent', function() {

@@ -109,10 +109,13 @@ export function moveChildren(fromEl, toEl) {
     return toEl;
 }
 
-export function transformCheckbox(from, to) {
-    if (from.checked) {
-        // pass off checked property, not the attribute
-        to.checked = from.checked;
+export function transformCheckbox(to, from) {
+    if (to.checked || to.getAttribute('checked')) {
+        // force checked property
+        from.checked = true;
+    } else {
+        // force off checked property
+        from.checked = false;
     }
 }
 
@@ -134,7 +137,7 @@ export function isCheckable(node) {
  */
 export function morphCheckboxProperties(toNode, fromNode) {
     if (isCheckable(toNode) && isCheckable(fromNode)) {
-        return transformCheckbox(fromNode, toNode);
+        return transformCheckbox(toNode, fromNode);
     }
 
     if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
@@ -149,7 +152,7 @@ export function morphCheckboxProperties(toNode, fromNode) {
               }
 
               if (input) {
-                  transformCheckbox(input, curChild);
+                  transformCheckbox(curChild, input);
               }
             }
 
