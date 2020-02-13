@@ -116,8 +116,8 @@ function transformCheckbox(from, to) {
     to.checked = from.checked;
 }
 
-function isCheckbox(node) {
-    return node instanceof HTMLInputElement && node.type === 'checkbox';
+function isCheckable(node) {
+    return node instanceof HTMLInputElement && (node.type === 'checkbox' || node.type === 'radio');
 }
 
 /**
@@ -132,14 +132,14 @@ function isCheckbox(node) {
  * @param {HTMLElement} fromNode
  */
 function morphCheckboxProperties(toNode, fromNode) {
-    if (isCheckbox(toNode) && isCheckbox(fromNode)) {
+    if (isCheckable(toNode) && isCheckable(fromNode)) {
         return transformCheckbox(fromNode, toNode);
     }
 
     if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
         var curChild = toNode.firstChild;
         while (curChild) {
-            if (isCheckbox(curChild)) {
+            if (isCheckable(curChild)) {
               var input;
               if (curChild.id) {
                 input = fromNode.querySelector('#' + curChild.id);
