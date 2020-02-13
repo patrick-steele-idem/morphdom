@@ -553,7 +553,7 @@ describe('morphdom' , function() {
         expect(el1.type).to.equal('checkbox');
     });
 
-    it('should transform a checkbox input property as string when not checked by default', function() {
+    it('should transform a checkbox input property as string when target has no checked state', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
         el1.setAttribute('checked', '');
@@ -685,7 +685,7 @@ describe('morphdom' , function() {
         expect(div1.firstChild.checked).to.equal(false);
     });
 
-    it('should transform a radio input property', function() {
+    it('should transform a radio input property as HTMLElements', function() {
         var el1 = document.createElement('input');
         el1.type = 'radio';
         el1.checked = false;
@@ -701,7 +701,7 @@ describe('morphdom' , function() {
         expect(el1.type).to.equal('radio');
     });
 
-    it('should transform a radio input property with container', function() {
+    it('should transform a radio input property with container as HTMLElements', function() {
         var div1 = document.createElement('div');
         var el1 = document.createElement('input');
         el1.id = 'meade';
