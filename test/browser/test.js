@@ -496,22 +496,6 @@ describe('morphdom' , function() {
       expect(morphedEl.querySelector('[name="check2"]').getAttribute('checked')).to.equal(null);
     });
 
-    it('should transform a radio input attribute', function() {
-        var el1 = document.createElement('input');
-        el1.type = 'radio';
-        el1.setAttribute('checked', '');
-        el1.checked = false;
-
-        var el2 = document.createElement('input');
-        el2.setAttribute('type', 'radio');
-        el2.setAttribute('checked', '');
-
-        morphdom(el1, el2);
-
-        expect(el1.checked).to.equal(true);
-        expect(el1.type).to.equal('radio');
-    });
-
     it('should transform a checkbox input attribute as string when no checked attribute nor property', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
@@ -604,10 +588,25 @@ describe('morphdom' , function() {
         expect(div1.firstChild.checked).to.equal(false);
     });
 
-    it('should transform a radio input attribute as string', function() {
+    it('should transform a radio input attribute', function() {
         var el1 = document.createElement('input');
         el1.type = 'radio';
         el1.setAttribute('checked', '');
+        el1.checked = false;
+
+        var el2 = document.createElement('input');
+        el2.setAttribute('type', 'radio');
+        el2.setAttribute('checked', '');
+
+        morphdom(el1, el2);
+
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('radio');
+    });
+
+    it('should transform a radio input attribute as string', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'radio';
         el1.checked = false;
 
         var el2 = '<input type="radio" checked="" />';
