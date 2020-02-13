@@ -438,6 +438,20 @@ describe('morphdom' , function() {
         expect(el1.type).to.equal('checkbox');
     });
 
+    it('should transform a checkbox input property as string with no checked attribute', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.checked = true;
+
+        var el2 = '<input type="checkbox" checked="" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('checked')).to.equal('');
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('checkbox');
+    });
+
     it('should transform a checkbox input property as string when not checked by default', function() {
         var el1 = document.createElement('input');
         el1.type = 'checkbox';
