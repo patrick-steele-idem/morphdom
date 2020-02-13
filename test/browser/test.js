@@ -385,8 +385,27 @@ describe('morphdom' , function() {
 
         morphdom(el1, el2);
 
+        expect(el1.getAttribute('checked')).to.equal('');
         expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input attribute if toNode has checked property', function() {
+        var div1 = document.createElement('div');
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        div1.appendChild(el1);
+
+        var div2 = document.createElement('div');
+        var el2 = document.createElement('input');
+        el2.setAttribute('type', 'checkbox');
+        el2.checked = true;
+        div2.appendChild(el2);
+
+        morphdom(div1, div2);
+
+        expect(div1.firstChild.getAttribute('checked')).to.equal('');
+        expect(div1.firstChild.checked).to.equal(true);
     });
 
     it('should transform a checkbox input attribute as string', function() {

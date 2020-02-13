@@ -180,7 +180,7 @@
     }
 
     function transformCheckbox(from, to) {
-        // pass off checked property
+        // pass off checked property, not the attribute
         to.checked = from.checked;
     }
 
@@ -190,7 +190,8 @@
 
     /**
      * Use this function when toNode was a string. The checked property could have been lost in
-     * translation (since it is an idl property).
+     * translation (since it is an idl property).  If the server is sending back a "checked" attribute,
+     * then that will be taken care of in the main morphdom module
      *
      * This is only relevant for responses that are a string (assuming they were serialized and sent by the server)
      * If toNode was an HTMLElement to begin with, then it is unsafe to use this function
