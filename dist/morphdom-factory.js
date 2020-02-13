@@ -111,10 +111,13 @@ function moveChildren(fromEl, toEl) {
     return toEl;
 }
 
-function transformCheckbox(from, to) {
-    if (from.checked) {
-        // pass off checked property, not the attribute
-        to.checked = from.checked;
+function transformCheckbox(to, from) {
+    if (to.checked || to.getAttribute('checked')) {
+        // force checked property
+        from.checked = true;
+    } else {
+        // force off checked property
+        from.checked = false;
     }
 }
 
@@ -136,7 +139,7 @@ function isCheckable(node) {
  */
 function morphCheckboxProperties(toNode, fromNode) {
     if (isCheckable(toNode) && isCheckable(fromNode)) {
-        return transformCheckbox(fromNode, toNode);
+        return transformCheckbox(toNode, fromNode);
     }
 
     if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
@@ -151,7 +154,7 @@ function morphCheckboxProperties(toNode, fromNode) {
               }
 
               if (input) {
-                  transformCheckbox(input, curChild);
+                  transformCheckbox(curChild, input);
               }
             }
 
