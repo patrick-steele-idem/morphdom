@@ -419,8 +419,20 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.getAttribute('checked')).to.equal('');
-        expect(el1.checked).to.equal(false);
+        expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input attribute as string when no checked attribute nor property', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+
+        var el2 = '<input type="checkbox" checked="" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('checked')).to.equal('');
+        expect(el1.checked).to.equal(true);
     });
 
     it('should transform a checkbox input property as string', function() {
@@ -579,7 +591,7 @@ describe('morphdom' , function() {
         morphdom(el1, el2);
 
         expect(el1.getAttribute('checked')).to.equal('');
-        expect(el1.checked).to.equal(false);
+        expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('radio');
     });
 

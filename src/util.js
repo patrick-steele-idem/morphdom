@@ -110,8 +110,10 @@ export function moveChildren(fromEl, toEl) {
 }
 
 export function transformCheckbox(from, to) {
-    // pass off checked property, not the attribute
-    to.checked = from.checked;
+    if (from.checked) {
+        // pass off checked property, not the attribute
+        to.checked = from.checked;
+    }
 }
 
 export function isCheckable(node) {
