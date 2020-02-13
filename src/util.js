@@ -137,17 +137,21 @@ export function morphCheckboxProperties(toNode, fromNode) {
     if (toNode.nodeType === ELEMENT_NODE || toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
         var curChild = toNode.firstChild;
         while (curChild) {
-            var key = curChild.id;
-
             if (isCheckbox(curChild)) {
-                var input = fromNode.querySelector('#' + key);
-                if (input) {
-                    transformCheckbox(input, curChild);
-                }
+              var input;
+              if (curChild.id) {
+                input = fromNode.querySelector('#' + curChild.id);
+              } else if (curChild.name) {
+                input = fromNode.querySelector('[name=' +  curChild.name + ']');
+              }
+
+              if (input) {
+                  transformCheckbox(input, curChild);
+              }
             }
 
             // Walk recursively
-            morphCheckboxProperties(curChild);
+            morphCheckboxProperties(curChild, fromNode);
 
             curChild = curChild.nextSibling;
         }

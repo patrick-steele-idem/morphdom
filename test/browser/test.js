@@ -380,13 +380,13 @@ describe('morphdom' , function() {
         el1.checked = false;
 
         var el2 = document.createElement('input');
-        el2.setAttribute('type', 'text');
+        el2.setAttribute('type', 'checkbox');
         el2.setAttribute('checked', '');
 
         morphdom(el1, el2);
 
         expect(el1.checked).to.equal(true);
-        expect(el1.type).to.equal('text');
+        expect(el1.type).to.equal('checkbox');
     });
 
     it('should transform a checkbox input attribute as string', function() {
@@ -395,14 +395,79 @@ describe('morphdom' , function() {
         el1.setAttribute('checked', '');
         el1.checked = false;
 
-        var el2 = document.createElement('input');
-        el2.setAttribute('type', 'text');
-        el2.setAttribute('checked', '');
+        var el2 = '<input type="checkbox" checked="" />';
 
-        morphdom(el1, el2.outerHTML);
+        morphdom(el1, el2);
 
+        expect(el1.getAttribute('checked')).to.equal('');
+        expect(el1.checked).to.equal(false);
+        expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input property as string', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.setAttribute('checked', '');
+        el1.checked = true;
+
+        var el2 = '<input type="checkbox" checked="" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('checked')).to.equal('');
         expect(el1.checked).to.equal(true);
-        expect(el1.type).to.equal('text');
+        expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input property as string when not checked by default', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.setAttribute('checked', '');
+        el1.checked = true;
+
+        var el2 = '<input type="checkbox" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('checked')).to.equal(null);
+        expect(el1.checked).to.equal(true);
+        expect(el1.type).to.equal('checkbox');
+    });
+
+    it('should transform a checkbox input property to checked as string when container', function() {
+        var div1 = document.createElement('div');
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.id = 'foo';
+        el1.setAttribute('checked', '');
+        el1.checked = true;
+        div1.appendChild(el1);
+
+        var div2 = '<div><input id="foo" type="checkbox" /></div>';
+
+        morphdom(div1, div2);
+
+        expect(div1.firstChild.type).to.equal('checkbox');
+        expect(div1.firstChild.getAttribute('checked')).to.equal(null);
+        expect(div1.firstChild.checked).to.equal(true);
+    });
+
+    it('should transform a checkbox input property to checked as string with name attribute when container', function() {
+        var div1 = document.createElement('div');
+        var el1 = document.createElement('input');
+        el1.type = 'checkbox';
+        el1.name = 'foo';
+        el1.setAttribute('checked', '');
+        el1.checked = true;
+        div1.appendChild(el1);
+
+        var div2 = '<div><input name="foo" type="checkbox" /></div>';
+
+        morphdom(div1, div2);
+
+        expect(div1.firstChild.type).to.equal('checkbox');
+        expect(div1.firstChild.getAttribute('checked')).to.equal(null);
+        expect(div1.firstChild.checked).to.equal(true);
     });
 
     it('should transform a checkbox input property', function() {
@@ -416,23 +481,7 @@ describe('morphdom' , function() {
 
         morphdom(el1, el2);
 
-        expect(el1.checked).to.equal(true);
-        expect(el1.type).to.equal('checkbox');
-    });
-
-    it('should transform a checkbox input property as string', function() {
-        var el1 = document.createElement('input');
-        el1.id = 'meade';
-        el1.type = 'checkbox';
-        el1.checked = true;
-
-        var el2 = document.createElement('input');
-        el2.id = 'meade';
-        el2.type = 'checkbox';
-        el2.checked = true;
-
-        morphdom(el1, el2.outerHTML);
-
+        expect(el1.getAttribute('checked')).to.equal('');
         expect(el1.checked).to.equal(true);
         expect(el1.type).to.equal('checkbox');
     });
@@ -454,6 +503,7 @@ describe('morphdom' , function() {
 
         morphdom(div1, div2.outerHTML);
 
+        expect(div1.firstChild.getAttribute('checked')).to.equal(null);
         expect(div1.firstChild.checked).to.equal(true);
     });
 
