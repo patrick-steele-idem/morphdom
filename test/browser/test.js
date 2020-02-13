@@ -398,7 +398,7 @@ describe('morphdom' , function() {
 
         var div2 = document.createElement('div');
         var el2 = document.createElement('input');
-        el2.setAttribute('type', 'checkbox');
+        el2.type = 'checkbox';
         el2.checked = true;
         div2.appendChild(el2);
 
