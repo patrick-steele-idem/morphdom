@@ -155,6 +155,8 @@ export default function morphdomFactory(morphAttrs) {
                 var key = getNodeKey(curChild);
                 if (key) {
                     var unmatchedFromEl = fromNodesLookup[key];
+                    // if we find a duplicate #id node in cache, replace `el` with cache value
+                    // and morph it to the child node.
                     if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
                         morphEl(unmatchedFromEl, curChild);
