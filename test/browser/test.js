@@ -367,6 +367,7 @@ describe('morphdom' , function() {
         morphdom(el1, '<body></body>');
 
         expect(el1.nodeName).to.equal('BODY');
+        expect(el1.children.length).to.equal(0);
     });
 
     it('does morph child with dup id', function() {
