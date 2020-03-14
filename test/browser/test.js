@@ -359,6 +359,17 @@ describe('morphdom' , function() {
         expect(el1.className).to.equal('bar');
     });
 
+    it('can wipe out body', function() {
+        var el1 = document.createElement('body');
+        var div = document.createElement('div');
+        el1.appendChild(div);
+
+        morphdom(el1, '<body></body>');
+
+        expect(el1.nodeName).to.equal('BODY');
+        expect(el1.children.length).to.equal(0);
+    });
+
     it('does morph child with dup id', function() {
         var el1 = document.createElement('div');
         el1.id = 'el-1';
