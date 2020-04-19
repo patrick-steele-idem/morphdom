@@ -44,7 +44,7 @@ export default {
         syncBooleanAttrProp(fromEl, toEl, 'checked');
         syncBooleanAttrProp(fromEl, toEl, 'disabled');
 
-        if (fromEl.value !== toEl.value) {
+        if (!fromEl.skipMorph && fromEl.value !== toEl.value) {
             fromEl.value = toEl.value;
         }
 
@@ -55,7 +55,7 @@ export default {
 
     TEXTAREA: function(fromEl, toEl) {
         var newValue = toEl.value;
-        if (fromEl.value !== newValue) {
+        if (!fromEl.skipMorph && fromEl.value !== newValue) {
             fromEl.value = newValue;
         }
 
