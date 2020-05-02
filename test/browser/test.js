@@ -1410,6 +1410,19 @@ describe('morphdom' , function() {
       expect(morphedEl.querySelector('button').disabled).to.equal(false);
     });
 
+    it('handles SVG nodeName case mismatch', function () {
+      var svgChildHTML = '<g transform="translate(50 100)" id="myid"><g transform="translate(0 0)"><text>hi</text></g></g>'
+      var svgHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 640" preserveAspectRatio="xMidYMid meet">' +
+                      svgChildHTML +
+                    '</svg>';
+      var svg = document.createElement('template');
+      svg.innerHTML = svgHTML
+      var morphedEl = morphdom(svg.content.firstChild.firstChild, svgChildHTML, {childrenOnly: false})
+
+      expect(morphedEl.outerHTML).to.equal(svgChildHTML);
+    });
+
+
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
     //     //       for handling incompatible root nodes.
