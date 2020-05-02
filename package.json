@@ -52,7 +52,7 @@
     "virtual-dom": "^2.1.1"
   },
   "dependencies": {},
-  "version": "2.5.12",
+  "version": "2.6.0",
   "keywords": [
     "dom",
     "diff",
