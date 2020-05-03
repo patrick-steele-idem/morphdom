@@ -443,11 +443,14 @@ function morphdomFactory(morphAttrs) {
                     // and morph it to the child node.
                     if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
-                        morphEl(unmatchedFromEl, curChild);
+                        morphEl(unmatchedFromEl, curChild, false, true /* unmatched node moved to new parent */);
+                    } else {
+                      handleNodeAdded(curChild);
                     }
+                } else {
+                  handleNodeAdded(curChild);
                 }
 
-                handleNodeAdded(curChild);
                 curChild = nextSibling;
             }
         }
@@ -471,7 +474,7 @@ function morphdomFactory(morphAttrs) {
             }
         }
 
-        function morphEl(fromEl, toEl, childrenOnly) {
+        function morphEl(fromEl, toEl, childrenOnly, movedToNewParent) {
             var toElKey = getNodeKey(toEl);
 
             if (toElKey) {
@@ -482,28 +485,33 @@ function morphdomFactory(morphAttrs) {
 
             if (!childrenOnly) {
                 // optional
-                if (onBeforeElUpdated(fromEl, toEl) === false) {
-                    return;
-                }
+                var allowedUpdate = onBeforeElUpdated(fromEl, toEl) !== false;
+                if (!allowedUpdate){
+                    if (movedToNewParent){
+                        toEl = fromEl;
+                    } else {
+                        return;
+                    }
+                } else {
+                    // update attributes on original DOM element first
+                    morphAttrs(fromEl, toEl);
+                    // optional
+                    onElUpdated(fromEl);
 
-                // update attributes on original DOM element first
-                morphAttrs(fromEl, toEl);
-                // optional
-                onElUpdated(fromEl);
-
-                if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
-                    return;
+                    if (onBeforeElChildrenUpdated(fromEl, toEl) === false) {
+                        return;
+                    }
                 }
             }
 
             if (fromEl.nodeName !== 'TEXTAREA') {
-              morphChildren(fromEl, toEl);
+                morphChildren(fromEl, toEl, movedToNewParent);
             } else {
-              specialElHandlers.TEXTAREA(fromEl, toEl);
+                specialElHandlers.TEXTAREA(fromEl, toEl);
             }
-        }
+       }
 
-        function morphChildren(fromEl, toEl) {
+        function morphChildren(fromEl, toEl, movedToNewParent) {
             var curToNodeChild = toEl.firstChild;
             var curFromNodeChild = fromEl.firstChild;
             var curToNodeKey;
@@ -522,13 +530,14 @@ function morphdomFactory(morphAttrs) {
                 while (curFromNodeChild) {
                     fromNextSibling = curFromNodeChild.nextSibling;
 
-                    if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
+                    if (!movedToNewParent && curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
                         curToNodeChild = toNextSibling;
                         curFromNodeChild = fromNextSibling;
                         continue outer;
                     }
 
                     curFromNodeKey = getNodeKey(curFromNodeChild);
+
 
                     var curFromNodeType = curFromNodeChild.nodeType;
 
@@ -595,7 +604,7 @@ function morphdomFactory(morphAttrs) {
                                 // the current "from" node to match the current
                                 // target DOM node.
                                 // MORPH
-                                morphEl(curFromNodeChild, curToNodeChild);
+                                morphEl(curFromNodeChild, curToNodeChild, false, movedToNewParent);
                             }
 
                         } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
@@ -644,7 +653,7 @@ function morphdomFactory(morphAttrs) {
                 if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
                     fromEl.appendChild(matchingFromEl);
                     // MORPH
-                    morphEl(matchingFromEl, curToNodeChild);
+                    morphEl(matchingFromEl, curToNodeChild, false, movedToNewParent);
                 } else {
                     var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
                     if (onBeforeNodeAddedResult !== false) {
