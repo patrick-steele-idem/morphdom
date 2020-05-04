@@ -161,9 +161,10 @@ export default function morphdomFactory(morphAttrs) {
                         curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
                         morphEl(unmatchedFromEl, curChild);
                     }
+                } else {
+                  handleNodeAdded(curChild);
                 }
 
-                handleNodeAdded(curChild);
                 curChild = nextSibling;
             }
         }

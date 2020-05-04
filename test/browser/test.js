@@ -1422,6 +1422,67 @@ describe('morphdom' , function() {
       expect(morphedEl.outerHTML).to.equal(svgChildHTML);
     });
 
+    it('considers matched keyed el with skipped update that is moved to new parent as updated instead of added', function () {
+      var div = document.createElement('div');
+      div.id = 'root';
+      div.innerHTML = `
+        <div id="static">1</div>
+        <div>sibling</div>
+        <div>
+            <div id="noupdate">
+              <div id="child">child</div>
+              <span>span</span>
+            </div>
+        </div>
+      `;
+      var diffHTML = `
+      <div id="root">
+        <div id="static">2</div>
+        <div id="sibling-now-has-id">sibling</div>
+        <div>
+            <div id="noupdate">
+              <div id="child">child update</div>
+              <span>span update</span>
+            </div>
+        </div>
+      </div>
+      `;
+      var noUpdateBefore = div.querySelector('#noupdate')
+      var noUpdateParentBefore = noUpdateBefore.parentNode
+      var childBefore = div.querySelector('#child')
+      var added = []
+      var updated = []
+      var discarded = []
+      var morphedEl = morphdom(div, diffHTML, {
+        childrenOnly: false,
+        onNodeAdded: function(node) { added.push(node) },
+        onElUpdated: function(el) { updated.push(el) },
+        onNodeDiscarded: function(node) { discarded.push(node) },
+        onBeforeElUpdated: function(fromEl, toEl) {
+          return (fromEl.id !== 'noupdate');
+        }
+      })
+
+      expect(morphedEl.outerHTML.trim()).to.equal(`
+      <div id="root">
+        <div id="static">2</div>
+        <div id="sibling-now-has-id">sibling</div>
+        <div>
+            <div id="noupdate">
+              <div id="child">child</div>
+              <span>span</span>
+            </div>
+        </div>
+      </div>
+      `.trim());
+
+      expect(added.map(el => el.id).filter(id => id)).to.deep.equal(['sibling-now-has-id'])
+      expect(updated.map(el => el.id).filter(id => id)).to.deep.equal(['root', 'static'])
+      expect(discarded.map(el => el.id).filter(id => id)).to.deep.equal([])
+      expect(noUpdateBefore.isSameNode(morphedEl.querySelector('#noupdate'))).to.equal(true)
+      expect(childBefore.isSameNode(morphedEl.querySelector('#child'))).to.equal(true)
+      expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false)
+    });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {
     //     // NOTE: This test is currently failing. We need to improve the special case code
