@@ -450,10 +450,15 @@
                         if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                             curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
                             morphEl(unmatchedFromEl, curChild);
+                        } else {
+                          handleNodeAdded(curChild);
                         }
+                    } else {
+                      // recursively call for curChild and it's children to see if we find something in
+                      // fromNodesLookup
+                      handleNodeAdded(curChild);
                     }
 
-                    handleNodeAdded(curChild);
                     curChild = nextSibling;
                 }
             }
