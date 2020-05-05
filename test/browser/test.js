@@ -1447,21 +1447,21 @@ describe('morphdom' , function() {
         </div>
       </div>
       `;
-      var noUpdateBefore = div.querySelector('#noupdate')
-      var noUpdateParentBefore = noUpdateBefore.parentNode
-      var childBefore = div.querySelector('#child')
-      var added = []
-      var updated = []
-      var discarded = []
+      var noUpdateBefore = div.querySelector('#noupdate');
+      var noUpdateParentBefore = noUpdateBefore.parentNode;
+      var childBefore = div.querySelector('#child');
+      var added = [];
+      var updated = [];
+      var discarded = [];
       var morphedEl = morphdom(div, diffHTML, {
         childrenOnly: false,
-        onNodeAdded: function(node) { added.push(node) },
-        onElUpdated: function(el) { updated.push(el) },
-        onNodeDiscarded: function(node) { discarded.push(node) },
+        onNodeAdded: function(node) { added.push(node); },
+        onElUpdated: function(el) { updated.push(el); },
+        onNodeDiscarded: function(node) { discarded.push(node); },
         onBeforeElUpdated: function(fromEl, toEl) {
           return (fromEl.id !== 'noupdate');
         }
-      })
+      });
 
       expect(morphedEl.outerHTML.trim()).to.equal(`
       <div id="root">
@@ -1476,12 +1476,12 @@ describe('morphdom' , function() {
       </div>
       `.trim());
 
-      expect(added.map(el => el.id).filter(id => id)).to.deep.equal(['sibling-now-has-id'])
-      expect(updated.map(el => el.id).filter(id => id)).to.deep.equal(['root', 'static'])
-      expect(discarded.map(el => el.id).filter(id => id)).to.deep.equal([])
-      expect(noUpdateBefore.isSameNode(morphedEl.querySelector('#noupdate'))).to.equal(true)
-      expect(childBefore.isSameNode(morphedEl.querySelector('#child'))).to.equal(true)
-      expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false)
+      expect(added.map(el => el.id).filter(id => id)).to.deep.equal(['sibling-now-has-id']);
+      expect(updated.map(el => el.id).filter(id => id)).to.deep.equal(['root', 'static']);
+      expect(discarded.map(el => el.id).filter(id => id)).to.deep.equal([]);
+      expect(noUpdateBefore.isSameNode(morphedEl.querySelector('#noupdate'))).to.equal(true);
+      expect(childBefore.isSameNode(morphedEl.querySelector('#child'))).to.equal(true);
+      expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false);
     });
 
     // xit('should reuse DOM element with matching ID and class name (2)', function() {

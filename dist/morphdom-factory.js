@@ -386,6 +386,8 @@ function morphdomFactory(morphAttrs) {
                       handleNodeAdded(curChild);
                     }
                 } else {
+                  // recursively call for curChild and it's children to see if we find something in
+                  // fromNodesLookup
                   handleNodeAdded(curChild);
                 }
 
