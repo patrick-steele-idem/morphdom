@@ -450,6 +450,8 @@
                         if (unmatchedFromEl && compareNodeNames(curChild, unmatchedFromEl)) {
                             curChild.parentNode.replaceChild(unmatchedFromEl, curChild);
                             morphEl(unmatchedFromEl, curChild);
+                        } else {
+                          handleNodeAdded(curChild);
                         }
                     } else {
                       handleNodeAdded(curChild);
