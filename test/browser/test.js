@@ -1422,7 +1422,7 @@ describe('morphdom' , function() {
       expect(morphedEl.outerHTML).to.equal(svgChildHTML);
     });
 
-    it('considers matched keyed el with skipped update that is moved to new parent as updated instead of added', function () {
+    it('new id will not cause sibling-child keyed elements to be removed', function () {
       var div = document.createElement('div');
       div.id = 'root';
       div.innerHTML = `
