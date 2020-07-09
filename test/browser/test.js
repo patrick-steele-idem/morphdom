@@ -1505,4 +1505,18 @@ describe('morphdom' , function() {
     //     expect(div1).to.equal(div1_2);
     // });
 
+    it('should not update attributes listed to ignore', function() {
+        var fromEl = document.createElement('div');
+        fromEl.innerHTML = `<span id="identifiesMe" value="bar-value" class="skipMe" hidden data-morphdom-ignore-attributes='["class", "hidden"]'></span>`;
+
+        var toEl = document.createElement('div');
+        toEl.innerHTML = `<span id="identifiesMe" value="foo-value" class="foo bar" data-morphdom-ignore-attributes='["class", "hidden"]'></span>`;
+
+        morphdom(fromEl, toEl);
+        
+        var spanElement = fromEl.querySelector('#identifiesMe');
+        expect(spanElement.getAttribute("class")).to.equal("skipMe");
+        expect(spanElement.hasAttribute("hidden")).to.equal(true);
+        expect(spanElement.getAttribute("value")).to.equal("foo-value");
+    });
 });

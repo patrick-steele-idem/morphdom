@@ -14,11 +14,20 @@ function morphAttrs(fromNode, toNode) {
     if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE || fromNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return;
     }
+    
+    var ignoredAttributes = fromNode.dataset.morphdomIgnoreAttributes ?
+       JSON.parse(fromNode.dataset.morphdomIgnoreAttributes) :
+       [];
 
     // update attributes on original DOM element
     for (var i = toNodeAttrs.length - 1; i >= 0; i--) {
         attr = toNodeAttrs[i];
         attrName = attr.name;
+        
+        if (ignoredAttributes.indexOf(attrName) !== -1) {
+            continue;
+        }
+        
         attrNamespaceURI = attr.namespaceURI;
         attrValue = attr.value;
 
@@ -49,6 +58,10 @@ function morphAttrs(fromNode, toNode) {
         attr = fromNodeAttrs[d];
         attrName = attr.name;
         attrNamespaceURI = attr.namespaceURI;
+        
+        if (ignoredAttributes.indexOf(attrName) !== -1) {
+            continue;
+        }
 
         if (attrNamespaceURI) {
             attrName = attr.localName || attrName;

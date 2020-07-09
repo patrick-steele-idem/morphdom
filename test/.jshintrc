@@ -23,7 +23,6 @@
     },
 
     "node" : true,
-    "es5" : false,
     "browser" : true,
     "boss" : false,
     "curly": false,
@@ -48,5 +47,6 @@
     "eqeqeq": false,
     "latedef": false,
     "unused": "vars",
-    "eqnull": true
+    "eqnull": true,
+    "esversion": 9
 }
