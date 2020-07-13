@@ -197,6 +197,7 @@ A good strategy to optimize for performance is to render a template to an HTML s
 `morphdom` is being used in the following projects:
 
 - __[Phoenix Live View](https://github.com/phoenixframework/phoenix_live_view)__ (`v0.0.1+`) - Rich, real-time user experiences with server-rendered HTML
+- __[TS LiveView](https://github.com/beenotung/ts-liveview)__ (`v0.1.0+`) - Build SSR realtime SPA with Typescript
 - __[Omi.js](https://github.com/AlloyTeam/omi)__ (`v1.0.1+`) - Open and modern framework for building user interfaces.
 - __[Marko Widgets](https://github.com/marko-js/marko-widgets)__ (`v5.0.0-beta+`) - Marko Widgets is a high performance and lightweight UI components framework that uses the [Marko templating engine](https://github.com/marko-js/marko) for rendering UI components. You can see how Marko Widgets compares to React in performance by taking a look at the following benchmark: [Marko vs React: Performance Benchmark](https://github.com/patrick-steele-idem/marko-vs-react)
 - __[Catberry.js](https://github.com/catberry/catberry)__ (`v6.0.0+`) - Catberry is a framework with Flux architecture, isomorphic web-components and progressive rendering.
