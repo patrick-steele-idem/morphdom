@@ -31,6 +31,10 @@ export default function morphdomFactory(morphAttrs) {
             } else {
                 toNode = toElement(toNode);
             }
+        } else if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
+          var div = document.createElement('div');
+          div.appendChild(toNode);
+          toNode = toElement(div.innerHTML);
         }
 
         var getNodeKey = options.getNodeKey || defaultGetNodeKey;
