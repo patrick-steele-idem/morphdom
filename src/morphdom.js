@@ -28,11 +28,11 @@ export default function morphdomFactory(morphAttrs) {
                 var toNodeHtml = toNode;
                 toNode = doc.createElement('html');
                 toNode.innerHTML = toNodeHtml;
-            } else if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
-                toNode = toNode.firstElementChild;
             } else {
                 toNode = toElement(toNode);
             }
+        } else if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
+          toNode = toNode.firstElementChild;
         }
 
         var getNodeKey = options.getNodeKey || defaultGetNodeKey;
