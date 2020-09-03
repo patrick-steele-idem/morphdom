@@ -1349,7 +1349,6 @@ describe('morphdom' , function() {
       fragment.appendChild(document.createElement('span'));
       fragment.firstChild.appendChild(document.createTextNode('World'));
 
-      // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(element, fragment);
 
       expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
@@ -1366,7 +1365,6 @@ describe('morphdom' , function() {
       english.appendChild(document.createElement('span'));
       english.firstChild.appendChild(document.createTextNode('Hello'));
 
-      // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(spanish, english);
 
       expect(morphedEl.firstChild.nodeName).to.equal('SPAN');

@@ -318,6 +318,8 @@
                     var toNodeHtml = toNode;
                     toNode = doc.createElement('html');
                     toNode.innerHTML = toNodeHtml;
+                } else if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
+                    toNode = toNode.firstElementChild;
                 } else {
                     toNode = toElement(toNode);
                 }
