@@ -1346,16 +1346,14 @@ describe('morphdom' , function() {
 
       // Build the fragment to match the children.
       var fragment = document.createDocumentFragment();
-      var div = document.createElement('div');
       var span = document.createElement('span');
       span.appendChild(document.createTextNode('World'));
-      div.appendChild(span);
-      fragment.appendChild(div);
+      fragment.appendChild(span);
 
       var morphedEl = morphdom(element, fragment);
 
-      expect(morphedEl.firstElementChild.nodeName).to.equal('SPAN');
-      expect(morphedEl.firstElementChild.textContent).to.equal('World');
+      expect(morphedEl.nodeName).to.equal('SPAN');
+      expect(morphedEl.textContent).to.equal('World');
     });
 
     it('should handle document fragment as target', function () {
