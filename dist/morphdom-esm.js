@@ -315,6 +315,8 @@ function morphdomFactory(morphAttrs) {
             } else {
                 toNode = toElement(toNode);
             }
+        } else if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE$1) {
+          toNode = toNode.firstElementChild;
         }
 
         var getNodeKey = options.getNodeKey || defaultGetNodeKey;

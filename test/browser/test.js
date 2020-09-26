@@ -1346,14 +1346,14 @@ describe('morphdom' , function() {
 
       // Build the fragment to match the children.
       var fragment = document.createDocumentFragment();
-      fragment.appendChild(document.createElement('span'));
-      fragment.firstChild.appendChild(document.createTextNode('World'));
+      var span = document.createElement('span');
+      span.appendChild(document.createTextNode('World'));
+      fragment.appendChild(span);
 
-      // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(element, fragment);
 
-      expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
-      expect(morphedEl.firstChild.textContent).to.equal('World');
+      expect(morphedEl.nodeName).to.equal('SPAN');
+      expect(morphedEl.textContent).to.equal('World');
     });
 
     it('should handle document fragment as target', function () {
@@ -1363,146 +1363,147 @@ describe('morphdom' , function() {
       spanish.firstChild.appendChild(document.createTextNode('Ola'));
 
       var english = document.createDocumentFragment();
-      english.appendChild(document.createElement('span'));
-      english.firstChild.appendChild(document.createTextNode('Hello'));
+      var div = document.createElement('div');
+      var span = document.createElement('span');
+      span.appendChild(document.createTextNode('Hello'));
+      div.appendChild(span);
+      english.appendChild(div);
 
-      // This currently does not error, but does not diff the children.
       var morphedEl = morphdom(spanish, english);
 
-      expect(morphedEl.firstChild.nodeName).to.equal('SPAN');
-      expect(morphedEl.firstChild.textContent).to.equal('Hello');
+      expect(morphedEl.firstElementChild.nodeName).to.equal('SPAN');
+      expect(morphedEl.firstElementChild.textContent).to.equal('Hello');
     });
 
-    it('multiple forms and adding additional form', function () {
-      // Build the fragment to match the children.
-      var english = document.createElement('template');
-      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article></section></div>';
-      var spanish = document.createElement('template');
-      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
+     it('multiple forms and adding additional form', function () {
+       // Build the fragment to match the children.
+       var english = document.createElement('template');
+       english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article></section></div>';
+       var spanish = document.createElement('template');
+       spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article><article id="item-1"><form id="form-1" phx-submit="submit"><input type="hidden" name="id" value="1"><textarea name="text">b</textarea><button type="submit">Submit</button></form></article><article id="item-2"><form id="form-2" phx-submit="submit"><input type="hidden" name="id" value="2"><textarea name="text"></textarea><button type="submit">Submit</button></form></article></section></div>';
 
-      var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
+       var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
 
-      expect(morphedEl.querySelectorAll('#form-0').length).to.equal(1);
-      expect(morphedEl.querySelectorAll('form').length).to.equal(3);
-    });
+       expect(morphedEl.querySelectorAll('#form-0').length).to.equal(1);
+       expect(morphedEl.querySelectorAll('form').length).to.equal(3);
+     });
 
-    it('can work when container id changes', function () {
-      var input = document.createElement('template');
-      input.innerHTML = '<div id="foo"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
-      var output = document.createElement('template');
-      output.innerHTML = '<div id="bar"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
+     it('can work when container id changes', function () {
+       var input = document.createElement('template');
+       input.innerHTML = '<div id="foo"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
+       var output = document.createElement('template');
+       output.innerHTML = '<div id="bar"><div class="sds-field filter" id="make" data-phx-component="3"><label class="heading">Make</label><div class="sds-checkbox"><input class="sds-input" id="make_acura" name="makes[]" type="checkbox" value="acura"><label for="make_acura" class="sds-label">Acura</label></div><div class="sds-checkbox"><input class="sds-input" id="make_honda" name="makes[]" type="checkbox" value="honda"><label for="make_honda" class="sds-label">Honda</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ram" name="makes[]" type="checkbox" value="ram"><label for="make_ram" class="sds-label">RAM</label></div><div class="sds-checkbox"><input class="sds-input" id="make_ford" name="makes[]" type="checkbox" value="ford"><label for="make_ford" class="sds-label">Ford</label></div></div></div>';
 
-      var morphedEl = morphdom(input.content.firstChild, output.content.firstChild);
+       var morphedEl = morphdom(input.content.firstChild, output.content.firstChild);
 
-      expect(morphedEl.id).to.equal('bar');
-      expect(morphedEl.querySelectorAll('input').length).to.equal(4);
-      expect(morphedEl.querySelectorAll('input').length).to.equal(4);
-    });
+       expect(morphedEl.id).to.equal('bar');
+       expect(morphedEl.querySelectorAll('input').length).to.equal(4);
+       expect(morphedEl.querySelectorAll('input').length).to.equal(4);
+     });
 
-    it('disabled works with multiple attributes/properties on element (need reverse for loop)', function () {
-      var english = document.createElement('template');
-      english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
-      var spanish = document.createElement('template');
-      spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article>';
+     it('disabled works with multiple attributes/properties on element (need reverse for loop)', function () {
+       var english = document.createElement('template');
+       english.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit" data-phx-disaabled disabled>Submit</button></form></article>';
+       var spanish = document.createElement('template');
+       spanish.innerHTML = '<div><section id="list" phx-update="append"><article id="item-0"><form id="form-0" phx-submit="submit"><input type="hidden" name="id" value="0"><textarea name="text"></textarea><button type="submit">Submit</button></form></article>';
 
-      var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
+       var morphedEl = morphdom(english.content.firstChild, spanish.content.firstChild);
 
-      expect(morphedEl.querySelector('button').disabled).to.equal(false);
-    });
+       expect(morphedEl.querySelector('button').disabled).to.equal(false);
+     });
 
-    it('handles SVG nodeName case mismatch', function () {
-      var svgChildHTML = '<g transform="translate(50 100)" id="myid"><g transform="translate(0 0)"><text>hi</text></g></g>'
-      var svgHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 640" preserveAspectRatio="xMidYMid meet">' +
-                      svgChildHTML +
-                    '</svg>';
-      var svg = document.createElement('template');
-      svg.innerHTML = svgHTML
-      var morphedEl = morphdom(svg.content.firstChild.firstChild, svgChildHTML, {childrenOnly: false})
+     it('handles SVG nodeName case mismatch', function () {
+       var svgChildHTML = '<g transform="translate(50 100)" id="myid"><g transform="translate(0 0)"><text>hi</text></g></g>'
+       var svgHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 640" preserveAspectRatio="xMidYMid meet">' +
+                       svgChildHTML +
+                     '</svg>';
+       var svg = document.createElement('template');
+       svg.innerHTML = svgHTML
+       var morphedEl = morphdom(svg.content.firstChild.firstChild, svgChildHTML, {childrenOnly: false})
 
-      expect(morphedEl.outerHTML).to.equal(svgChildHTML);
-    });
+       expect(morphedEl.outerHTML).to.equal(svgChildHTML);
+     });
 
-    it('new id will not cause sibling-child keyed elements to be removed', function () {
-      var div = document.createElement('div');
-      div.id = 'root';
-      div.innerHTML = `
-        <div id="static">1</div>
-        <div>sibling</div>
-        <div>
-            <div id="noupdate">
-              <div id="child">child</div>
-              <span>span</span>
-            </div>
-        </div>
-      `;
-      var diffHTML = `
-      <div id="root">
-        <div id="static">2</div>
-        <div id="sibling-now-has-id">sibling</div>
-        <div>
-            <div id="noupdate">
-              <div id="child">child update</div>
-              <span>span update</span>
-            </div>
-        </div>
-      </div>
-      `;
-      var noUpdateBefore = div.querySelector('#noupdate');
-      var noUpdateParentBefore = noUpdateBefore.parentNode;
-      var childBefore = div.querySelector('#child');
-      var added = [];
-      var updated = [];
-      var discarded = [];
-      var morphedEl = morphdom(div, diffHTML, {
-        childrenOnly: false,
-        onNodeAdded: function(node) { added.push(node); },
-        onElUpdated: function(el) { updated.push(el); },
-        onNodeDiscarded: function(node) { discarded.push(node); },
-        onBeforeElUpdated: function(fromEl, toEl) {
-          return (fromEl.id !== 'noupdate');
-        }
-      });
+     it('new id will not cause sibling-child keyed elements to be removed', function () {
+       var div = document.createElement('div');
+       div.id = 'root';
+       div.innerHTML = `
+         <div id="static">1</div>
+         <div>sibling</div>
+         <div>
+             <div id="noupdate">
+               <div id="child">child</div>
+               <span>span</span>
+             </div>
+         </div>
+       `;
+       var diffHTML = `
+       <div id="root">
+         <div id="static">2</div>
+         <div id="sibling-now-has-id">sibling</div>
+         <div>
+             <div id="noupdate">
+               <div id="child">child update</div>
+               <span>span update</span>
+             </div>
+         </div>
+       </div>
+       `;
+       var noUpdateBefore = div.querySelector('#noupdate');
+       var noUpdateParentBefore = noUpdateBefore.parentNode;
+       var childBefore = div.querySelector('#child');
+       var added = [];
+       var updated = [];
+       var discarded = [];
+       var morphedEl = morphdom(div, diffHTML, {
+         childrenOnly: false,
+         onNodeAdded: function(node) { added.push(node); },
+         onElUpdated: function(el) { updated.push(el); },
+         onNodeDiscarded: function(node) { discarded.push(node); },
+         onBeforeElUpdated: function(fromEl, toEl) {
+           return (fromEl.id !== 'noupdate');
+         }
+       });
 
-      expect(morphedEl.outerHTML.trim()).to.equal(`
-      <div id="root">
-        <div id="static">2</div>
-        <div id="sibling-now-has-id">sibling</div>
-        <div>
-            <div id="noupdate">
-              <div id="child">child</div>
-              <span>span</span>
-            </div>
-        </div>
-      </div>
-      `.trim());
+       expect(morphedEl.outerHTML.trim()).to.equal(`
+       <div id="root">
+         <div id="static">2</div>
+         <div id="sibling-now-has-id">sibling</div>
+         <div>
+             <div id="noupdate">
+               <div id="child">child</div>
+               <span>span</span>
+             </div>
+         </div>
+       </div>
+       `.trim());
 
-      expect(added.map(el => el.id).filter(id => id)).to.deep.equal(['sibling-now-has-id']);
-      expect(updated.map(el => el.id).filter(id => id)).to.deep.equal(['root', 'static']);
-      expect(discarded.map(el => el.id).filter(id => id)).to.deep.equal([]);
-      expect(noUpdateBefore.isSameNode(morphedEl.querySelector('#noupdate'))).to.equal(true);
-      expect(childBefore.isSameNode(morphedEl.querySelector('#child'))).to.equal(true);
-      expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false);
-    });
+       expect(added.map(el => el.id).filter(id => id)).to.deep.equal(['sibling-now-has-id']);
+       expect(updated.map(el => el.id).filter(id => id)).to.deep.equal(['root', 'static']);
+       expect(discarded.map(el => el.id).filter(id => id)).to.deep.equal([]);
+       expect(noUpdateBefore.isSameNode(morphedEl.querySelector('#noupdate'))).to.equal(true);
+       expect(childBefore.isSameNode(morphedEl.querySelector('#child'))).to.equal(true);
+       expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false);
+     });
 
-    // xit('should reuse DOM element with matching ID and class name (2)', function() {
-    //     // NOTE: This test is currently failing. We need to improve the special case code
-    //     //       for handling incompatible root nodes.
-    //     var fromEl = document.createElement('div');
-    //     var toEl = document.createElement('div');
-    //
-    //     fromEl.innerHTML = '<div id="qwerty" class="div1"></div>';
-    //     toEl.innerHTML = '<span><div id="qwerty" class="div1"></div></span>';
-    //
-    //     fromEl = fromEl.firstChild;
-    //     toEl = toEl.firstChild;
-    //
-    //     var div1 = fromEl;
-    //
-    //     var morphedEl = morphdom(fromEl, toEl);
-    //
-    //     var div1_2 = morphedEl.querySelector('.div1');
-    //
-    //     expect(div1).to.equal(div1_2);
-    // });
+     xit('should reuse DOM element with matching ID and class name (2)', function() {
+         // NOTE: This test is currently failing. We need to improve the special case code
+         //       for handling incompatible root nodes.
+         var fromEl = document.createElement('div');
+         var toEl = document.createElement('div');
 
+         fromEl.innerHTML = '<div id="qwerty" class="div1"></div>';
+         toEl.innerHTML = '<span><div id="qwerty" class="div1"></div></span>';
+
+         fromEl = fromEl.firstChild;
+         toEl = toEl.firstChild;
+
+         var div1 = fromEl;
+
+         var morphedEl = morphdom(fromEl, toEl);
+
+         var div1_2 = morphedEl.querySelector('.div1');
+
+         expect(div1).to.equal(div1_2);
+     });
 });
