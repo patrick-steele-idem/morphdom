@@ -1317,18 +1317,12 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(-1);
     });
 
-    it('should handle shadow DOM removal', function () {
-        var html = `<form>
-            <label>This should be removed</label>
-            <input type="checkbox" id="element-to-be-removed">
-            <p>Element to keep in dom</p>
-          </form>`;
+    it('can handle shadow DOM removal via shadowRoot', function () {
+        var html = '<form><label>This should be removed</label><input type="checkbox" id="element-to-be-removed"><p>Element to keep in dom</p></form>';
         var container = document.createElement('div');
-        container.className = 'shadow-root-container';
+        container.id = 'shadow-root-container';
         container.innerHTML = html;
 
-        var form = container.querySelector('form');
-        form = form.cloneNode(true);
         container.attachShadow({ mode: 'open' });
 
         var morphedEl = morphdom(
@@ -1337,6 +1331,133 @@ describe('morphdom' , function() {
           { childrenOnly: true }
         );
 
+        expect(morphedEl.querySelector('input') === null).to.equal(true);
+    });
+
+    it('handles web components', function () {
+        class Form extends HTMLElement {
+          constructor() {
+            super();
+
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'element-to-be-removed';
+            form.appendChild(input);
+            this.appendChild(form);
+          }
+        }
+
+        window.customElements.define('my-form', Form);
+        var html = '<my-form></my-form>';
+        var container = document.createElement('div');
+        container.id = 'root';
+        container.innerHTML = html;
+
+        var morphedEl = morphdom(
+          container,
+          '<div id="root"><form><p>Element to keep in dom</p></form></div>',
+          { childrenOnly: true }
+        );
+
+        expect(morphedEl.querySelector('input') === null).to.equal(true);
+    });
+
+    it('handles web components as both from and to', function () {
+        class FirstForm extends HTMLElement {
+          constructor() {
+            super();
+
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'element-to-be-replaced';
+            form.appendChild(input);
+            this.appendChild(form);
+          }
+        }
+
+        window.customElements.define('first-form', FirstForm);
+        var html = '<first-form></first-form>';
+        var container = document.createElement('div');
+        container.id = 'root';
+        container.innerHTML = html;
+
+        class SecondForm extends HTMLElement {
+          constructor() {
+            super();
+
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'second-element-input';
+            form.appendChild(input);
+            this.appendChild(form);
+          }
+        }
+
+        window.customElements.define('second-form', SecondForm);
+        var secondHtml = '<second-form></second-form>';
+        var secondContainer = document.createElement('div');
+        secondContainer.id = 'root';
+        secondContainer.innerHTML = secondHtml;
+
+        var morphedEl = morphdom(
+          container,
+          secondContainer,
+          { childrenOnly: true }
+        );
+
+        expect(morphedEl.querySelector('input').id).to.equal('second-element-input');
+    });
+
+    it('does partially handle web components with attached shadow root', function () {
+        class OtherForm extends HTMLElement {
+          constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'element-to-be-removed';
+            form.appendChild(input);
+            this.shadowRoot.append(form);
+          }
+        }
+
+        window.customElements.define('other-form', OtherForm);
+        var html = '<other-form></other-form>';
+        var container = document.createElement('div');
+        container.id = 'root';
+        container.innerHTML = html;
+
+        class ZooForm extends HTMLElement {
+          constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'second-to-be-replaced';
+            form.appendChild(input);
+            this.shadowRoot.append(form);
+          }
+        }
+
+        window.customElements.define('zoo-form', ZooForm);
+        var zooHtml = '<zoo-form></zoo-form>';
+        var zooContainer = document.createElement('div');
+        zooContainer.id = 'root';
+        zooContainer.innerHTML = zooHtml;
+
+        var morphedEl = morphdom(
+          container,
+          zooContainer,
+          { childrenOnly: true }
+        );
+
+        expect(morphedEl.querySelector('zoo-form').toString()).to.be.ok;
+        // THIS IS BAD
         expect(morphedEl.querySelector('input') === null).to.equal(true);
     });
 
