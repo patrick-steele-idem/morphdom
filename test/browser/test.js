@@ -1411,6 +1411,41 @@ describe('morphdom' , function() {
         expect(morphedEl.querySelector('input').id).to.equal('second-element-input');
     });
 
+    it('handles web components when both are the same', function () {
+        var connectedCallbackCount = 0;
+        var disconnectedCallbackCount = 0;
+        class YinzForm extends HTMLElement {
+          constructor() {
+            super();
+
+            var form = document.createElement('form');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'element-to-be-replaced';
+            form.appendChild(input);
+            this.appendChild(form);
+          }
+        }
+
+        window.customElements.define('yinz-form', YinzForm);
+        var html = '<yinz-form></yinz-form>';
+        var container = document.createElement('div');
+        container.id = 'root';
+        container.innerHTML = html;
+
+        var morphedEl = morphdom(
+          container,
+          container.outerHTML,
+          {
+            childrenOnly: true,
+          }
+        );
+
+        expect(morphedEl.querySelector('input').id).to.equal('element-to-be-replaced');
+        expect(morphedEl.isSameNode(container)).to.equal(true);
+        expect(morphedEl.isEqualNode(container)).to.equal(true);
+    });
+
     it('does partially handle web components with attached shadow root', function () {
         class OtherForm extends HTMLElement {
           constructor() {
@@ -1457,7 +1492,7 @@ describe('morphdom' , function() {
         );
 
         expect(morphedEl.querySelector('zoo-form').toString()).to.be.ok;
-        // THIS IS BAD
+        // THIS IS A NECESSARY CONSEQUENCE OF NO STRING REPRESENTATION OF TOEL
         expect(morphedEl.querySelector('input') === null).to.equal(true);
     });
 
