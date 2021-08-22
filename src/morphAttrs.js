@@ -1,7 +1,8 @@
 var DOCUMENT_FRAGMENT_NODE = 11;
 
 export default function morphAttrs(fromNode, toNode) {
-    var toNodeAttrs = toNode.attributes;
+    // Convert to array to use findIndex/unshift/splice if required below
+    var toNodeAttrs = Array.from(toNode.attributes);
     var attr;
     var attrName;
     var attrNamespaceURI;
@@ -11,6 +12,18 @@ export default function morphAttrs(fromNode, toNode) {
     // document-fragments dont have attributes so lets not do anything
     if (toNode.nodeType === DOCUMENT_FRAGMENT_NODE || fromNode.nodeType === DOCUMENT_FRAGMENT_NODE) {
       return;
+    }
+
+    // If input element types do not match, change their value last in case the new value can't hold the old value
+    if (fromNode.nodeName === "INPUT" && toNode.nodeName === "INPUT" && fromNode.attributes.type !== toNode.attributes.type) {
+        // Position of the value attr, if it exists
+        var toNodeAttrValueIndex = toNodeAttrs.findIndex(function(a) {
+            return a.name === "value";
+        });
+        if (toNodeAttrValueIndex !== -1) {
+            // Send it to the front by splicing and unshifting
+            toNodeAttrs.unshift(toNodeAttrs.splice(toNodeAttrValueIndex, 1)[0]);
+        }
     }
 
     // update attributes on original DOM element
