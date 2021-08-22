@@ -15,7 +15,7 @@ function morphAttrs(fromNode, toNode) {
     }
 
     // If input element types do not match, change their value last in case the new value can't hold the old value
-    if (fromNode.nodeType === "INPUT" && toNode.nodeType === "INPUT" && fromNode.attributes.type !== toNode.attributes.type) {
+    if (fromNode.nodeName === "INPUT" && toNode.nodeName === "INPUT" && fromNode.attributes.type !== toNode.attributes.type) {
         // Position of the value attr, if it exists
         var toNodeAttrValueIndex = toNodeAttrs.findIndex(function(a) {
             return a.name === "value";
