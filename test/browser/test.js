@@ -1662,4 +1662,36 @@ describe('morphdom' , function() {
 
          expect(div1).to.equal(div1_2);
      });
+
+    it('should transform a number input to a color input', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'number';
+        el1.setAttribute('value', '8');
+        el1.setAttribute('name', 'width');
+        el1.setAttribute('min', '0');
+        el1.setAttribute('max', '255');
+
+        var el2 = '<input type="color" value="#ff00ff" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('value')).to.equal("#ff00ff");
+        expect(el1.type).to.equal('color');
+    });
+
+    it('should transform a color input to a number input', function() {
+        var el1 = document.createElement('input');
+        el1.type = 'color';
+        el1.setAttribute('value', '#ff00ff');
+
+        var el2 = '<input type="number" name="width" value="8" min="0" max="255" />';
+
+        morphdom(el1, el2);
+
+        expect(el1.getAttribute('value')).to.equal("8");
+        expect(el1.getAttribute('name')).to.equal('width');
+        expect(el1.getAttribute('min')).to.equal('0');
+        expect(el1.getAttribute('max')).to.equal('255');
+        expect(el1.type).to.equal('number');
+    });
 });
