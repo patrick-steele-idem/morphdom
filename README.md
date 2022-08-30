@@ -206,6 +206,7 @@ A good strategy to optimize for performance is to render a template to an HTML s
 - __[vomit.js](https://github.com/bredele/vomit)__ (`v0.9.19`) - A library that uses the power of ES6 template literals to quickly create DOM elements that you can update and compose with Objects, Arrays, other DOM elements, Functions, Promises and even Streams. All with the ease of a function call.
 - __[CableReady](https://github.com/hopsoft/cable_ready)__(`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
 - __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__(`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
+- __[Ema](https://ema.srid.ca/)__(`all versions`) - A change-aware static site generator library for Haskell. morphdom is used to provide [hot reload](https://ema.srid.ca/topics/hot-reload) in the live server.
 
 _NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
