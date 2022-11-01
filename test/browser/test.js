@@ -429,6 +429,21 @@ describe('morphdom' , function() {
         expect(el1.children[1].textContent).to.equal('B');
     });
 
+    it('incompatible matching ids are morphed correctly', function() {
+        var el1 = document.createElement('div');
+        el1.innerHTML = `<h1 id="foo" class="foo">A</h1> <h2 id="matching" class="bar">B</h2>`;
+
+        var el2 = document.createElement('div');
+        el2.innerHTML = '<h1 id="matching" class="baz">C</h1>';
+
+        morphdom(el1, el2);
+
+        expect(el1.children.length).to.equal(1);
+        expect(el1.children[0].id).to.equal('matching');
+        expect(el1.children[0].className).to.equal('baz');
+        expect(el1.children[0].textContent).to.equal('C');
+    });
+
     it('should transform a text input el', function() {
         var el1 = document.createElement('input');
         el1.type = 'text';
