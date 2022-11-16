@@ -16,4 +16,4 @@ declare function morphdom(
     options?: MorphDomOptions,
 ): void;
 
-export = morphdom;
+export default morphdom;
