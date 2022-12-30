@@ -43,7 +43,7 @@
     "lasso": "^3.2.9",
     "lasso-marko": "^2.4.7",
     "marko": "^4.1.3",
-    "mocha": "^6.2.2",
+    "mocha": "^10.2.0",
     "mocha-chrome": "^2.2.0",
     "nanomorph": "^5.4.0",
     "rollup": "^1.4.1",
