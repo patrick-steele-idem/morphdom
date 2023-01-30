@@ -103,7 +103,7 @@ var morphedNode = morphdom(fromNode, toNode, {
     getNodeKey: function(node) {
         return node.id;
     },
-    addChild: function(parentNode, childNode){
+    addChild: function(parentNode, childNode) {
         parentNode.appendChild(childNode);
     },
     onBeforeNodeAdded: function(node) {
@@ -128,7 +128,7 @@ var morphedNode = morphdom(fromNode, toNode, {
         return true;
     },
     childrenOnly: false,
-    skipFromChildren: function(fromEl){
+    skipFromChildren: function(fromEl) {
         return false;
     }
 });

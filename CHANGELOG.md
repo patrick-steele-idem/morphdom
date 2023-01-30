@@ -3,6 +3,11 @@ Changelog
 
 # 2.x
 
+## 2.6.2
+
+- Add new `addChild` and `skipFromChildren` callbacks to allow customization of how new children are
+added to a parent as well as preserving the from tree when indexing changes for diffing.
+
 ## 2.5.12
 
 - Fix merge attrs with multiple properties [PR #175](https://github.com/patrick-steele-idem/morphdom/pull/175)
