@@ -327,6 +327,8 @@ function morphdomFactory(morphAttrs) {
     var onBeforeNodeDiscarded = options.onBeforeNodeDiscarded || noop;
     var onNodeDiscarded = options.onNodeDiscarded || noop;
     var onBeforeElChildrenUpdated = options.onBeforeElChildrenUpdated || noop;
+    var skipFromChildren = options.skipFromChildren || noop;
+    var addChild = options.addChild || function(parent, child){ return parent.appendChild(child); };
     var childrenOnly = options.childrenOnly === true;
 
     // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
@@ -511,6 +513,7 @@ function morphdomFactory(morphAttrs) {
     }
 
     function morphChildren(fromEl, toEl) {
+      var skipFrom = skipFromChildren(fromEl);
       var curToNodeChild = toEl.firstChild;
       var curFromNodeChild = fromEl.firstChild;
       var curToNodeKey;
@@ -526,7 +529,7 @@ function morphdomFactory(morphAttrs) {
         curToNodeKey = getNodeKey(curToNodeChild);
 
         // walk the fromNode children all the way through
-        while (curFromNodeChild) {
+        while (!skipFrom && curFromNodeChild) {
           fromNextSibling = curFromNodeChild.nextSibling;
 
           if (curToNodeChild.isSameNode && curToNodeChild.isSameNode(curFromNodeChild)) {
@@ -646,11 +649,10 @@ function morphdomFactory(morphAttrs) {
 
         // If we got this far then we did not find a candidate match for
         // our "to node" and we exhausted all of the children "from"
-        // nodes. Therefore, we will just append the current "to" node
-        // to the end
+        // nodes.
         if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
-          fromEl.appendChild(matchingFromEl);
           // MORPH
+          addChild(fromEl, matchingFromEl);
           morphEl(matchingFromEl, curToNodeChild);
         } else {
           var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);
@@ -662,7 +664,7 @@ function morphdomFactory(morphAttrs) {
             if (curToNodeChild.actualize) {
               curToNodeChild = curToNodeChild.actualize(fromEl.ownerDocument || doc);
             }
-            fromEl.appendChild(curToNodeChild);
+            addChild(fromEl, curToNodeChild);
             handleNodeAdded(curToNodeChild);
           }
         }
