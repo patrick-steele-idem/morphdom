@@ -3,7 +3,7 @@ Changelog
 
 # 2.x
 
-## 2.6.2
+## 2.7.0
 
 - Add new `addChild` and `skipFromChildren` callbacks to allow customization of how new children are
 added to a parent as well as preserving the from tree when indexing changes for diffing.

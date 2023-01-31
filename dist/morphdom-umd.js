@@ -655,10 +655,11 @@
 
             // If we got this far then we did not find a candidate match for
             // our "to node" and we exhausted all of the children "from"
-            // nodes.
+            // nodes. Therefore, we will just append the current "to" node
+            // to the end
             if (curToNodeKey && (matchingFromEl = fromNodesLookup[curToNodeKey]) && compareNodeNames(matchingFromEl, curToNodeChild)) {
               // MORPH
-              addChild(fromEl, matchingFromEl);
+              if(!skipFrom){ addChild(fromEl, matchingFromEl); }
               morphEl(matchingFromEl, curToNodeChild);
             } else {
               var onBeforeNodeAddedResult = onBeforeNodeAdded(curToNodeChild);

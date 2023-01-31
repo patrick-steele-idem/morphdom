@@ -100,37 +100,37 @@ Supported options (all optional):
 ```javascript
 var morphdom = require('morphdom');
 var morphedNode = morphdom(fromNode, toNode, {
-    getNodeKey: function(node) {
-        return node.id;
-    },
-    addChild: function(parentNode, childNode) {
-        parentNode.appendChild(childNode);
-    },
-    onBeforeNodeAdded: function(node) {
-        return node;
-    },
-    onNodeAdded: function(node) {
+  getNodeKey: function(node) {
+    return node.id;
+  },
+  addChild: function(parentNode, childNode) {
+    parentNode.appendChild(childNode);
+  },
+  onBeforeNodeAdded: function(node) {
+    return node;
+  },
+  onNodeAdded: function(node) {
 
-    },
-    onBeforeElUpdated: function(fromEl, toEl) {
-        return true;
-    },
-    onElUpdated: function(el) {
+  },
+  onBeforeElUpdated: function(fromEl, toEl) {
+    return true;
+  },
+  onElUpdated: function(el) {
 
-    },
-    onBeforeNodeDiscarded: function(node) {
-        return true;
-    },
-    onNodeDiscarded: function(node) {
+  },
+  onBeforeNodeDiscarded: function(node) {
+    return true;
+  },
+  onNodeDiscarded: function(node) {
 
-    },
-    onBeforeElChildrenUpdated: function(fromEl, toEl) {
-        return true;
-    },
-    childrenOnly: false,
-    skipFromChildren: function(fromEl) {
-        return false;
-    }
+  },
+  onBeforeElChildrenUpdated: function(fromEl, toEl) {
+    return true;
+  },
+  childrenOnly: false,
+  skipFromChildren: function(fromEl) {
+    return false;
+  }
 });
 ```
 
