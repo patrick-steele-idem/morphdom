@@ -451,7 +451,7 @@ function morphdomFactory(morphAttrs) {
     }
 
     function morphChildren(fromEl, toEl) {
-      var skipFrom = skipFromChildren(fromEl);
+      var skipFrom = skipFromChildren(fromEl, toEl);
       var curToNodeChild = toEl.firstChild;
       var curFromNodeChild = fromEl.firstChild;
       var curToNodeKey;

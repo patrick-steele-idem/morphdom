@@ -3,6 +3,9 @@ Changelog
 
 # 2.x
 
+## 2.7.1
+- Pass toEl as second argument to `skipFromChildren` callback
+
 ## 2.7.0
 
 - Add new `addChild` and `skipFromChildren` callbacks to allow customization of how new children are

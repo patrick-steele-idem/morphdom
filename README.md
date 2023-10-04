@@ -128,7 +128,7 @@ var morphedNode = morphdom(fromNode, toNode, {
     return true;
   },
   childrenOnly: false,
-  skipFromChildren: function(fromEl) {
+  skipFromChildren: function(fromEl, toEl) {
     return false;
   }
 });
