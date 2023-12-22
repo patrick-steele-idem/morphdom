@@ -113,7 +113,7 @@
     /**
      * Creates HTML fragments from wrap.
      *
-     * @param {ReadOnly<String>} str The string to convert to a DOM node.
+     * @param {ReadOnly<string>} str The string to convert to a DOM node.
      *
      * @return {ChildNode} The DOM node for the given string.
      */
@@ -121,7 +121,7 @@
         /** @type {HTMLBodyElement} */
         var fragment = doc.createElement('body');
         fragment.innerHTML = str;
-        return fragment.content.childNodes[0];
+        return fragment.childNodes[0];
     }
 
     /**
@@ -130,7 +130,7 @@
      * return html.body.firstChild;
      *
      * @method toElement
-     * @param {ReadOnly<String>} str
+     * @param {ReadOnly<string>} str
      *
      * @return {ChildNode}
      */
