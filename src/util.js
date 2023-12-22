@@ -43,7 +43,7 @@ function createFragmentFromRange(str) {
 /**
  * Creates HTML fragments from wrap.
  *
- * @param {ReadOnly<String>} str The string to convert to a DOM node.
+ * @param {ReadOnly<string>} str The string to convert to a DOM node.
  *
  * @return {ChildNode} The DOM node for the given string.
  */
@@ -60,7 +60,7 @@ function createFragmentFromWrap(str) {
  * return html.body.firstChild;
  *
  * @method toElement
- * @param {ReadOnly<String>} str
+ * @param {ReadOnly<string>} str
  *
  * @return {ChildNode}
  */
