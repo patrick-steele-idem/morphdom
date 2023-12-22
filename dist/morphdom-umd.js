@@ -74,6 +74,7 @@
     var doc = typeof document === 'undefined' ? undefined : document;
     var HAS_TEMPLATE_SUPPORT = !!doc && 'content' in doc.createElement('template');
     var HAS_RANGE_SUPPORT = !!doc && doc.createRange && 'createContextualFragment' in doc.createRange();
+    var DOM_DOCUMENT_DOESNT_EXIST_ERROR = 'DOM document is not present.';
 
     /**
      * Create element from string.
@@ -83,6 +84,9 @@
      * @return {ChildNode} The DOM node for the given string.
      */
     function createFragmentFromTemplate(str) {
+        if (!doc) {
+            throw new Error(DOM_DOCUMENT_DOESNT_EXIST_ERROR);
+        }
         var template = doc.createElement('template');
         template.innerHTML = str;
         return template.content.childNodes[0];
@@ -97,9 +101,8 @@
      */
     function createFragmentFromRange(str) {
         if (!range) {
-            // Throw a specific error if document doesn't exist.
             if (!doc) {
-                throw new Error('DOM document is not present.');
+                throw new Error(DOM_DOCUMENT_DOESNT_EXIST_ERROR);
             }
             range = doc.createRange();
             range.selectNode(doc.body);
@@ -118,6 +121,9 @@
      * @return {ChildNode} The DOM node for the given string.
      */
     function createFragmentFromWrap(str) {
+        if (!doc) {
+            throw new Error(DOM_DOCUMENT_DOESNT_EXIST_ERROR);
+        }
         /** @type {HTMLBodyElement} */
         var fragment = doc.createElement('body');
         fragment.innerHTML = str;
@@ -194,6 +200,9 @@
      * @return {Element}
      */
     function createElementNS(name, namespaceURI) {
+        if (!doc) {
+            throw new Error(DOM_DOCUMENT_DOESNT_EXIST_ERROR);
+        }
         return !namespaceURI || namespaceURI === NS_XHTML ?
             doc.createElement(name) :
             doc.createElementNS(namespaceURI, name);
