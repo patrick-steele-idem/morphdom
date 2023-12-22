@@ -5,26 +5,53 @@ export var doc = typeof document === 'undefined' ? undefined : document;
 var HAS_TEMPLATE_SUPPORT = !!doc && 'content' in doc.createElement('template');
 var HAS_RANGE_SUPPORT = !!doc && doc.createRange && 'createContextualFragment' in doc.createRange();
 
+/**
+ * Create element from string.
+ *
+ * @param {ReadOnly<string>} str The string to convert to a DOM node.
+ *
+ * @return {ChildNode} The DOM node for the given string.
+ */
 function createFragmentFromTemplate(str) {
     var template = doc.createElement('template');
     template.innerHTML = str;
     return template.content.childNodes[0];
 }
 
+/**
+ * Create element from string.
+ *
+ * @param {ReadOnly<string>} str The string to convert to a DOM node.
+ *
+ * @return {ChildNode} The DOM node for the given string.
+ */
 function createFragmentFromRange(str) {
     if (!range) {
+        // Throw a specific error if document doesn't exist.
+        if (!doc) {
+            throw new Error('DOM document is not present.');
+        }
         range = doc.createRange();
         range.selectNode(doc.body);
     }
 
+    /** @type {DocumentFragment} */
     var fragment = range.createContextualFragment(str);
     return fragment.childNodes[0];
 }
 
+/**
+ * Creates HTML fragments from wrap.
+ *
+ * @param {ReadOnly<String>} str The string to convert to a DOM node.
+ *
+ * @return {ChildNode} The DOM node for the given string.
+ */
 function createFragmentFromWrap(str) {
+    /** @type {HTMLBodyElement} */
     var fragment = doc.createElement('body');
     fragment.innerHTML = str;
-    return fragment.childNodes[0];
+    return fragment.content.childNodes[0];
 }
 
 /**
@@ -33,20 +60,22 @@ function createFragmentFromWrap(str) {
  * return html.body.firstChild;
  *
  * @method toElement
- * @param {String} str
+ * @param {ReadOnly<String>} str
+ *
+ * @return {ChildNode}
  */
 export function toElement(str) {
-    str = str.trim();
+    var trimmedStr = str.trim();
     if (HAS_TEMPLATE_SUPPORT) {
       // avoid restrictions on content for things like `<tr><th>Hi</th></tr>` which
       // createContextualFragment doesn't support
       // <template> support not available in IE
-      return createFragmentFromTemplate(str);
+      return createFragmentFromTemplate(trimmedStr);
     } else if (HAS_RANGE_SUPPORT) {
-      return createFragmentFromRange(str);
+      return createFragmentFromRange(trimmedStr);
     }
 
-    return createFragmentFromWrap(str);
+    return createFragmentFromWrap(trimmedStr);
 }
 
 /**
@@ -55,9 +84,10 @@ export function toElement(str) {
  * NOTE: We don't bother checking `namespaceURI` because you will never find two HTML elements with the same
  *       nodeName and different namespace URIs.
  *
- * @param {Element} a
- * @param {Element} b The target element
- * @return {boolean}
+ * @param {Element} fromEl The source element.
+ * @param {Element} toEl The target element
+ *
+ * @return {boolean} True if the node names are the same.
  */
 export function compareNodeNames(fromEl, toEl) {
     var fromNodeName = fromEl.nodeName;
@@ -101,6 +131,11 @@ export function createElementNS(name, namespaceURI) {
 
 /**
  * Copies the children of one DOM element to another DOM element
+ * 
+ * @param {Element} fromEl The source element.
+ * @param {Element} toEl The target element.
+ *
+ * @return {Element} toEl The target element with moved children.
  */
 export function moveChildren(fromEl, toEl) {
     var curChild = fromEl.firstChild;
