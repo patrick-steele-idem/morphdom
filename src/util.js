@@ -51,7 +51,7 @@ function createFragmentFromWrap(str) {
     /** @type {HTMLBodyElement} */
     var fragment = doc.createElement('body');
     fragment.innerHTML = str;
-    return fragment.content.childNodes[0];
+    return fragment.childNodes[0];
 }
 
 /**
