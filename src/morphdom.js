@@ -303,6 +303,7 @@ export default function morphdomFactory(morphAttrs) {
                       }
 
                       curFromNodeChild = matchingFromEl;
+                      curFromNodeKey = getNodeKey(curFromNodeChild);
                     }
                   } else {
                     // The nodes are not compatible since the "to" node has a key and there
