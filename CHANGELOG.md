@@ -3,6 +3,9 @@ Changelog
 
 # 2.x
 
+## 2.7.2
+- Fix morphing duplicate ids of incompatible tags
+
 ## 2.7.1
 - Pass toEl as second argument to `skipFromChildren` callback
 
