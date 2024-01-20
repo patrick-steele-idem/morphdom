@@ -89,7 +89,8 @@ Supported options (all optional):
 - **addChild** (`Function(parentNode, childNode)`) - Called when adding a new child to a parent. By default, `parentNode.appendChild(childNode)` is invoked. Use this callback to customize how a new child is added.
 - **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added. Should return the node to be added.
 - **onNodeAdded** (`Function(node)`) - Called after a `Node` in the `to` tree has been added to the `from` tree.
-- **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated.
+- **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated. Also its children won't be processed.
+- **onBeforeElAttrsUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated. Its children will still be processed.
 - **onElUpdated** (`Function(el)`) - Called after a `HTMLElement` in the `from` tree has been updated.
 - **onBeforeNodeDiscarded** (`Function(node)`) - Called before a `Node` in the `from` tree is discarded. If this function returns `false` then the node will not be discarded.
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
