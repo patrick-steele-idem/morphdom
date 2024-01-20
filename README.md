@@ -142,11 +142,7 @@ var morphedNode = morphdom(fromNode, toNode, {
 morphdom(fromNode, toNode, {
     onBeforeElUpdated: function(fromEl, toEl) {
         // spec - https://dom.spec.whatwg.org/#concept-node-equals
-        if (fromEl.isEqualNode(toEl)) {
-            return false
-        }
-
-        return true
+        return !fromEl.isEqualNode(toEl)
     }
 })
 ```
