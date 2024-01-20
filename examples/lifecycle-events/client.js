@@ -10,7 +10,7 @@ var todos = [
 ];
 
 function updateDOM() {
-    var todosHtml = todosTemplate.renderSync({ todos: todos });
+    var todosHtml = todosTemplate.renderSync({ todos: todos }).toString();
     morphdom(document.getElementById('todos'), todosHtml, {
         onNodeAdded: function(el) {
             if (el.className === 'todo') {
