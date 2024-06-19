@@ -207,8 +207,11 @@ export default function morphdomFactory(morphAttrs) {
 
       if (!childrenOnly) {
         // optional
-        if (onBeforeElUpdated(fromEl, toEl) === false) {
+        var beforeUpdateResult = onBeforeElUpdated(fromEl, toEl);
+        if (beforeUpdateResult === false) {
           return;
+        } else if (beforeUpdateResult instanceof HTMLElement) {
+          fromEl = beforeUpdateResult;
         }
 
         // update attributes on original DOM element first
