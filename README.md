@@ -90,6 +90,8 @@ Supported options (all optional):
 - **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added. Should return the node to be added.
 - **onNodeAdded** (`Function(node)`) - Called after a `Node` in the `to` tree has been added to the `from` tree.
 - **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated.
+if this function returns an instance of `HTMLElement`, it will be used as the new fromEl tree
+to proceed with morphing for that branch, otherwise the current fromEl tree is used.
 - **onElUpdated** (`Function(el)`) - Called after a `HTMLElement` in the `from` tree has been updated.
 - **onBeforeNodeDiscarded** (`Function(node)`) - Called before a `Node` in the `from` tree is discarded. If this function returns `false` then the node will not be discarded.
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
