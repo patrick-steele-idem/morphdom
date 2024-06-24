@@ -29,7 +29,7 @@ NOTES:
 
 ## Why support a virtual DOM?
 
-Working with real DOM nodes is fast, but real DOM nodes do tend to have more overhead (the amount of overhead associated with real DOM nodes will vary drastically by browser). In order to be 100% compliant with the DOM specification, real DOM nodes require a lot of internal "bookkeeping" and validation checks that slow certain operations down. Virtual DOM nodes have the advantage that they can be optimized to use less memory and enable better performance since they are not required to be compatible the entire DOM specification.
+Working with real DOM nodes is fast, but real DOM nodes do tend to have more overhead (the amount of overhead associated with real DOM nodes will vary drastically by browser). In order to be 100% compliant with the DOM specification, real DOM nodes require a lot of internal "bookkeeping" and validation checks that slow certain operations down. Virtual DOM nodes have the advantage that they can be optimized to use less memory and enable better performance since they are not required to be compatible with the entire DOM specification.
 
 When using `morphdom` to update the view, performance will be largely dictated by how much time it takes to render the view to a virtual DOM/real DOM and how long it takes to walk the tree (including iterating over attributes). We are seeing signficant performance improvements when utilizing a virtual DOM. Please see the [marko-vdom benchmarks](https://github.com/marko-js/marko-vdom#benchmarks) to better understand the performance characteristics of the virtual DOM and the real DOM.
 
