@@ -2,7 +2,7 @@
   <if (data.todos.length)>
     <ul>
         <for|todo| of=data.todos>
-            <li class=["todo", todo.visible && 'todo-visible'] id='todo${todo.id}'>
+            <li class=["todo", todo.visible && 'todo-visible'] id=`todo${todo.id}`>
                 <span class="todo-remove" onclick="window.handleRemoveTodoClick(this)" data-id=todo.id></span>
                 <span class="title">${todo.title}</span>
             </li>
