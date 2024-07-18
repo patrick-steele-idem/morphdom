@@ -45,6 +45,13 @@ export default function morphAttrs(fromNode, toNode) {
 
     for (var d = fromNodeAttrs.length - 1; d >= 0; d--) {
         attr = fromNodeAttrs[d];
+        if (attr === undefined) {
+          // This can happen when a removal of an attribute causes the automatic
+          // removal of another attribute. For example when removing the "src" 
+          // attribute from a "turbo-frame" element the attribute "complete" is
+          // automatically removed too.
+          continue;
+        }
         attrName = attr.name;
         attrNamespaceURI = attr.namespaceURI;
 
