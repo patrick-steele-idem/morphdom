@@ -3,6 +3,9 @@ Changelog
 
 # 2.x
 
+## 2.7.4
+- Fix incorrect index references when returning a cloned tree from onBeforeElUpdated
+
 ## 2.7.3
 - Allow returning a new fromEl tree from onBeforeElUpdated to be used morph for that branch
 
