@@ -212,6 +212,11 @@ export default function morphdomFactory(morphAttrs) {
           return;
         } else if (beforeUpdateResult instanceof HTMLElement) {
           fromEl = beforeUpdateResult;
+          // reindex the new fromEl in case it's not in the same
+          // tree as the original fromEl
+          // (Phoenix LiveView sometimes returns a cloned tree,
+          //  but keyed lookups would still point to the original tree)
+          indexTree(fromEl);
         }
 
         // update attributes on original DOM element first
