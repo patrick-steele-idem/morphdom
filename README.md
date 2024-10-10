@@ -90,6 +90,8 @@ Supported options (all optional):
 - **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added. Should return the node to be added.
 - **onNodeAdded** (`Function(node)`) - Called after a `Node` in the `to` tree has been added to the `from` tree.
 - **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated.
+if this function returns an instance of `HTMLElement`, it will be used as the new fromEl tree
+to proceed with morphing for that branch, otherwise the current fromEl tree is used.
 - **onElUpdated** (`Function(el)`) - Called after a `HTMLElement` in the `from` tree has been updated.
 - **onBeforeNodeDiscarded** (`Function(node)`) - Called before a `Node` in the `from` tree is discarded. If this function returns `false` then the node will not be discarded.
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
@@ -214,7 +216,10 @@ A good strategy to optimize for performance is to render a template to an HTML s
 - __[vomit.js](https://github.com/bredele/vomit)__ (`v0.9.19`) - A library that uses the power of ES6 template literals to quickly create DOM elements that you can update and compose with Objects, Arrays, other DOM elements, Functions, Promises and even Streams. All with the ease of a function call.
 - __[CableReady](https://github.com/hopsoft/cable_ready)__(`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
 - __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__(`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
-- __[simply.js](https://github.com/fehmi/simply.js)__(`all versions`) - Simple web-component library for simple web-apps..
+- __[CableReady](https://github.com/hopsoft/cable_ready)__ (`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
+- __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__ (`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
+- __[morphdom-swap for htmx](https://v1.htmx.org/extensions/morphdom-swap/))__ (`all versions`) - an extension that uses `morphdom` as the swapping mechanism for [htmx](https://htmx.org/).
+- __[simply.js](https://github.com/fehmi/simply.js)__(`all versions`) - Simple web-component library for simple web-apps.
 
 _NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
