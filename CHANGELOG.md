@@ -3,6 +3,23 @@ Changelog
 
 # 2.x
 
+## 2.7.4
+- Fix incorrect index references when returning a cloned tree from onBeforeElUpdated
+
+## 2.7.3
+- Allow returning a new fromEl tree from onBeforeElUpdated to be used morph for that branch
+
+## 2.7.2
+- Fix morphing duplicate ids of incompatible tags
+
+## 2.7.1
+- Pass toEl as second argument to `skipFromChildren` callback
+
+## 2.7.0
+
+- Add new `addChild` and `skipFromChildren` callbacks to allow customization of how new children are
+added to a parent as well as preserving the from tree when indexing changes for diffing.
+
 ## 2.5.12
 
 - Fix merge attrs with multiple properties [PR #175](https://github.com/patrick-steele-idem/morphdom/pull/175)

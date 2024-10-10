@@ -86,43 +86,53 @@ The returned value will typically be the `fromNode`. However, in situations wher
 Supported options (all optional):
 
 - **getNodeKey** (`Function(node)`) - Called to get the `Node`'s unique identifier. This is used by `morphdom` to rearrange elements rather than creating and destroying an element that already exists. This defaults to using the `Node`'s `id` property. (Note that form fields must not have a `name` corresponding to forms' DOM properties, e.g. `id`.)
+- **addChild** (`Function(parentNode, childNode)`) - Called when adding a new child to a parent. By default, `parentNode.appendChild(childNode)` is invoked. Use this callback to customize how a new child is added.
 - **onBeforeNodeAdded** (`Function(node)`) - Called before a `Node` in the `to` tree is added to the `from` tree. If this function returns `false` then the node will not be added. Should return the node to be added.
 - **onNodeAdded** (`Function(node)`) - Called after a `Node` in the `to` tree has been added to the `from` tree.
 - **onBeforeElUpdated** (`Function(fromEl, toEl)`) - Called before a `HTMLElement` in the `from` tree is updated. If this function returns `false` then the element will not be updated.
+if this function returns an instance of `HTMLElement`, it will be used as the new fromEl tree
+to proceed with morphing for that branch, otherwise the current fromEl tree is used.
 - **onElUpdated** (`Function(el)`) - Called after a `HTMLElement` in the `from` tree has been updated.
 - **onBeforeNodeDiscarded** (`Function(node)`) - Called before a `Node` in the `from` tree is discarded. If this function returns `false` then the node will not be discarded.
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
 - **onBeforeElChildrenUpdated** (`Function(fromEl, toEl)`) - Called before the children of a `HTMLElement` in the `from` tree are updated. If this function returns `false` then the child nodes will not be updated.
 - **childrenOnly** (`Boolean`) - If `true` then only the children of the `fromNode` and `toNode` nodes will be morphed (the containing element will be skipped). Defaults to `false`.
+- **skipFromChildren** (`Function(fromEl)`) - called when indexing a the `fromEl` tree. False by default. Return `true` to skip indexing the from tree, which will keep current items in place after patch rather than removing them when not found in the `toEl`.
 
 ```javascript
 var morphdom = require('morphdom');
 var morphedNode = morphdom(fromNode, toNode, {
-    getNodeKey: function(node) {
-        return node.id;
-    },
-    onBeforeNodeAdded: function(node) {
-        return node;
-    },
-    onNodeAdded: function(node) {
+  getNodeKey: function(node) {
+    return node.id;
+  },
+  addChild: function(parentNode, childNode) {
+    parentNode.appendChild(childNode);
+  },
+  onBeforeNodeAdded: function(node) {
+    return node;
+  },
+  onNodeAdded: function(node) {
 
-    },
-    onBeforeElUpdated: function(fromEl, toEl) {
-        return true;
-    },
-    onElUpdated: function(el) {
+  },
+  onBeforeElUpdated: function(fromEl, toEl) {
+    return true;
+  },
+  onElUpdated: function(el) {
 
-    },
-    onBeforeNodeDiscarded: function(node) {
-        return true;
-    },
-    onNodeDiscarded: function(node) {
+  },
+  onBeforeNodeDiscarded: function(node) {
+    return true;
+  },
+  onNodeDiscarded: function(node) {
 
-    },
-    onBeforeElChildrenUpdated: function(fromEl, toEl) {
-        return true;
-    },
-    childrenOnly: false
+  },
+  onBeforeElChildrenUpdated: function(fromEl, toEl) {
+    return true;
+  },
+  childrenOnly: false,
+  skipFromChildren: function(fromEl, toEl) {
+    return false;
+  }
 });
 ```
 
@@ -207,6 +217,10 @@ A good strategy to optimize for performance is to render a template to an HTML s
 - __[CableReady](https://github.com/hopsoft/cable_ready)__(`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
 - __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__(`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
 - __[Ema](https://ema.srid.ca/)__(`all versions`) - A change-aware static site generator library for Haskell. morphdom is used to provide [hot reload](https://ema.srid.ca/topics/hot-reload) in the live server.
+- __[CableReady](https://github.com/hopsoft/cable_ready)__ (`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
+- __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__ (`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
+- __[morphdom-swap for htmx](https://v1.htmx.org/extensions/morphdom-swap/))__ (`all versions`) - an extension that uses `morphdom` as the swapping mechanism for [htmx](https://htmx.org/).
+- __[simply.js](https://github.com/fehmi/simply.js)__(`all versions`) - Simple web-component library for simple web-apps.
 
 _NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
