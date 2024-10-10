@@ -214,10 +214,12 @@ A good strategy to optimize for performance is to render a template to an HTML s
 - __[Composer.js](https://lyonbros.github.io/composer.js/)__ (`v1.2.1`) - Composer is a set of stackable libraries for building complex single-page apps. It uses morphdom in its rendering engine for efficient and non-destructive updates to the DOM.
 - __[yo-yo.js](https://github.com/maxogden/yo-yo)__ (`v1.2.2`) - A tiny library for building modular UI components using DOM diffing and ES6 tagged template literals. yo-yo powers a tiny, isomorphic framework called [choo](https://github.com/yoshuawuyts/choo) (`v3.3.0`), which is designed to be fun.
 - __[vomit.js](https://github.com/bredele/vomit)__ (`v0.9.19`) - A library that uses the power of ES6 template literals to quickly create DOM elements that you can update and compose with Objects, Arrays, other DOM elements, Functions, Promises and even Streams. All with the ease of a function call.
+- __[CableReady](https://github.com/hopsoft/cable_ready)__(`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
+- __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__(`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
 - __[CableReady](https://github.com/hopsoft/cable_ready)__ (`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
 - __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__ (`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
 - __[morphdom-swap for htmx](https://v1.htmx.org/extensions/morphdom-swap/))__ (`all versions`) - an extension that uses `morphdom` as the swapping mechanism for [htmx](https://htmx.org/).
-  
+- __[simply.js](https://github.com/fehmi/simply.js)__(`all versions`) - Simple web-component library for simple web-apps.
 
 _NOTE: If you are using a `morphdom` in your project please send a PR to add your project here_
 
