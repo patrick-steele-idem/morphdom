@@ -245,7 +245,7 @@ export default function morphdomFactory(morphAttrs) {
       }
 
       // Handle incremental update case
-      if (toText.startsWith(fromText)) {
+      if (fromNode.nodeType === TEXT_NODE && toText.startsWith(fromText)) {
         var appendedText = toText.substring(fromText.length);
         fromNode.after(appendedText);
         fromNode.parentNode.normalize();
