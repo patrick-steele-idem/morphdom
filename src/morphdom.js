@@ -236,9 +236,9 @@ export default function morphdomFactory(morphAttrs) {
       }
     }
 
-    function morphText(fromEl, toEl) {
-      var fromText = fromEl.nodeValue;
-      var toText = toEl.nodeValue;
+    function morphText(fromNode, toNode) {
+      var fromText = fromNode.nodeValue;
+      var toText = toNode.nodeValue;
 
       if (fromText === toText) {
         return;
@@ -247,14 +247,14 @@ export default function morphdomFactory(morphAttrs) {
       // Handle incremental update case
       if (toText.startsWith(fromText)) {
         var appendedText = toText.substring(fromText.length);
-        fromEl.after(appendedText);
-        fromEl.parentNode.normalize();
+        fromNode.after(appendedText);
+        fromNode.parentNode.normalize();
         return;
       }
 
       // Simply update nodeValue on the original node to
       // change the text value
-      fromEl.nodeValue = toText;
+      fromNode.nodeValue = toText;
     }
 
     function morphChildren(fromEl, toEl) {
