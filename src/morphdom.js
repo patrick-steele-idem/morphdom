@@ -236,25 +236,25 @@ export default function morphdomFactory(morphAttrs) {
       }
     }
 
-    function morphText(morphedNode, toNode) {
-      var morphedText = morphedNode.nodeValue;
-      var toText = toNode.nodeValue;
+    function morphText(fromEl, toEl) {
+      var fromText = fromEl.nodeValue;
+      var toText = toEl.nodeValue;
 
-      if (morphedText === toText) {
+      if (fromText === toText) {
         return;
       }
 
       // Handle incremental update case
-      if (toText.startsWith(morphedText)) {
-        var appendedText = toText.substring(morphedText.length);
-        morphedNode.after(appendedText);
-        morphedNode.parentNode.normalize();
+      if (toText.startsWith(fromText)) {
+        var appendedText = toText.substring(fromText.length);
+        fromEl.after(appendedText);
+        fromEl.parentNode.normalize();
         return;
       }
 
       // Simply update nodeValue on the original node to
       // change the text value
-      morphedNode.nodeValue = toText;
+      fromEl.nodeValue = toText;
     }
 
     function morphChildren(fromEl, toEl) {
