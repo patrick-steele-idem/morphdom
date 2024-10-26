@@ -255,7 +255,6 @@ export default function morphdomFactory(morphAttrs) {
       // Simply update nodeValue on the original node to
       // change the text value
       morphedNode.nodeValue = toText;
-      return;
     }
 
     function morphChildren(fromEl, toEl) {
