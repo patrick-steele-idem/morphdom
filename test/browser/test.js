@@ -1332,6 +1332,18 @@ describe('morphdom' , function() {
         expect(el1.selectedIndex).to.equal(-1);
     });
 
+    it('should not clear selectedIndex when morphing option directly', function () {
+        var sel = node('select');
+        var el1 = node('option', {}, 'Option 1');
+        sel.appendChild(el1);
+        document.body.appendChild(sel);
+
+        var el2 = node('option', {}, 'Option 1');
+        var index = sel.selectedIndex;
+        morphdom(el1, el2);
+        expect(sel.selectedIndex).to.equal(index);
+    });
+
     it('can handle shadow DOM removal via shadowRoot', function () {
         var html = '<form><label>This should be removed</label><input type="checkbox" id="element-to-be-removed"><p>Element to keep in dom</p></form>';
         var container = document.createElement('div');
