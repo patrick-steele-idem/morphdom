@@ -3,6 +3,9 @@ Changelog
 
 # 2.x
 
+## 2.7.5
+- Fix issue where empty optgroup in select prevents proper diffing
+
 ## 2.7.4
 - Fix incorrect index references when returning a cloned tree from onBeforeElUpdated
 
