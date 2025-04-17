@@ -1657,6 +1657,84 @@ describe('morphdom' , function() {
        expect(noUpdateParentBefore.isSameNode(noUpdateBefore.parentNode)).to.equal(false);
      });
 
+     it('should preserve text selection during incremental updates', () => {
+       // Initial setup
+       var fromEl = document.createElement('div');
+       var initialText = 'Hello world';
+       fromEl.textContent = initialText;
+       document.body.appendChild(fromEl);
+
+       // Create and set selection
+       var selection = window.getSelection();
+       var range = document.createRange();
+       range.setStart(fromEl.firstChild, 0);
+       range.setEnd(fromEl.firstChild, 5); // Select "Hello"
+       selection.removeAllRanges();
+       selection.addRange(range);
+
+       // Create target node with incremental update
+       var toEl = document.createElement('div');
+       toEl.textContent = 'Hello world, how are you?';
+
+       // Apply morphdom with incremental update option
+       morphdom(fromEl, toEl);
+
+       // Verify selection is preserved
+       var updatedSelection = window.getSelection();
+       expect(updatedSelection.toString()).to.equal('Hello');
+       expect(fromEl.textContent).to.equal('Hello world, how are you?');
+     });
+
+     it('should handle multiple incremental updates correctly', () => {
+       var fromEl = document.createElement('div');
+       fromEl.textContent = 'Start';
+       document.body.appendChild(fromEl);
+
+       // Create and set selection
+       var selection = window.getSelection();
+       var range = document.createRange();
+       range.setStart(fromEl.firstChild, 0);
+       range.setEnd(fromEl.firstChild, 5);
+       selection.removeAllRanges();
+       selection.addRange(range);
+
+       // Perform multiple updates
+       var updates = [
+         'Start with',
+         'Start with more',
+         'Start with more text',
+         'Start with more text!!!',
+       ];
+
+       updates.forEach(text => {
+         var toEl = document.createElement('div');
+         toEl.textContent = text;
+
+         morphdom(fromEl, toEl);
+
+         // Verify text content after each update
+         expect(fromEl.textContent).to.equal(text);
+       });
+
+       // Verify final selection
+       expect(window.getSelection().toString()).to.equal('Start');
+     });
+
+     it('should properly normalize DOM after incremental updates', () => {
+       var fromEl = document.createElement('div');
+       fromEl.textContent = 'Initial';
+
+       var toEl = document.createElement('div');
+       toEl.textContent = 'Initial text with more content';
+
+       morphdom(fromEl, toEl);
+
+       // Verify that we have a single text node after normalization
+       expect(fromEl.childNodes.length).to.equal(1);
+       expect(fromEl.childNodes[0].nodeType).to.equal(3); // TEXT_NODE
+       expect(fromEl.textContent).to.equal('Initial text with more content');
+     });
+
      xit('should reuse DOM element with matching ID and class name (2)', function() {
          // NOTE: This test is currently failing. We need to improve the special case code
          //       for handling incompatible root nodes.
