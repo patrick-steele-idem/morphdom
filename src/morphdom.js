@@ -443,10 +443,6 @@ export default function morphdomFactory(morphAttrs) {
       // toss out the "from node" and use the "to node"
       onNodeDiscarded(fromNode);
     } else {
-      if (toNode.isSameNode && toNode.isSameNode(morphedNode)) {
-        return;
-      }
-
       morphEl(morphedNode, toNode, childrenOnly);
 
       // We now need to loop over any keyed nodes that might need to be
