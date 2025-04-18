@@ -11,28 +11,13 @@ function syncBooleanAttrProp(fromEl, toEl, name) {
 
 export default {
     OPTION: function(fromEl, toEl) {
-        var parentNode = fromEl.parentNode;
-        if (parentNode) {
-            var parentName = parentNode.nodeName.toUpperCase();
-            if (parentName === 'OPTGROUP') {
-                parentNode = parentNode.parentNode;
-                parentName = parentNode && parentNode.nodeName.toUpperCase();
-            }
-            if (parentName === 'SELECT' && !parentNode.hasAttribute('multiple')) {
-                if (fromEl.hasAttribute('selected') && !toEl.selected) {
-                    // Workaround for MS Edge bug where the 'selected' attribute can only be
-                    // removed if set to a non-empty value:
-                    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12087679/
-                    fromEl.setAttribute('selected', 'selected');
-                    fromEl.removeAttribute('selected');
-                }
-                // We have to reset select element's selectedIndex to -1, otherwise setting
-                // fromEl.selected using the syncBooleanAttrProp below has no effect.
-                // The correct selectedIndex will be set in the SELECT special handler below.
-                parentNode.selectedIndex = -1;
-            }
+        if (fromEl.hasAttribute('selected') && !toEl.selected) {
+            // Workaround for MS Edge bug where the 'selected' attribute can only be
+            // removed if set to a non-empty value:
+            // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12087679/
+            fromEl.setAttribute('selected', 'selected');
+            fromEl.removeAttribute('selected');
         }
-        syncBooleanAttrProp(fromEl, toEl, 'selected');
     },
     /**
      * The "value" attribute is special for the <input> element since it sets
