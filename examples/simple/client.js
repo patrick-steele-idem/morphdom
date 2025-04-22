@@ -9,10 +9,10 @@ window.updateDOM = function() {
 
     if (state === 'before') {
         state = 'after';
-        updatedHTML = contentAfterTemplate.renderSync();
+        updatedHTML = contentAfterTemplate.renderSync().toString();
     } else {
         state = 'before';
-        updatedHTML = contentBeforeTemplate.renderSync();
+        updatedHTML = contentBeforeTemplate.renderSync().toString();
     }
 
     morphdom(document.getElementById('container'), updatedHTML);
