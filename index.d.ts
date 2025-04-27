@@ -14,6 +14,6 @@ declare function morphdom(
     fromNode: Node,
     toNode: Node | string,
     options?: MorphDomOptions,
-): void;
+): Node;
 
 export = morphdom;
