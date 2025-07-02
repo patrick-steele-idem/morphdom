@@ -7,7 +7,11 @@ var HAS_RANGE_SUPPORT = !!doc && doc.createRange && 'createContextualFragment' i
 
 function createFragmentFromTemplate(str) {
     var template = doc.createElement('template');
-    template.innerHTML = str;
+    if (template.setHTMLUnsafe) {
+        template.setHTMLUnsafe(str);
+    } else {
+        template.innerHTML = str;
+    }
     return template.content.childNodes[0];
 }
 
@@ -23,7 +27,11 @@ function createFragmentFromRange(str) {
 
 function createFragmentFromWrap(str) {
     var fragment = doc.createElement('body');
-    fragment.innerHTML = str;
+    if (fragment.setHTMLUnsafe) {
+        fragment.setHTMLUnsafe(str);
+    } else {
+        fragment.innerHTML = str;
+    }
     return fragment.childNodes[0];
 }
 

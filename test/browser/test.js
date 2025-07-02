@@ -1677,4 +1677,34 @@ describe('morphdom' , function() {
 
          expect(div1).to.equal(div1_2);
      });
+
+    it('should handle declarative shadow dom', function() {
+        // Initial state: simple div with some content
+        const el1 = document.createElement('div');
+        el1.innerHTML = '<p>Before</p>';
+
+        // Target HTML includes declarative shadow DOM
+        const newHTML = `
+        <div>
+            <custom-element>
+                <template shadowrootmode="open">
+                  <span>Inside Shadow</span>
+                </template>
+            </custom-element>
+        </div>`;
+
+        // Perform the morph
+        morphdom(el1, newHTML);
+
+        // The shadow root should now exist
+        const shadowRoot = el1.firstElementChild.shadowRoot;
+        expect(shadowRoot === null).to.equal(false);
+        expect(shadowRoot.mode).to.equal('open');
+
+        // The shadow DOM should contain the expected content
+        expect(shadowRoot.innerHTML.trim()).to.equal('<span>Inside Shadow</span>');
+
+        // The light DOM should have no children (template was processed and removed)
+        expect(el1.firstElementChild.children.length).to.equal(0);
+    });
 });

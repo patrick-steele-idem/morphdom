@@ -27,7 +27,11 @@ export default function morphdomFactory(morphAttrs) {
       if (fromNode.nodeName === '#document' || fromNode.nodeName === 'HTML' || fromNode.nodeName === 'BODY') {
         var toNodeHtml = toNode;
         toNode = doc.createElement('html');
-        toNode.innerHTML = toNodeHtml;
+        if (toNode.setHTMLUnsafe) {
+          toNode.setHTMLUnsafe(toNodeHtml);
+        } else {
+          toNode.innerHTML = toNodeHtml;
+        }
       } else {
         toNode = toElement(toNode);
       }
