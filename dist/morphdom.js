@@ -268,6 +268,11 @@ var specialElHandlers = {
                 if (nodeName === 'OPTGROUP') {
                     optgroup = curChild;
                     curChild = optgroup.firstChild;
+                    // handle empty optgroups
+                    if (!curChild) {
+                        curChild = optgroup.nextSibling;
+                        optgroup = null;
+                    }
                 } else {
                     if (nodeName === 'OPTION') {
                         if (curChild.hasAttribute('selected')) {

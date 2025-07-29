@@ -3,8 +3,12 @@ Changelog
 
 # 2.x
 
+## 2.7.7
+- Fix stale build
+
 ## 2.7.6
 - Fix typescript type definition
+- handle empty optgroups
 
 ## 2.7.5
 - Fix issue where empty optgroup in select prevents proper diffing
