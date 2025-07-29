@@ -3,6 +3,9 @@ Changelog
 
 # 2.x
 
+## 2.7.6
+- Fix typescript type definition
+
 ## 2.7.5
 - Fix issue where empty optgroup in select prevents proper diffing
 
