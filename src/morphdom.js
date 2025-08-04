@@ -236,6 +236,27 @@ export default function morphdomFactory(morphAttrs) {
       }
     }
 
+    function morphText(fromNode, toNode) {
+      var fromText = fromNode.nodeValue;
+      var toText = toNode.nodeValue;
+
+      if (fromText === toText) {
+        return;
+      }
+
+      // Handle incremental update case
+      if (fromNode.nodeType === TEXT_NODE && toText.startsWith(fromText)) {
+        var appendedText = toText.substring(fromText.length);
+        fromNode.after(appendedText);
+        fromNode.parentNode.normalize();
+        return;
+      }
+
+      // Simply update nodeValue on the original node to
+      // change the text value
+      fromNode.nodeValue = toText;
+    }
+
     function morphChildren(fromEl, toEl) {
       var skipFrom = skipFromChildren(fromEl, toEl);
       var curToNodeChild = toEl.firstChild;
@@ -336,12 +357,7 @@ export default function morphdomFactory(morphAttrs) {
             } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
               // Both nodes being compared are Text or Comment nodes
               isCompatible = true;
-              // Simply update nodeValue on the original node to
-              // change the text value
-              if (curFromNodeChild.nodeValue !== curToNodeChild.nodeValue) {
-                curFromNodeChild.nodeValue = curToNodeChild.nodeValue;
-              }
-
+              morphText(curFromNodeChild, curToNodeChild);
             }
           }
 
@@ -426,9 +442,7 @@ export default function morphdomFactory(morphAttrs) {
         }
       } else if (morphedNodeType === TEXT_NODE || morphedNodeType === COMMENT_NODE) { // Text or comment node
         if (toNodeType === morphedNodeType) {
-          if (morphedNode.nodeValue !== toNode.nodeValue) {
-            morphedNode.nodeValue = toNode.nodeValue;
-          }
+          morphText(morphedNode, toNode);
 
           return morphedNode;
         } else {
