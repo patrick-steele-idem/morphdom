@@ -273,6 +273,7 @@ function morphdomFactory(morphAttrs) {
     var skipFromChildren = options.skipFromChildren || noop;
     var addChild = options.addChild || function(parent, child){ return parent.appendChild(child); };
     var childrenOnly = options.childrenOnly === true;
+    var canUseMoveBefore = typeof Element.prototype.moveBefore === 'function';
 
     // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
     var fromNodesLookup = Object.create(null);
@@ -520,10 +521,25 @@ function morphdomFactory(morphAttrs) {
                       // Let's move the original DOM node into the current position and morph
                       // it.
 
-                      // NOTE: We use insertBefore instead of replaceChild because we want to go through
-                      // the `removeNode()` function for the node that is being discarded so that
-                      // all lifecycle hooks are correctly invoked
-                      fromEl.insertBefore(matchingFromEl, curFromNodeChild);
+                      if (canUseMoveBefore) {
+                        try {
+                          // We first try and use the new `moveBefore()` API if it's available
+                          // `moveBefore()` doesn't remove and reinsert a node, instead the state
+                          // of the node is preserved. This allows for things like iframes, animations,
+                          // popeovers, etc to continue to be in the state they were in before the move
+                          fromEl.moveBefore(matchingFromEl, curFromNodeChild);
+                        } catch (err) {
+                          // If `moveBefore()`  errors for some reason, fall back to
+                          // `insertBefore()`
+                          fromEl.insertBefore(matchingFromEl, curFromNodeChild);
+                        }
+                      } else {
+                        // NOTE: We use insertBefore instead of replaceChild because we want to go through
+                        // the `removeNode()` function for the node that is being discarded so that
+                        // all lifecycle hooks are correctly invoked
+                        fromEl.insertBefore(matchingFromEl, curFromNodeChild);
+                      }
+
 
                       // fromNextSibling = curFromNodeChild.nextSibling;
 
