@@ -1692,4 +1692,161 @@ describe('morphdom' , function() {
 
          expect(div1).to.equal(div1_2);
      });
+
+    // =========================================================================
+    // CSP-safe style synchronization
+    // =========================================================================
+
+    describe('CSP-safe style handling', function() {
+        it('should sync styles without calling setAttribute("style")', function() {
+            var el1 = document.createElement('div');
+            el1.style.color = 'red';
+            el1.style.padding = '10px';
+
+            var el2 = document.createElement('div');
+            el2.style.color = 'blue';
+            el2.style.margin = '5px';
+
+            // Spy on setAttribute to verify it is NOT called with "style"
+            var origSetAttribute = el1.setAttribute;
+            var styleSetAttrCalled = false;
+            el1.setAttribute = function(name, value) {
+                if (name === 'style') {
+                    styleSetAttrCalled = true;
+                }
+                return origSetAttribute.call(this, name, value);
+            };
+
+            morphdom(el1, el2);
+
+            expect(styleSetAttrCalled).to.equal(false);
+            expect(el1.style.color).to.equal('blue');
+            expect(el1.style.margin).to.equal('5px');
+            expect(el1.style.padding).to.equal('');
+        });
+
+        it('should add style to an element that had none', function() {
+            var el1 = document.createElement('div');
+
+            var el2 = document.createElement('div');
+            el2.style.color = 'red';
+            el2.style.fontWeight = 'bold';
+
+            morphdom(el1, el2);
+
+            expect(el1.style.color).to.equal('red');
+            expect(el1.style.fontWeight).to.equal('bold');
+        });
+
+        it('should remove style attribute entirely', function() {
+            var el1 = document.createElement('div');
+            el1.style.color = 'red';
+            el1.style.padding = '10px';
+
+            var el2 = document.createElement('div');
+
+            morphdom(el1, el2);
+
+            expect(el1.hasAttribute('style')).to.equal(false);
+        });
+
+        it('should handle !important priority', function() {
+            var el1 = document.createElement('div');
+            el1.style.setProperty('color', 'red', '');
+
+            var el2 = document.createElement('div');
+            el2.style.setProperty('color', 'blue', 'important');
+
+            morphdom(el1, el2);
+
+            expect(el1.style.getPropertyValue('color')).to.equal('blue');
+            expect(el1.style.getPropertyPriority('color')).to.equal('important');
+        });
+
+        it('should handle CSS custom properties (variables)', function() {
+            var el1 = document.createElement('div');
+            el1.style.setProperty('--value', '0');
+            el1.style.setProperty('--size', '4rem');
+
+            var el2 = document.createElement('div');
+            el2.style.setProperty('--value', '75');
+            el2.style.setProperty('--size', '6rem');
+
+            morphdom(el1, el2);
+
+            expect(el1.style.getPropertyValue('--value').trim()).to.equal('75');
+            expect(el1.style.getPropertyValue('--size').trim()).to.equal('6rem');
+        });
+
+        it('should be idempotent — second morph with same style is a no-op', function() {
+            var el1 = document.createElement('div');
+            el1.style.color = 'red';
+            el1.style.padding = '10px';
+
+            var el2 = document.createElement('div');
+            el2.style.color = 'blue';
+
+            morphdom(el1, el2);
+
+            expect(el1.style.color).to.equal('blue');
+            expect(el1.style.padding).to.equal('');
+
+            // Morph again with same target — cssText setter should not be called
+            // because getAttribute("style") returns the same value
+            var el3 = document.createElement('div');
+            el3.style.color = 'blue';
+
+            var cssTextSet = false;
+            var origDescriptor = Object.getOwnPropertyDescriptor(CSSStyleDeclaration.prototype, 'cssText');
+            Object.defineProperty(el1.style, 'cssText', {
+                get: function() { return origDescriptor.get.call(this); },
+                set: function(v) { cssTextSet = true; return origDescriptor.set.call(this, v); },
+                configurable: true
+            });
+
+            morphdom(el1, el3);
+
+            expect(cssTextSet).to.equal(false);
+            expect(el1.style.color).to.equal('blue');
+        });
+
+        it('should handle style morph from HTML string', function() {
+            var el1 = document.createElement('div');
+            el1.id = 'test';
+            el1.style.color = 'red';
+
+            morphdom(el1, '<div id="test" style="color: blue; font-size: 14px"></div>');
+
+            expect(el1.style.color).to.equal('blue');
+            expect(el1.style.fontSize).to.equal('14px');
+            expect(el1.style.getPropertyValue('color')).to.equal('blue');
+        });
+
+        it('should handle shorthand properties', function() {
+            var el1 = document.createElement('div');
+            el1.style.margin = '10px';
+
+            var el2 = document.createElement('div');
+            el2.style.margin = '20px';
+
+            morphdom(el1, el2);
+
+            expect(el1.style.margin).to.equal('20px');
+        });
+
+        it('should handle mixed style and other attribute changes', function() {
+            var el1 = document.createElement('div');
+            el1.className = 'foo';
+            el1.style.color = 'red';
+
+            var el2 = document.createElement('div');
+            el2.className = 'bar';
+            el2.style.color = 'blue';
+
+            morphdom(el1, el2);
+
+            expect(el1.className).to.equal('bar');
+            expect(el1.style.color).to.equal('blue');
+        });
+    });
 });
