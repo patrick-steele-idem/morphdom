@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>morphdom style synchronization benchmark</title>
+<style>
+  body { font-family: monospace; margin: 2rem; background: #1a1a2e; color: #e0e0e0; }
+  h1 { font-size: 1.2rem; color: #00d4ff; }
+  h2 { font-size: 1rem; color: #7b68ee; margin-top: 2rem; }
+  table { border-collapse: collapse; margin: 1rem 0; }
+  th, td { border: 1px solid #333; padding: 0.4rem 1rem; text-align: right; }
+  th { background: #16213e; color: #00d4ff; }
+  td:first-child { text-align: left; }
+  button { background: #7b68ee; color: white; border: none; padding: 0.6rem 1.4rem;
+           cursor: pointer; font-family: monospace; font-size: 0.9rem; margin: 0.5rem 0.5rem 0.5rem 0; }
+  button:hover { background: #6a5acd; }
+  button:disabled { background: #444; cursor: wait; }
+  #status { color: #ffd700; margin: 1rem 0; }
+  #container { display: none; }
+  .note { color: #888; font-size: 0.85rem; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<h1>morphdom — style synchronization benchmark</h1>
+<p class="note">
+  Measures morph time for elements with inline styles.<br>
+  Run on <code>master</code> (setAttribute) and on <code>fix/csp-safe-style-sync</code> (syncStyle) to compare.
+</p>
+
+<button id="btn-run" onclick="runAll()">Run benchmark</button>
+<button id="btn-run-extended" onclick="runAll(true)">Run extended (slower, more precise)</button>
+<span id="status"></span>
+
+<div id="results"></div>
+<div id="container"></div>
+
+<script src="../dist/morphdom-umd.js"></script>
+<script>
+'use strict';
+
+var container = document.getElementById('container');
+var resultsDiv = document.getElementById('results');
+var statusEl = document.getElementById('status');
+
+// ---- helpers ----
+
+function makeStyledDiv(id, styleStr) {
+  var el = document.createElement('div');
+  el.id = 'item-' + id;
+  if (styleStr) el.setAttribute('style', styleStr);
+  el.textContent = 'item ' + id;
+  return el;
+}
+
+var STYLE_PROPS = [
+  'color', 'background-color', 'padding', 'margin', 'font-size',
+  'border', 'border-radius', 'opacity', 'display', 'width',
+  'height', 'max-width', 'min-height', 'line-height', 'letter-spacing',
+  'text-align', 'overflow', 'position', 'top', 'left'
+];
+
+var STYLE_VALUES_A = [
+  'red', '#f0f0f0', '10px', '5px', '14px',
+  '1px solid #ccc', '4px', '1', 'block', '100px',
+  '50px', '200px', '20px', '1.5', '0.5px',
+  'left', 'hidden', 'relative', '0px', '0px'
+];
+
+var STYLE_VALUES_B = [
+  'blue', '#333333', '20px', '15px', '18px',
+  '2px solid #999', '8px', '0.8', 'flex', '150px',
+  '80px', '300px', '40px', '1.8', '1px',
+  'center', 'auto', 'absolute', '10px', '20px'
+];
+
+function buildStyleString(values, count) {
+  var parts = [];
+  for (var i = 0; i < count && i < STYLE_PROPS.length; i++) {
+    parts.push(STYLE_PROPS[i] + ':' + values[i]);
+  }
+  return parts.join(';');
+}
+
+// ---- scenarios ----
+
+var scenarios = [
+  { name: '1000 els, 5 props, 100% changed',  elCount: 1000, propCount: 5,  changeRatio: 1.0 },
+  { name: '1000 els, 20 props, 100% changed',  elCount: 1000, propCount: 20, changeRatio: 1.0 },
+  { name: '1000 els, 5 props, 10% changed',    elCount: 1000, propCount: 5,  changeRatio: 0.1 },
+  { name: '1000 els, 20 props, 10% changed',   elCount: 1000, propCount: 20, changeRatio: 0.1 },
+  { name: '1000 els, 20 props, 0% changed',    elCount: 1000, propCount: 20, changeRatio: 0.0 },
+  { name: '5000 els, 5 props, 100% changed',   elCount: 5000, propCount: 5,  changeRatio: 1.0 },
+  { name: '100 els, 20 props + CSS vars',       elCount: 100,  propCount: 20, changeRatio: 1.0, cssVars: true },
+  { name: '1000 els, no style (baseline)',      elCount: 1000, propCount: 0,  changeRatio: 0 }
+];
+
+function buildTree(scenario, variant) {
+  var wrap = document.createElement('div');
+  wrap.id = 'bench-root';
+  var styleA = buildStyleString(STYLE_VALUES_A, scenario.propCount);
+  var styleB = buildStyleString(STYLE_VALUES_B, scenario.propCount);
+
+  var cssVarA = scenario.cssVars ? ';--value:10;--size:4rem;--progress:25' : '';
+  var cssVarB = scenario.cssVars ? ';--value:75;--size:6rem;--progress:80' : '';
+
+  for (var i = 0; i < scenario.elCount; i++) {
+    var useB = false;
+    if (variant === 'b') {
+      useB = scenario.changeRatio >= 1.0 || (i / scenario.elCount) < scenario.changeRatio;
+    }
+    var style = scenario.propCount === 0 ? null : (useB ? (styleB + cssVarB) : (styleA + cssVarA));
+    wrap.appendChild(makeStyledDiv(i, style));
+  }
+  return wrap;
+}
+
+function runScenario(scenario, iterations) {
+  var times = [];
+
+  for (var iter = 0; iter < iterations; iter++) {
+    var fromTree = buildTree(scenario, 'a');
+    container.textContent = '';
+    container.appendChild(fromTree);
+
+    var toTree = buildTree(scenario, 'b');
+
+    // Force layout
+    fromTree.offsetHeight;
+
+    var t0 = performance.now();
+    morphdom(fromTree, toTree);
+    var t1 = performance.now();
+    times.push(t1 - t0);
+  }
+
+  // Trim outliers (10% top/bottom)
+  times.sort(function(a, b) { return a - b; });
+  var trimCount = Math.floor(times.length * 0.1);
+  var trimmed = times.slice(trimCount, times.length - trimCount);
+  if (trimmed.length === 0) trimmed = times;
+
+  var sum = 0;
+  for (var i = 0; i < trimmed.length; i++) sum += trimmed[i];
+  var mean = sum / trimmed.length;
+
+  var variance = 0;
+  for (var i = 0; i < trimmed.length; i++) {
+    var diff = trimmed[i] - mean;
+    variance += diff * diff;
+  }
+  var stddev = Math.sqrt(variance / trimmed.length);
+
+  return {
+    mean: mean,
+    stddev: stddev,
+    median: trimmed[Math.floor(trimmed.length / 2)],
+    min: trimmed[0],
+    max: trimmed[trimmed.length - 1]
+  };
+}
+
+// ---- run ----
+
+function runAll(extended) {
+  var iterations = extended ? 50 : 20;
+  var btnRun = document.getElementById('btn-run');
+  var btnExt = document.getElementById('btn-run-extended');
+  btnRun.disabled = true;
+  btnExt.disabled = true;
+  statusEl.textContent = 'Running...';
+
+  // Clear previous results
+  while (resultsDiv.firstChild) resultsDiv.removeChild(resultsDiv.firstChild);
+
+  var i = 0;
+  function next() {
+    if (i >= scenarios.length) {
+      container.textContent = '';
+      statusEl.textContent = 'Done. (' + iterations + ' iterations, trimmed mean)';
+      btnRun.disabled = false;
+      btnExt.disabled = false;
+      return;
+    }
+
+    var sc = scenarios[i];
+    statusEl.textContent = 'Running: ' + sc.name + '...';
+
+    requestAnimationFrame(function() {
+      var result = runScenario(sc, iterations);
+      appendResult(sc, result, i === 0);
+      i++;
+      setTimeout(next, 50);
+    });
+  }
+  next();
+}
+
+function appendResult(scenario, result, isFirst) {
+  if (isFirst) {
+    var h = document.createElement('h2');
+    h.textContent = 'Results';
+    resultsDiv.appendChild(h);
+
+    var table = document.createElement('table');
+    table.id = 'results-table';
+    var thead = document.createElement('thead');
+    var headerRow = document.createElement('tr');
+    ['Scenario', 'Mean (ms)', 'Median (ms)', 'StdDev', 'Min', 'Max'].forEach(function(text) {
+      var th = document.createElement('th');
+      th.textContent = text;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    resultsDiv.appendChild(table);
+  }
+
+  var tbody = document.querySelector('#results-table tbody');
+  var tr = document.createElement('tr');
+  var values = [
+    scenario.name,
+    result.mean.toFixed(2),
+    result.median.toFixed(2),
+    result.stddev.toFixed(2),
+    result.min.toFixed(2),
+    result.max.toFixed(2)
+  ];
+  values.forEach(function(text) {
+    var td = document.createElement('td');
+    td.textContent = text;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+</script>
+
+</body>
+</html>
