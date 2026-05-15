@@ -217,8 +217,6 @@ A good strategy to optimize for performance is to render a template to an HTML s
 - __[CableReady](https://github.com/hopsoft/cable_ready)__(`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
 - __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__(`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
 - __[Ema](https://ema.srid.ca/)__(`all versions`) - A change-aware static site generator library for Haskell. morphdom is used to provide [hot reload](https://ema.srid.ca/topics/hot-reload) in the live server.
-- __[CableReady](https://github.com/hopsoft/cable_ready)__ (`v4.0+`) - Server Rendered SPAs. CableReady provides a standard interface for invoking common client-side DOM operations from the server via ActionCable.
-- __[Integrated Haskell Platform](https://github.com/digitallyinduced/ihp)__ (`all versions`) - A complete platform for developing server-rendered web applications in Haskell.
 - __[morphdom-swap for htmx](https://v1.htmx.org/extensions/morphdom-swap/))__ (`all versions`) - an extension that uses `morphdom` as the swapping mechanism for [htmx](https://htmx.org/).
 - __[simply.js](https://github.com/fehmi/simply.js)__(`all versions`) - Simple web-component library for simple web-apps.
 
