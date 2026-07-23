@@ -55,6 +55,7 @@ export default function morphdomFactory(morphAttrs) {
     var skipFromChildren = options.skipFromChildren || noop;
     var addChild = options.addChild || function(parent, child){ return parent.appendChild(child); };
     var childrenOnly = options.childrenOnly === true;
+    var keyedRoot = options.keyedRoot === true;
 
     // This object is used as a lookup to quickly find all keyed elements in the original DOM tree.
     var fromNodesLookup = Object.create(null);
@@ -416,6 +417,37 @@ export default function morphdomFactory(morphAttrs) {
       }
     } // END: morphChildren(...)
 
+    function cleanupKeyedNodes() {
+      for (var i=0, len=keyedRemovalList.length; i<len; i++) {
+        var elToRemove = fromNodesLookup[keyedRemovalList[i]];
+        if (elToRemove) {
+          removeNode(elToRemove, elToRemove.parentNode, false);
+        }
+      }
+    }
+
+    if (keyedRoot && !childrenOnly) {
+      var fromNodeKey = getNodeKey(fromNode);
+      var toNodeKey = getNodeKey(toNode);
+
+      if ((fromNodeKey || toNodeKey) && fromNodeKey !== toNodeKey) {
+        if (toNode.actualize) {
+          toNode = toNode.actualize(fromNode.ownerDocument || doc);
+        }
+
+        onNodeDiscarded(fromNode);
+
+        if (fromNode.parentNode) {
+          fromNode.parentNode.replaceChild(toNode, fromNode);
+        }
+
+        handleNodeAdded(toNode);
+        walkDiscardedChildNodes(fromNode, false);
+        cleanupKeyedNodes();
+        return toNode;
+      }
+    }
+
     var morphedNode = fromNode;
     var morphedNodeType = morphedNode.nodeType;
     var toNodeType = toNode.nodeType;
@@ -463,14 +495,7 @@ export default function morphdomFactory(morphAttrs) {
       // never found a match. When a keyed node is matched up we remove
       // it out of fromNodesLookup and we use fromNodesLookup to determine
       // if a keyed node has been matched up or not
-      if (keyedRemovalList) {
-        for (var i=0, len=keyedRemovalList.length; i<len; i++) {
-          var elToRemove = fromNodesLookup[keyedRemovalList[i]];
-          if (elToRemove) {
-            removeNode(elToRemove, elToRemove.parentNode, false);
-          }
-        }
-      }
+      cleanupKeyedNodes();
     }
 
     if (!childrenOnly && morphedNode !== fromNode && fromNode.parentNode) {

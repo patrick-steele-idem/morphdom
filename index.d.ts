@@ -10,6 +10,7 @@ interface MorphDomOptions {
     skipFromChildren?: (fromEl: HTMLElement) => boolean;
     addChild?: (parent: HTMLElement, child: HTMLElement) => void;
     childrenOnly?: boolean;
+    keyedRoot?: boolean;
 }
 
 declare function morphdom(

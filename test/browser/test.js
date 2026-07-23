@@ -425,6 +425,103 @@ describe('morphdom' , function() {
         expect(el1.children[1].textContent).to.equal('B');
     });
 
+    it('updates a keyed root in place by default', function() {
+        var parent = document.createElement('div');
+        var fromRoot = document.createElement('section');
+        fromRoot.id = 'old-root';
+        fromRoot.innerHTML = '<span id="shared">old</span>';
+        parent.appendChild(fromRoot);
+        var shared = fromRoot.firstChild;
+
+        var toRoot = document.createElement('section');
+        toRoot.id = 'new-root';
+        toRoot.innerHTML = '<span id="shared">new</span>';
+
+        var morphedRoot = morphdom(fromRoot, toRoot);
+
+        expect(morphedRoot).to.equal(fromRoot);
+        expect(parent.firstChild).to.equal(fromRoot);
+        expect(fromRoot.id).to.equal('new-root');
+        expect(fromRoot.firstChild).to.equal(shared);
+        expect(shared.textContent).to.equal('new');
+    });
+
+    it('replaces a keyed root and preserves matching keyed descendants', function() {
+        var parent = document.createElement('div');
+        var fromRoot = document.createElement('section');
+        fromRoot.id = 'old-root';
+        fromRoot.innerHTML = '<span id="shared"><i id="old-only">old</i></span>';
+        parent.appendChild(fromRoot);
+        var shared = fromRoot.firstChild;
+
+        var toRoot = document.createElement('section');
+        toRoot.id = 'new-root';
+        toRoot.innerHTML = '<span id="shared"><strong id="new-only">new</strong></span>';
+
+        var added = [];
+        var updated = [];
+        var discarded = [];
+        var lifecycle = [];
+        var morphedRoot = morphdom(fromRoot, toRoot, {
+            keyedRoot: true,
+            onNodeAdded: function(node) {
+                added.push(node);
+                if (node.id) lifecycle.push('added:' + node.id);
+            },
+            onElUpdated: function(node) { updated.push(node); },
+            onNodeDiscarded: function(node) {
+                discarded.push(node);
+                if (node.id) lifecycle.push('discarded:' + node.id);
+            }
+        });
+
+        expect(morphedRoot).to.equal(toRoot);
+        expect(parent.firstChild).to.equal(toRoot);
+        expect(fromRoot.parentNode).to.equal(null);
+        expect(toRoot.outerHTML).to.equal('<section id="new-root"><span id="shared"><strong id="new-only">new</strong></span></section>');
+        expect(toRoot.querySelector('#shared')).to.equal(shared);
+        expect(added.map(function(node) { return node.id; }).filter(Boolean)).to.deep.equal(['new-root', 'new-only']);
+        expect(updated.map(function(node) { return node.id; }).filter(Boolean)).to.deep.equal(['shared']);
+        expect(discarded.map(function(node) { return node.id; }).filter(Boolean)).to.deep.equal(['old-root', 'old-only']);
+        expect(lifecycle).to.deep.equal(['discarded:old-root', 'added:new-root', 'added:new-only', 'discarded:old-only']);
+    });
+
+    it('replaces keyed roots with different tag names', function() {
+        var parent = document.createElement('div');
+        var fromRoot = document.createElement('div');
+        fromRoot.id = 'old-root';
+        parent.appendChild(fromRoot);
+
+        var toRoot = document.createElement('article');
+        toRoot.id = 'new-root';
+        toRoot.textContent = 'new';
+
+        var morphedRoot = morphdom(fromRoot, toRoot, {keyedRoot: true});
+
+        expect(morphedRoot).to.equal(toRoot);
+        expect(parent.firstChild).to.equal(toRoot);
+        expect(parent.innerHTML).to.equal('<article id="new-root">new</article>');
+    });
+
+    it('replaces keyed SVG roots', function() {
+        var fromTemplate = document.createElement('template');
+        fromTemplate.innerHTML = '<svg id="old-root"><g id="shared"><text>old</text></g></svg>';
+        var toTemplate = document.createElement('template');
+        toTemplate.innerHTML = '<svg id="new-root"><g id="shared"><text>new</text></g></svg>';
+        var parent = document.createElement('div');
+        var fromRoot = fromTemplate.content.firstChild;
+        var toRoot = toTemplate.content.firstChild;
+        var shared = fromRoot.firstChild;
+        parent.appendChild(fromRoot);
+
+        var morphedRoot = morphdom(fromRoot, toRoot, {keyedRoot: true});
+
+        expect(morphedRoot).to.equal(toRoot);
+        expect(parent.firstChild).to.equal(toRoot);
+        expect(toRoot.firstChild).to.equal(shared);
+        expect(shared.textContent).to.equal('new');
+    });
+
     it('nested duplicate ids are morphed correctly', function() {
         var el1 = document.createElement('div');
         el1.innerHTML = '<p id="hi" class="foo">A</p><p id="hi" class="bar">B</p>';

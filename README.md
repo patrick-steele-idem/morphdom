@@ -97,6 +97,7 @@ to proceed with morphing for that branch, otherwise the current fromEl tree is u
 - **onNodeDiscarded** (`Function(node)`) - Called after a `Node` in the `from` tree has been discarded.
 - **onBeforeElChildrenUpdated** (`Function(fromEl, toEl)`) - Called before the children of a `HTMLElement` in the `from` tree are updated. If this function returns `false` then the child nodes will not be updated.
 - **childrenOnly** (`Boolean`) - If `true` then only the children of the `fromNode` and `toNode` nodes will be morphed (the containing element will be skipped). Defaults to `false`.
+- **keyedRoot** (`Boolean`) - If `true` then a root node whose key differs from the target root node's key will be replaced instead of updated in place. Matching keyed descendants are preserved. Defaults to `false`.
 - **skipFromChildren** (`Function(fromEl)`) - called when indexing a the `fromEl` tree. False by default. Return `true` to skip indexing the from tree, which will keep current items in place after patch rather than removing them when not found in the `toEl`.
 
 ```javascript
@@ -130,6 +131,7 @@ var morphedNode = morphdom(fromNode, toNode, {
     return true;
   },
   childrenOnly: false,
+  keyedRoot: false,
   skipFromChildren: function(fromEl, toEl) {
     return false;
   }
@@ -262,4 +264,3 @@ npm test
 # License
 
 MIT
-
