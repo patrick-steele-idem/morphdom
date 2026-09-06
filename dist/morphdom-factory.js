@@ -567,6 +567,11 @@ function morphdomFactory(morphAttrs) {
                 // target DOM node.
                 // MORPH
                 morphEl(curFromNodeChild, curToNodeChild);
+                // Recursion may move the saved sibling into this child's subtree.
+                // Resume with a sibling that still belongs to the current parent.
+                if (fromNextSibling && fromNextSibling.parentNode !== fromEl) {
+                  fromNextSibling = curFromNodeChild.nextSibling;
+                }
               }
 
             } else if (curFromNodeType === TEXT_NODE || curFromNodeType == COMMENT_NODE) {
