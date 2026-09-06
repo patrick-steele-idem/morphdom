@@ -329,6 +329,58 @@ function node(tag, attrs, body) {
 }
 
 describe('morphdom' , function() {
+    [
+        {
+            name: 'an existing parent',
+            from: '<div></div><span id="x"></span><p>old</p>',
+            to: '<div><span id="x"></span></div><p>new</p>'
+        },
+        {
+            name: 'a newly added descendant',
+            from: '<div></div><span id="x"></span><p>old</p>',
+            to: '<div><section><span id="x"></span></section></div><p>new</p>'
+        },
+        {
+            name: 'a parent receiving consecutive keyed siblings',
+            from: '<div></div><span id="x"></span><span id="y"></span><p>old</p>',
+            to: '<div><span id="x"></span><span id="y"></span></div><p>new</p>'
+        },
+        {
+            name: 'a parent with a new trailing child',
+            from: '<div></div><span id="x"></span><p>old</p>',
+            to: '<div><span id="x"></span><em>inside</em></div><p>new</p>'
+        },
+        {
+            name: 'a parent before siblings to discard',
+            from: '<div></div><span id="x"></span><p>old</p>',
+            to: '<div><span id="x"></span></div>'
+        }
+    ].forEach(function(test) {
+        it('should continue visiting siblings after moving a keyed node into ' + test.name, function() {
+            var from = document.createElement('main');
+            from.innerHTML = test.from;
+            var keyedNodes = buildElLookup(from);
+            var paragraph = from.querySelector('p');
+            var discarded = [];
+
+            morphdom(from, '<main>' + test.to + '</main>', {
+                onNodeDiscarded: function(node) { discarded.push(node); }
+            });
+
+            expect(from.innerHTML).to.equal(test.to);
+            Object.keys(keyedNodes).forEach(function(key) {
+                expect(from.querySelector('#' + key)).to.equal(keyedNodes[key]);
+                expect(discarded).not.to.include(keyedNodes[key]);
+            });
+            if (test.to.indexOf('<p>') !== -1) {
+                expect(from.querySelector('p')).to.equal(paragraph);
+                expect(discarded).not.to.include(paragraph);
+            } else {
+                expect(discarded.filter(function(node) { return node === paragraph; })).to.have.lengthOf(1);
+            }
+        });
+    });
+
     this.timeout(0);
 
     beforeEach(function() {
